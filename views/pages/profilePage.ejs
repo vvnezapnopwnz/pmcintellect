@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+  <div class="row d-flex">
+    <div class="col-sm">
+      <div class="user__info">
+        <h2>Инфо</h2>
+        <h4>Имя: <%= user.name%></h4>
+        <h4>Роль: <%= user.role%></h4>
+      </div>
+      <div class="students__content">
+        <h5>Ученики</h5>
+        <button type="button" class="btn btn-secondary my-2">Перейти в базу учеников</button>
+        <button type="button" class="btn btn-primary my-2">Создать ученика</button>
+      </div>
+    </div>
+
+
+    <div class="col-sm">
+      <h3>Списки групп</h3>
+      <ul>
+        <% groups.forEach(function(group) { %>
+            <li>
+                <strong><%= group.name %></strong>
+              
+            </li>
+        <% }); %>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+

@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
 
-// const userRouter = require('./routes/userRoutes');
+const userRouter = require('./routes/userRoutes');
 // const groupRouter = require('./routes/groupRoutes');
 // const studentRouter = require('./routes/studentRoutes');
 
@@ -24,7 +24,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(express.urlencoded({ extended: true, limit: '10kb' }));
   app.use(cookieParser());
 
-//   app.use('/users', userRouter);
+  app.use('/users', userRouter);
 //   app.use('/groups', groupRouter);
 //   app.use('/students', studentRouter);
   
