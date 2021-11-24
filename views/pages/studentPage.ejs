@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+
+    <div class="row d-flex student__block my-4">
+        <div class="col-6">
+            <div class="student__info flex-column">
+                <h4>
+                    <%= student.name %>
+                </h4>
+                <h5>
+                    Класс:
+                    <%= student.classNumber %>
+                </h5>
+            </div>
+
+        </div>
+
+    </div>

@@ -9,8 +9,8 @@ const groupSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Please provide your class number'],
   },
-  subjects: [{type: String, required: true}],
-  students: [{type: String, required: true}],
+  subjects: [{ type: String, required: true }],
+  students: [{ type: String }],
   active: {
     type: Boolean,
     default: true,

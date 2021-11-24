@@ -5,8 +5,8 @@ const cookieParser = require('cookie-parser');
 
 
 const userRouter = require('./routes/userRoutes');
-// const groupRouter = require('./routes/groupRoutes');
-// const studentRouter = require('./routes/studentRoutes');
+const groupRouter = require('./routes/groupRoutes');
+const studentRouter = require('./routes/studentRoutes');
 
 const app = express();
 
@@ -25,8 +25,8 @@ if (process.env.NODE_ENV === 'development') {
   app.use(cookieParser());
 
   app.use('/users', userRouter);
-//   app.use('/groups', groupRouter);
-//   app.use('/students', studentRouter);
+  app.use('/groups', groupRouter);
+  app.use('/students', studentRouter);
   
   
   module.exports = app;

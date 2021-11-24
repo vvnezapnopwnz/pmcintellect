@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+    <div class="row  my-3">
+        <div class="col-6 student__block">
+            <h4>Создать группу</h4>
+            <form action='http://localhost:3000/groups/new' method='POST'>
+              <div class="mb-1">
+                <label for="inputName" class="form-label">Название</label>
+                <div id="" class="form-text">Введите название группы</div>
+                <input value=<%= group.name %> name="name" type="text" class="form-control w-50" id="inputName" aria-describedby="NameHelp">
+              </div>
+              <div class="mb-3">
+                <label for="InputClassNumber" class="form-label">Класс</label>
+                <div id="" class="form-text">Укажите класс</div>
+                <input value=<%= group.classNumber %> name="classNumber" type="number" class="form-control w-50" id="InputClassNumber">
+              </div>
+
+                <div class="subjects__list">
+
+                    <label for="InputSubjects" class="form-label">Предметы</label>
+
+                    <% group.subjects.forEach(function(subject) { %>
+                    <div id="" class="form-text">Добавьте предмет</div>
+                    <div class="subjects__add d-flex">
+                        <input value=<%= subject %> name="subjects" type="string" class="form-control w-50" id="InputSubjects">
+                        <button type="button" class="add__button btn btn-primary mx-1">+</button>
+                    </div>
+
+                    <% }); %>
+                </div>
+
+
+                <div class="subjects__list">
+
+                    <label for="InputSubjects" class="form-label">Ученики</label>
+                    <div id="" class="form-text">Список учеников</div>
+                    <% studentsIDs.forEach(function(student) { %>
+                    <div class="students__add d-flex">
+                        <input value=<%= student %> name="students" type="string" class="form-control w-50" id="InputSubjects">
+                        <button type="button" class="add__button btn btn-primary mx-1">+</button>
+                    </div>
+                    
+                    <% }); %>
+                </div>
+
+                <!-- <div class="students__list my-3">
+                    <label for="Inputstudents" class="form-label">Ученики</label>
+                    <div id="" class="form-text">Добавьте учеников</div>
+                    <div class="students__add d-flex">
+                        <input name="students" type="string" class="form-control w-50" id="Inputstudents">
+                        <button type="button" class="add__student__button btn btn-primary mx-1">+</button>
+                    </div>
+                </div> -->
+
+
+
+              <button type="submit" class="btn btn-primary my-4">Создать ученика и занести в базу</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+<script type="text/javascript">
+    const subjectsList = document.querySelector('.subjects__list')
+    const subjectsBlock = document.querySelector('.subjects__add');
+    const addButton = document.querySelector('.add__button');
+
+    addButton.addEventListener('click', function() {
+
+        const newSubjectsBlock = document.createElement('div');
+        newSubjectsBlock.className = "subjects__add d-flex my-1";
+
+        const newInput = document.createElement('input');
+        newInput.name = 'subjects';
+        newInput.type = 'text';
+        newInput.className = "form-control w-50";
+        newSubjectsBlock.appendChild(newInput);
+
+        const newButton = document.createElement('button')
+        newButton.type = 'button'
+        newButton.className = 'remove__button btn btn-danger mx-1';
+        newButton.innerText = '-';
+        newSubjectsBlock.appendChild(newButton)
+
+        subjectsList.appendChild(newSubjectsBlock);
+
+        const removeButtonArr = document.querySelectorAll('.remove__button');
+        const removeButton = removeButtonArr[removeButtonArr.length - 1]
+        removeButton.addEventListener('click', function () {
+        const last = subjectsList.lastChild;
+        subjectsList.removeChild(last);
+        });
+    });
+
+//     const studentsList = document.querySelector('.students__list')
+//     const studentsBlock = document.querySelector('.students__add');
+//     const addStudentButton = document.querySelector('.add__student__button');
+
+//     addStudentButton.addEventListener('click', function() {
+
+// const newstudentsBlock = document.createElement('div');
+// newstudentsBlock.className = "students__add d-flex my-1";
+
+//     const newInput = document.createElement('input');
+//     newInput.name = 'students';
+//     newInput.type = 'text';
+//     newInput.className = "form-control w-50";
+//     newstudentsBlock.appendChild(newInput);
+
+//     const newButton = document.createElement('button')
+//     newButton.type = 'button'
+//     newButton.className = 'remove__student__button btn btn-danger mx-1';
+//     newButton.innerText = '-';
+//     newstudentsBlock.appendChild(newButton)
+
+//     studentsList.appendChild(newstudentsBlock);
+
+//     const removeButtonArr = document.querySelectorAll('.remove__student__button');
+//     const removeButton = removeButtonArr[removeButtonArr.length - 1]
+//     removeButton.addEventListener('click', function () {
+//     const last = studentsList.lastChild;
+//     studentsList.removeChild(last);
+//     });
+
+//     });
+
+
+    </script>

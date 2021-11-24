@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+
+    <div class="row d-flex group__block my-4">
+        <div class="col-6">
+            <div class="group__info flex-column">
+                <h4>
+                    <%= group.name %>
+                </h4>
+                <h5>
+                    Класс:
+                    <%= group.classNumber %>
+                </h5>
+            </div>
+            
+            <ul>
+                <% group.subjects.forEach(function(subject) { %>
+                    <li>
+                        <strong><%= subject%></strong>
+                      </a>
+                    </li>
+                <% }); %>
+              </ul>
+
+        </div>
+        <div class="col-sm-6">
+            <ul>
+                <% group.students.forEach(function(student) { %>
+                    <li>
+                      <a href=<%= `http://localhost:3000/students/${student._id}` %>>
+                        <strong><%= student%></strong>
+                      </a>
+                    </li>
+                <% }); %>
+              </ul>
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+</div>

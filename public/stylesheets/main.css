@@ -2,10 +2,18 @@ body {
   background-image: url('../EVdpVvQ.jpg');
 }
 
-.profile__info {
+.profile__content {
+  background-color: #ffb10a;
+  border-radius: 15px;
+  box-shadow: 0 1px 10px rgb(0 0 0 / 25%);
+  margin: 30px 20px;
+  padding: 20px 20px;
+}
+
+.profile__info, .group__block, .student__block {
   background-color: #ffb10a;
   padding: 15px;
-  background-color: #ffb10a;
+
   border-radius: 15px;
   margin-bottom: 5px;
   box-shadow: 0 1px 10px rgb(0 0 0 / 25%);
@@ -14,8 +22,20 @@ body {
 .students__content {
   display:flex;
   flex-direction: column;
-  width: 50%;
+  width: 100%;
+  margin: 30px auto;
   background-color: #a070ca;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 1px 10px rgb(0 0 0 / 25%);
+}
+
+.groups__content {
+  display:flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 30px auto;
+  background-color: #6370e4;
   border-radius: 15px;
   padding: 15px;
   box-shadow: 0 1px 10px rgb(0 0 0 / 25%);
