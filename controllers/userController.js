@@ -2,6 +2,8 @@ const User = require('./../models/userModel');
 const Group = require('./../models/groupModel');
 
 
+const globalLink = 'http://localhost:3000';
+
 exports.profilePage = async (req, res, next) => {
 
 
@@ -11,6 +13,7 @@ exports.profilePage = async (req, res, next) => {
 
 
     res.status(200).render('./pages/profilePage', {
+      globalLink,
       groups
     });
   };

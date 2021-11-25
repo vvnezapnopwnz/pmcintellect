@@ -14,7 +14,7 @@ app
   .use(express.static(path.join(__dirname, 'public')))
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/index'))
+  .get('/', (req, res) => res.render('pages/mainPage'))
 
 if (process.env.NODE_ENV === 'development') {
  app.use(morgan('dev'));

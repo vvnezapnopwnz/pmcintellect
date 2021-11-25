@@ -9,48 +9,119 @@
 <%- include ("../partials/nav.ejs") %>
 
 <div class="container">
+    <div class="row my-3 group__block">
+      <div class="col">
+        <div class="group__info d-flex flex-column justify-content-start">
+          <h4 class="btn btn-success">
+             Группа: <%= group.name %>
+          </h4>
+          <h4 class="btn btn-success">
+              Класс:
+              <%= group.classNumber %>
+          </h4>
+      </div>
+      </div>
+    </div>
+    <div class="row d-flex group__block my-3">
 
-    <div class="row d-flex group__block my-4">
         <div class="col-6">
-            <div class="group__info flex-column">
-                <h4>
-                    <%= group.name %>
-                </h4>
-                <h5>
-                    Класс:
-                    <%= group.classNumber %>
-                </h5>
-            </div>
-            
-            <ul>
-                <% group.subjects.forEach(function(subject) { %>
-                    <li>
-                        <strong><%= subject%></strong>
-                      </a>
-                    </li>
-                <% }); %>
-              </ul>
+              <div class="subjects__content">
+                <div class="accordion" id="accordion">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingSubject">
+                      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject" aria-expanded="true" aria-controls="collapseSubject">
+                        Предметы группы
+                      </button>
+                    </h2>
+                    <div id="collapseSubject" class="accordion-collapse collapse" aria-labelledby="headingSubject" data-bs-parent="#accordion">
+                      <div class="accordion-body">
+                        <% group.subjects.forEach(function(subject) { %>
+                          <strong><%= subject%></strong>
+                          <% }); %>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <a href=<%= `${globalLink}/groups/${group._id}/addSubject` %> class="btn btn-primary my-2">
+                Добавить предмет в эту группу(no)
+                </a>
+                <button type="button" class="btn btn-danger my-2">Удалить предмет из группы(no)</button>
 
+              </div>
         </div>
-        <div class="col-sm-6">
-            <ul>
-                <% group.students.forEach(function(student) { %>
-                    <li>
-                      <a href=<%= `http://localhost:3000/students/${student._id}` %>>
+
+        <div class="col-6">
+          <div class="students__content">
+            <div class="accordion" id="accordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingStudent">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStudent" aria-expanded="true" aria-controls="collapseStudent">
+                    Ученики группы
+                  </button>
+                </h2>
+                <div id="collapseStudent" class="accordion-collapse collapse" aria-labelledby="headingStudent" data-bs-parent="#accordion">
+                  <div class="accordion-body d-flex flex-column">
+                    <% group.students.forEach(function(student) { %>
+                    <div class="student__profile">
+                      <a href="http://" class="btn btn-success my-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                          <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                        </svg>
                         <strong><%= student%></strong>
                       </a>
-                    </li>
-                <% }); %>
-              </ul>
+                    </div>
 
-
+                      <% }); %>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <a href=<%= `${globalLink}/groups/${group._id}/addStudent` %> class="btn btn-primary my-2">
+            Добавить ученика в эту группу
+            </a>
+            <button type="button" class="btn btn-danger my-2">Удалить ученика из группы(no)</button>
+          </div>
         </div>
-
-
 
     </div>
 
+    <div class="row d-flex group__block my-4">
+      <div class="col py-2">
+        <h4 class="py-2">Тесты</h4>
+        <div class="tests__content">
+          <a href=<%= `${globalLink}/groups/${group._id}/addTest` %> class="btn btn-primary my-2">
+          Добавить тест в эту группу
+          </a>
+          <button type="button" class="btn btn-danger my-2">Удалить тест из группы(no)</button>
+        </div>
 
+        <table class="table table-striped table-hover table-bordered border-primary">
+          <tr>
+             <th>Дата проведения</th>
+             <th>Группа</th>
+             <th>Предмет</th>
+             <th>Количество сдающих</th>
+             <th>Формат тестирования</th>
+             <th>Максимум баллов</th>
+             <th>Средний балл</th>
+          </tr>
+          <% groupTests.forEach(function(test) { %>
+
+          <tr>
+             <td class="date"><%= new Date(test.date).toLocaleDateString('ru-RU') %></td>
+             <td><%= test.groupName %></td>
+             <td><%= test.subject %></td>
+             <td><%= test.studentGrades.length %></td>
+             <td><%= test.format %></td>
+             <td><%= test.questionsQuantity %></td>
+             <td><%= test.averageGrade %></td>
+          </tr>
+          <% }); %>
+       </table>
+      </div>
+      </div>
 
 
 </div>
+
+<%- include ("../partials/footer.ejs") %>

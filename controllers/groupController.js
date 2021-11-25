@@ -1,6 +1,9 @@
 const Group = require('./../models/groupModel');
 const Student = require('./../models/studentModel');
+const Test = require('./../models/testModel');
 
+
+const globalLink = 'http://localhost:3000';
 
 exports.newGroupPage = async (req, res, next) => {
 
@@ -18,13 +21,12 @@ exports.newGroup = async (req, res, next) => {
 
 const newGroup = await Group.create(req.body);
 
-const group = await Group.findOneById(newGroup.id)
   
     //   res.status(201).redirect(`/groups/${group.id}`);
 
 
     res.json({
-        data: req.body,
+        data: newGroup
 
     })
 
@@ -35,39 +37,74 @@ exports.getGroup = async (req, res, next) => {
     console.log(req.params)
     const groupId = req.params.id
 
-    const group = await Group.findById(groupId);
-// const newGroup = await Group.create(req.body);
-    // const tests = await Test.find({ groupName: group.name });
-    // console.log(tests)
-    const groupStudents = await Student.find({  })
+    const group = await Group.findById(groupId)
+    const groupName = await Group.findById(groupId, function(err, obj) {                      
+        return obj.name  // 1234          
+    })
 
 
+    const groupTests = await Test.find({ groupName: groupName.name })
+    console.log(groupName.name);
+    
 
     res.status(201).render('./pages/groupPage',{
         group,
-        // tests
+        groupTests,
+        globalLink,
     });
 };
 
 
-exports.updateGroup = async (req, res, next) => {
+exports.addStudentPage = async (req, res, next) => {
     const groupId = req.params.id
 
     const group = await Group.findById(groupId);
-    const studentsIDs = await group.students.map( async (studentID) => {
 
-        const student = await Student.findById(studentID);
-        return `${student}`;
+    const availableStudents = await Student.find({classNumber: group.classNumber });
 
-    });
-
-    console.Console(studentsIDs)
-    res.status(201).render('./updatePages/group',{
+    res.status(201).render('./updatePages/addStudent',{
         group,
-        studentsIDs,
+        availableStudents,
+        globalLink,
         // tests
     });
+};
+
+exports.addStudent = async (req, res, next) => {
+    const groupId = req.params.id
+    const group = await Group.findById(groupId);
+
+    const studentToGroup = req.body.students;
+
+    Group.updateOne({ _id: groupId },
+        {
+            $push: {
+                students: { $each: studentToGroup }
+            }
+        }
+    ,
+        { upsert:true } ,function(err){
+        if(err){
+                console.log(err);
+        }else{
+                console.log("Successfully added");
+        }
+});
 
 
+    // .map( async (student) => {
+    //     const studentName = student.split(' ')[1];
+    //     const studentSurname = student.split(' ')[0];
 
-}
+    //     findedStudentByName = await Student
+    //         .find({ name: studentName, surname: studentSurname });
+
+    //     return findedStudentByName;
+    // })
+
+    res.status(201).json({
+
+        data: group,
+        studentToGroup
+    })
+};

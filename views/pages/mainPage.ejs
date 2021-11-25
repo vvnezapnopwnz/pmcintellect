@@ -6,12 +6,16 @@
 
 <body>
 
-  <%- include ("../partials/nav.ejs") %>
-
   <div class="container">
-    <div class="row">
+    <div class="row mt-3">
+      <div class="col d-flex flex-column justify-content-center align-items-center">
+        <img src="./logo.png" alt="" class="logo">
 
-      <div class="col">
+        <h3 class="mt-2 text-center">Отчетность для клиентов и аналитика по успеваемости для тренеров</h3>
+      </div>
+    </div>
+    <div class="row d-flex auth__block my-4">
+      <div class="col-sm-6 mt-4">
         <h4>Ученик? Введите ID</h4>
         <form action='http://localhost:3000/students' method='POST'>
           <div class="mb-3">
@@ -23,7 +27,7 @@
         </form>
       </div>
 
-      <div class="col">
+      <div class="col-sm-6 mt-4">
         <h4>Сотрудник ФМЦИ? Перейти в систему</h4>
         <form action='http://localhost:3000/users/login' method='POST'>
           <div class="mb-1">
@@ -41,6 +45,5 @@
     </div>
   </div>
 
+  <%- include ("../partials/footer.ejs") %>
 
-</body>
-</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+  <div class="row  my-3">
+      <div class="col-6 student__block p-3">
+        <div class="group__info flex-column my-2">
+          <h4>
+            Группа:  <%= group.name %>
+          </h4>
+          <h5>
+              Класс:
+              <%= group.classNumber %>
+          </h5>
+      </div>
+      <hr>
+          <h4>Добавить тест</h4>
+          <form action=<%= `http://localhost:3000/groups/${group._id}/addTest` %> method='POST'>
+
+            <div class="mb-1">
+                <label for="Inputdate" class="form-label">Дата проведения</label>
+                <div id="" class="form-text">Укажите класс</div>
+                <input name="date" type="date" class="form-control w-50" id="InputDate">
+              </div>
+
+            <div class="mb-1">
+                <label for="inputName" class="form-label">Группа</label>
+                <select  name="name" type="text" class="form-control w-50" id="inputName" aria-describedby="NameHelp">
+                    <option value=<%= group.name %>><%= group.name %></option>
+                </select>
+              </div>
+
+            <div class="mb-1">
+                <label for="inputName" class="form-label">Предмет</label>
+                <select  name="subject" type="text" class="form-control w-50" id="inputName" aria-describedby="NameHelp">
+                    <% group.subjects.forEach(function(subject) { %>
+                    <option value=<%= subject %>><%= subject %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="format">
+                <label for="InputFormat" class="form-label">Формат тестирования</label>
+                <input name="format" type="text" class="form-control w-50" id="InputFormat">
+
+            </div>
+
+            <div class="questionsQuantity">
+                <label for="InputquestionsQuantity" class="form-label">Колличество вопросов</label>
+                <input name="questionsQuantity" type="number" class="form-control w-50" id="InputquestionsQuantity">
+
+            </div>
+
+
+            <div class="students__list my-4">
+
+                <label for="InputStudents" class="form-label">Набранные баллы учеников</label>
+
+                  <div class="students__add flex-column">
+                    <% group.students.forEach(function(student) { %>
+                    <div id="<%= student %>__content" class="single__student__content d-flex m-2">
+                        <select id="<%= student %>" name="studentNames" type="select" class="form-control w-50" id="InputStudents">
+                              <option class="available__option" value="<%= student %>">
+                                <%= student %>
+                              </option>
+                            </select>
+                        <input name="grades" class="form-control w-25 mx-1" type="string" class="form-control w-50" id="InputFormat">
+                        <button id="<%= student %>" type="button" class="add__student__button btn btn-danger mx-1">-</button>
+                    </div>
+                      <% }); %>
+                  </div>
+              </div>
+            <button type="submit" class="btn btn-primary my-4">Добавить</button>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    
+    <%- include ("../partials/footer.ejs") %>
+
+<script>
+
+    const addStudentButton = Array.from(document.querySelectorAll('.add__student__button'));
+    addStudentButton.forEach((student__button) => {
+        student__button.addEventListener('click', function () {
+            const parent = student__button.parentElement;
+            parent.remove()
+        })
+
+
+    })
+
+
+
+
+</script>

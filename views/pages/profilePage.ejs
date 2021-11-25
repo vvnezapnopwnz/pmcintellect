@@ -19,19 +19,23 @@
       </div>
       <div class="students__content">
         <h5>Ученики</h5>
-        <button type="button" class="btn btn-secondary my-2">Перейти в базу учеников</button>
-        <a href="http://localhost:3000/students/new" class="btn btn-primary my-2">
+        <a href="<%= globalLink%>/students/" class="btn btn-secondary my-2">
+          Перейти в базу учеников
+        </a>
+        <a href="<%= globalLink%>/students/new" class="btn btn-primary my-2">
           Создать ученика
         </a>
-        <button type="button" class="btn btn-danger my-2">Удалить ученика</button>
+        <button type="button" class="btn btn-danger my-2">Удалить ученика (no)</button>
       </div>
 
       <div class="groups__content">
         <h5>Управление группами</h5>
-        <a href="http://localhost:3000/groups/new" class="btn btn-primary my-2">
+        <a href="<%= globalLink%>/groups/new" class="btn btn-primary my-2">
         Создать группу
         </a>
-        <button type="button" class="btn btn-danger my-2">Удалить группу</button>
+        <a href="<%= globalLink%>/groups/delete" class="btn btn-danger my-2">
+          Удалить группу (no)
+          </a>
       </div>
     </div>
 
@@ -43,16 +47,16 @@
       <div class="accordion" id="accordionExample">
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingOne">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
               Группы 1 класса
             </button>
           </h2>
-          <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+          <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul>
                 <% groups.filter((group) => group.classNumber == 1).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `http://localhost:3000/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -72,7 +76,7 @@
               <ul>
                 <% groups.filter((group) => group.classNumber == 1).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `http://localhost:3000/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -92,7 +96,7 @@
               <ul>
                 <% groups.filter((group) => group.classNumber == 1).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `http://localhost:3000/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -112,7 +116,7 @@
               <ul>
                 <% groups.filter((group) => group.classNumber == 4).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `http://localhost:3000/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -132,7 +136,7 @@
               <ul>
                 <% groups.filter((group) => group.classNumber == 5).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `http://localhost:3000/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -152,7 +156,7 @@
               <ul>
                 <% groups.filter((group) => group.classNumber == 6).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `http://localhost:3000/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -172,7 +176,7 @@
               <ul>
                 <% groups.filter((group) => group.classNumber == 7).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `http://localhost:3000/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -192,7 +196,7 @@
               <ul>
                 <% groups.filter((group) => group.classNumber == 8).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `http://localhost:3000/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -212,7 +216,7 @@
               <ul>
                 <% groups.filter((group) => group.classNumber == 9).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `http://localhost:3000/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -232,7 +236,7 @@
               <ul>
                 <% groups.filter((group) => group.classNumber == 10).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `http://localhost:3000/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -252,7 +256,7 @@
               <ul>
                 <% groups.filter((group) => group.classNumber == 11).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `http://localhost:3000/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -270,3 +274,4 @@
 </div>
 
 
+<%- include ("../partials/footer.ejs") %>

@@ -11,17 +11,60 @@
 <div class="container">
 
     <div class="row d-flex student__block my-4">
-        <div class="col-6">
+        <div class="col">
             <div class="student__info flex-column">
                 <h4>
-                    <%= student.name %>
+                    <%= studentInfo.surname %> <%= studentInfo.name %>
                 </h4>
                 <h5>
-                    Класс:
-                    <%= student.classNumber %>
+                    Класс ученика:
+                    <%= studentInfo.classNumber %>
                 </h5>
+                <h5>
+                    Предметы ученика:
+                </h5>
+                <% studentInfo.subjects.forEach(function(subject) { %>
+                    <strong>
+                        <%= subject %>
+                    </strong>
+                    <% }); %>
             </div>
+        </div>
+    </div>
+
+    <div class="row d-flex student__block my-4">
+        <div class="col">
+            <table class="table table-striped table-hover table-bordered border-primary">
+                <tr>
+                   <th>Дата проведения</th>
+                   <th>Группа</th>
+                   <th>Предмет</th>
+                   <th>Формат тестирования</th>
+                   <th>Максимум баллов</th>
+                   <th>Набранный балл</th>
+                   <th>% от максимума</th>
+                </tr>
+                <% thisStudentResults.forEach(function(test) { %>
+      
+                <tr>
+                   <td class="date"><%= new Date(test.studentDate).toLocaleDateString('ru-RU') %></td>
+                   <td><%= test.studentGroupName %></td>
+                   <td><%= test.studentSubject %></td>
+                   <td><%= test.studentTestFormat %></td>
+                   <td><%= test.studentQuestionsQuantity %></td>
+                   <td><%= test.studentGrade %></td>
+                   <td><%= test.percentOfMaximum %></td>
+                   
+                </tr>
+                <% }); %>
+             </table>
+
 
         </div>
 
     </div>
+    
+</div>
+
+
+<%- include ("../partials/footer.ejs") %>

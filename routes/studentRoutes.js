@@ -5,6 +5,7 @@ const studentController = require('./../controllers/studentController');
 const router = express.Router();
 
 // router.param('id', tourController.checkID);
+router.get('/', studentController.getAll);
 router.get('/new', studentController.createStudentPage);
 router.post('/new', studentController.createStudent);
 

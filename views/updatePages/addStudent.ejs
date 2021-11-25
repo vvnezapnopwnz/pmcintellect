@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+  <div class="row  my-3">
+      <div class="col-6 student__block p-3">
+        <div class="group__info flex-column my-2">
+          <h4>
+            Группа:  <%= group.name %>
+          </h4>
+          <h5>
+              Класс:
+              <%= group.classNumber %>
+          </h5>
+      </div>
+      <hr>
+          <h4>Добавить ученика в группу</h4>
+          <form action=<%= `${globalLink}/groups/${group._id}/addStudent` %> method='POST'>
+
+              <div class="students__list">
+
+                <label for="InputStudents" class="form-label">Укажите имя</label>
+                  <div class="students__add d-flex">
+                      <select name="students" type="select" class="form-control w-50" id="InputStudents">
+                        <option value="">Выберите ученика</option>
+                        <% availableStudents.forEach(function(student) { %>
+                          <option class="available__option" value="<%= student.surname %> <%= student.name %>">
+                            <%= student.surname %> <%= student.name %>
+                          </option>
+                          <% }); %>
+                        </select>
+                      <button type="button" class="add__student__button btn btn-primary mx-1">+</button>
+                  </div>
+              </div>
+            <button type="submit" class="btn btn-primary my-4">Добавить</button>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+
+    <%- include ("../partials/footer.ejs") %>
+
+    
+<script>
+
+    const studentsList = document.querySelector('.students__list')
+    const studentsBlock = document.querySelector('.students__add');
+    const addStudentButton = document.querySelector('.add__student__button');
+    const availableStudents = Array.from(document.querySelectorAll('.available__option'))
+
+    addStudentButton.addEventListener('click', function() {
+
+const newstudentsBlock = document.createElement('div');
+newstudentsBlock.className = "students__add d-flex my-1";
+
+    const newSelect = document.createElement('select');
+    newSelect.name = 'students';
+    newSelect.type = 'select';
+    newSelect.className = "form-control w-50";
+
+    for(let i = 0; i < availableStudents.length;i++) {
+
+      const newOption = document.createElement('option')
+      newOption.innerText = availableStudents[i].innerText;
+      newOption.value = availableStudents[i].value;
+      newSelect.add(newOption);
+
+    }
+
+    newstudentsBlock.appendChild(newSelect);
+
+    const newButton = document.createElement('button')
+    newButton.type = 'button'
+    newButton.className = 'remove__student__button btn btn-danger mx-1 px-3';
+    newButton.innerText = '-';
+
+
+    if(studentsBlock.children.length <= 2) {
+      studentsBlock.appendChild(newButton)
+    }
+
+    studentsList.appendChild(newstudentsBlock);
+
+    newButton.addEventListener('click', function () {
+      const last = studentsList.lastChild;
+      studentsList.removeChild(last);
+      });
+    });
+
+
+</script>
