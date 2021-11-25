@@ -1,7 +1,7 @@
 const Student = require('./../models/studentModel');
 const Test = require('./../models/testModel');
 
-const globalLink = 'http://localhost:3000';
+const globalLink = 'https://pmcintellect.herokuapp.com';
 
 exports.createStudentPage = async (req, res, next) => {
     res.status(200).render('./createPages/student');

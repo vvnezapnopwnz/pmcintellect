@@ -2,7 +2,7 @@ const User = require('./../models/userModel');
 const Group = require('./../models/groupModel');
 
 
-const globalLink = 'http://localhost:3000';
+const globalLink = 'https://pmcintellect.herokuapp.com';
 
 exports.profilePage = async (req, res, next) => {
 
