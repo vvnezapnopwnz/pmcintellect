@@ -17,7 +17,7 @@
     <div class="row d-flex auth__block my-4">
       <div class="col-sm-6 mt-4">
         <h4>Ученик? Введите ID</h4>
-        <form action='http://localhost:3000/students' method='POST'>
+        <form action=<%= `${globalLink}/students` %> method='POST'>
           <div class="mb-3">
             <label for="studentId" class="form-label">ID ученика</label>
             <input type="number" class="form-control" id="studentId" aria-describedby="">
@@ -29,7 +29,7 @@
 
       <div class="col-sm-6 mt-4">
         <h4>Сотрудник ФМЦИ? Перейти в систему</h4>
-        <form action='http://localhost:3000/users/login' method='POST'>
+        <form action=<%= `${globalLink}/users/login/` %> method='POST'>
           <div class="mb-1">
             <label for="inputEmail" class="form-label">Email address</label>
             <input name="email" type="text" class="form-control" id="inputEmail" aria-describedby="emailHelp">

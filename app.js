@@ -9,12 +9,14 @@ const groupRouter = require('./routes/groupRoutes');
 const studentRouter = require('./routes/studentRoutes');
 
 const app = express();
-
+const globalLink = 'https://pmcintellect.herokuapp.com';
 app
   .use(express.static(path.join(__dirname, 'public')))
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
-  .get('/', (req, res) => res.render('pages/mainPage'))
+  .get('/', (req, res) => res.render('pages/mainPage', {
+    globalLink,
+  }))
 
 if (process.env.NODE_ENV === 'development') {
  app.use(morgan('dev'));
