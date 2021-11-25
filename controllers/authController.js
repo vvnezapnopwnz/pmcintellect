@@ -1,7 +1,7 @@
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
-
+const globalLink = 'https://pmcintellect.herokuapp.com';
 
 const signToken = id => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -27,7 +27,7 @@ const createSendToken = (user, statusCode, res) => {
   
     console.log(user)
     // if(user.role !== 'admin') {
-      res.status(statusCode).redirect('profile');
+      res.status(statusCode).redirect(`${globalLink}/users/profile`);
     // }
 
   
