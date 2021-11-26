@@ -27,7 +27,14 @@ body {
 .profile__info, .group__block, .student__block {
   background-color: #ffb10a;
   padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 5px;
+  box-shadow: 0 1px 10px rgb(0 0 0 / 25%);
+}
 
+.test__block {
+  background-color: #33964f;
+  padding: 15px;
   border-radius: 15px;
   margin-bottom: 5px;
   box-shadow: 0 1px 10px rgb(0 0 0 / 25%);

@@ -5,12 +5,15 @@ const testController = require('./../controllers/testController');
 const router = express.Router();
 
 // router.param('id', tourController.checkID);
-router.get('/new', testController.createTestPage);
-router.post('/new', testController.createTest);
+router.get('/new', testController.addTestPage);
+router.post('/new', testController.addTest);
 
 router
   .route('/:id')
   .get(testController.getTest)
+
+
+
 
 
 module.exports = router;

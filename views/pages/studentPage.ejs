@@ -53,7 +53,7 @@
                    <td><%= test.studentTestFormat %></td>
                    <td><%= test.studentQuestionsQuantity %></td>
                    <td><%= test.studentGrade %></td>
-                   <td><%= test.percentOfMaximum %></td>
+                   <td class="percents"><%= test.percentOfMaximum %></td>
                    
                 </tr>
                 <% }); %>
@@ -64,7 +64,56 @@
 
     </div>
     
+    <div class="row d-flex group__block my-4">
+        <div class="col py-2">
+          <div id="chart">
+          </div>
+        </div>
+    </div> 
+
 </div>
 
+<script>
+    const dates = Array.from(document.querySelectorAll('.date')).map((el) => el.innerHTML);
+    const percents = Array.from(document.querySelectorAll('.percents')).map((el) => el.innerHTML);
+    
+    var options = {
+      series: [{
+        name: "% от максимума",
+        data: percents
+            }],
+      chart: {
+      height: 350,
+      type: 'line',
+      zoom: {
+        enabled: false
+      }
+      },
+    dataLabels: {
+      enabled: true
+    },
+    stroke: {
+      curve: 'straight'
+    },
+    title: {
+      text: 'Общая успеваемость группы за период',
+      align: 'center'
+    },
+    grid: {
+      row: {
+        colors: ['#f3f3f3', 'transparent'],
+        opacity: 0.5
+      },
+    },
+    xaxis: {
+      categories: dates,
+    },
+    };
+    
+            var chart = new ApexCharts(document.querySelector("#chart"), options);
+            chart.render();
+    
+    
+    </script>
 
 <%- include ("../partials/footer.ejs") %>

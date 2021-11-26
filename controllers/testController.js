@@ -2,7 +2,7 @@ const Group = require('./../models/groupModel');
 const Student = require('./../models/studentModel');
 const Test = require('./../models/testModel');
 
-const globalLink = 'https://pmcintellect.herokuapp.com';
+const globalLink = 'http://localhost:3000';
 
 exports.addTestPage = async (req, res, next) => {
     const groupId = req.params.id
@@ -56,7 +56,54 @@ exports.addTest = async (req, res, next) => {
         averageGrade: averageGrade,
     })
     console.log(newTest)
-    // const availableStudents = await Student.find({classNumber: group.classNumber });
 
     res.status(200).redirect(`${globalLink}/groups/${groupId}/`)
+};
+
+
+exports.getTest = async (req, res, next) => {
+
+
+
+    const testId = req.params.id;
+
+    const thisTestInfo = await Test.findById(testId)
+
+    const groupId = await Group.findOne({ name: thisTestInfo.groupName })
+        .then((groupData) => groupData._id);
+
+    await Test.findById(testId)
+        .then((testData) => {
+            const questionsQuantity = testData.questionsQuantity;
+
+            const allGradesInfo = testData.studentGrades.map((gradeInfo) => {
+
+                const studentName = gradeInfo.studentName;
+
+                const studentGrade = gradeInfo.studentGrade;
+
+                const percentOfMaximum = Math.round(studentGrade / questionsQuantity * 100);
+
+                const fullInfo = {
+                    studentGrade,
+                    studentName,
+                    percentOfMaximum,
+                };
+
+                return fullInfo;
+
+            });
+
+            return allGradesInfo;
+
+        }).then((allGradesInfo) => {
+
+            res.status(201).render('./pages/testPage', {
+                groupId,
+                thisTestInfo,
+                allGradesInfo,
+                globalLink,
+            });
+        });
+
 };

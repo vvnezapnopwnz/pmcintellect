@@ -7,9 +7,10 @@ const cookieParser = require('cookie-parser');
 const userRouter = require('./routes/userRoutes');
 const groupRouter = require('./routes/groupRoutes');
 const studentRouter = require('./routes/studentRoutes');
+const testRouter = require('./routes/testRoutes');
 
 const app = express();
-const globalLink = 'https://pmcintellect.herokuapp.com';
+const globalLink = 'http://localhost:3000';
 app
   .use(express.static(path.join(__dirname, 'public')))
   .set('views', path.join(__dirname, 'views'))
@@ -29,6 +30,6 @@ if (process.env.NODE_ENV === 'development') {
   app.use('/users', userRouter);
   app.use('/groups', groupRouter);
   app.use('/students', studentRouter);
-  
+  app.use('/tests',testRouter); 
   
   module.exports = app;

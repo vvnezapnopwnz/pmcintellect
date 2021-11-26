@@ -1,7 +1,7 @@
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
-const globalLink = 'https://pmcintellect.herokuapp.com';
+const globalLink = 'http://localhost:3000';
 
 const signToken = id => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -57,7 +57,7 @@ exports.login = async (req, res, next) => {
       expires: new Date(Date.now() + 10 * 1000),
       httpOnly: true
     });
-    res.status(200).json({ status: 'success' });
+    res.status(200).redirect(`${globalLink}/`);
 };
 
 

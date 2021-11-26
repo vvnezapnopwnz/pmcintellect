@@ -1,23 +1,20 @@
 const Student = require('./../models/studentModel');
 const Test = require('./../models/testModel');
 
-const globalLink = 'https://pmcintellect.herokuapp.com';
+const globalLink = 'http://localhost:3000';
 
 exports.createStudentPage = async (req, res, next) => {
-    res.status(200).render('./createPages/student');
+    res.status(200).render('./createPages/student', {
+      globalLink,
+    });
 };
 
 exports.createStudent = async (req, res, next) => {
     console.log(req.body)
 
-const newStudent = await Student.create(req.body);
-  
-      res.status(201).json({
-        status: 'success',
-        data: {
-          data: newStudent
-        }
-      });
+   await Student.create(req.body).then(() => {
+    res.status(201).redirect(`${globalLink}/users/profile`);
+   });
 };
 
 
@@ -27,7 +24,6 @@ exports.getStudent = async (req, res, next) => {
     let name; 
     let surname; 
     const studentInfo = await Student.findById(StudentId)
-
 
   await Student.findById(StudentId)
     .then((data) => {

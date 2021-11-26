@@ -12,7 +12,7 @@
     <div class="row  my-3">
         <div class="col-6 student__block">
             <h4>Создать группу</h4>
-            <form action='http://localhost:3000/groups/new' method='POST'>
+            <form action=<%= `${globalLink}/groups/new` %> method='POST'>
               <div class="mb-1">
                 <label for="inputName" class="form-label">Название</label>
                 <div id="" class="form-text">Введите название группы</div>

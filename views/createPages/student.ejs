@@ -12,7 +12,7 @@
     <div class="row  my-3">
         <div class="col-6 student__block">
             <h4>Создать ученика</h4>
-            <form action='http://localhost:3000/students/new' method='POST'>
+            <form action=<%= `${globalLink}/students/new` %> method='POST'>
               <div class="mb-1">
                 <label for="inputName" class="form-label">Имя</label>
                 <input name="name" type="text" class="form-control w-50" id="inputName" aria-describedby="NameHelp">
