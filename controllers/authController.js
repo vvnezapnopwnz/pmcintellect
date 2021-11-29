@@ -1,7 +1,8 @@
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
-const globalLink = 'http://localhost:3000';
+const globalLink = require('./../app').globalLink;
+
 
 const signToken = id => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -25,9 +26,8 @@ const createSendToken = (user, statusCode, res) => {
     // Remove password from output
     user.password = undefined;
   
-    console.log(user)
     // if(user.role !== 'admin') {
-      res.status(statusCode).redirect(`${globalLink}/users/profile`);
+      res.status(statusCode).redirect(`${globalLink}/users/profile`)
     // }
 
   
@@ -57,7 +57,7 @@ exports.login = async (req, res, next) => {
       expires: new Date(Date.now() + 10 * 1000),
       httpOnly: true
     });
-    res.status(200).redirect(`${globalLink}/`);
+    res.status(200).redirect(`${globalLink}`);
 };
 
 

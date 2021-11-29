@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
+exports.globalLink = process.env.NODE_DEST;
 
 const userRouter = require('./routes/userRoutes');
 const groupRouter = require('./routes/groupRoutes');
@@ -10,13 +11,15 @@ const studentRouter = require('./routes/studentRoutes');
 const testRouter = require('./routes/testRoutes');
 
 const app = express();
-const globalLink = 'http://localhost:3000';
+
+
+
 app
   .use(express.static(path.join(__dirname, 'public')))
   .set('views', path.join(__dirname, 'views'))
   .set('view engine', 'ejs')
   .get('/', (req, res) => res.render('pages/mainPage', {
-    globalLink,
+    globalLink: 'http://localhost:3000',
   }))
 
 if (process.env.NODE_ENV === 'development') {

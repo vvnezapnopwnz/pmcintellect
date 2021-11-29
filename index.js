@@ -1,8 +1,43 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config({ path: './.env' });
-
+const pg = require('pg');
 const app = require('./app');
+
+
+const { Client } = require('pg');
+
+const client = new Client({
+    user: 'jsasjjko',
+    host: 'abul.db.elephantsql.com',
+    database: 'jsasjjko',
+    password: 'fEMWij6GR_o-APTBeUKdBks-GYgMXl2t',
+    port: 5432,
+});
+
+client.connect();
+
+const query = `
+CREATE TABLE users (
+    email varchar,
+    firstName varchar,
+    lastName varchar,
+    age int
+);
+`;
+
+client.query(query, (err, res) => {
+  if (err) {
+      console.error(err);
+      return;
+  }
+  console.log('Table is successfully created');
+  client.end();
+});
+
+
+
+
 
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
@@ -27,7 +62,7 @@ const server = app.listen(port, () => {
 process.on('unhandledRejection', err => {
   console.log('UNHANDLED REJECTION! 💥 Shutting down...');
   console.log(err.name, err.message);
-  server.close(() => {
-    process.exit(1);
-  });
+  // server.close(() => {
+  //   process.exit(1);
+  // });
 });

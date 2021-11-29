@@ -1,8 +1,6 @@
 const User = require('./../models/userModel');
 const Group = require('./../models/groupModel');
-
-
-const globalLink = 'http://localhost:3000';
+const globalLink = require('./../app').globalLink;
 
 exports.profilePage = async (req, res, next) => {
 

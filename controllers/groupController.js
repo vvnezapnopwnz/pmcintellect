@@ -1,9 +1,7 @@
 const Group = require('./../models/groupModel');
 const Student = require('./../models/studentModel');
 const Test = require('./../models/testModel');
-
-
-const globalLink = 'http://localhost:3000';
+const globalLink = require('./../app').globalLink;
 
 exports.newGroupPage = async (req, res, next) => {
 
