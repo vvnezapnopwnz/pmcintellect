@@ -14,7 +14,7 @@
     <div class="col-sm">
       <div class="user__info">
         <h2>Инфо</h2>
-        <h4>Имя: <%= user.name%></h4>
+        <h4>Имя: <%= user.username%></h4>
         <h4>Роль: <%= user.role%></h4>
       </div>
       <div class="students__content">
@@ -54,9 +54,9 @@
           <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul>
-                <% groups.filter((group) => group.classNumber == 1).forEach(function(group) { %>
+                <% groups.filter((group) => group.class_number == 1).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group.group_id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -74,9 +74,9 @@
           <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul>
-                <% groups.filter((group) => group.classNumber == 1).forEach(function(group) { %>
+                <% groups.filter((group) => group.class_number == 1).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group.group_id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -94,9 +94,9 @@
           <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul>
-                <% groups.filter((group) => group.classNumber == 1).forEach(function(group) { %>
+                <% groups.filter((group) => group.class_number == 1).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group.group_id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -114,9 +114,9 @@
           <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul>
-                <% groups.filter((group) => group.classNumber == 4).forEach(function(group) { %>
+                <% groups.filter((group) => group.class_number == 4).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group.group_id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -134,9 +134,9 @@
           <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul>
-                <% groups.filter((group) => group.classNumber == 5).forEach(function(group) { %>
+                <% groups.filter((group) => group.class_number == 5).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group.group_id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -154,9 +154,9 @@
           <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul>
-                <% groups.filter((group) => group.classNumber == 6).forEach(function(group) { %>
+                <% groups.filter((group) => group.class_number == 6).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group.group_id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -174,9 +174,9 @@
           <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul>
-                <% groups.filter((group) => group.classNumber == 7).forEach(function(group) { %>
+                <% groups.filter((group) => group.class_number == 7).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group.group_id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -194,9 +194,9 @@
           <div id="collapseEight" class="accordion-collapse collapse" aria-labelledby="headingEight" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul>
-                <% groups.filter((group) => group.classNumber == 8).forEach(function(group) { %>
+                <% groups.filter((group) => group.class_number == 8).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group.group_id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -214,9 +214,9 @@
           <div id="collapseNine" class="accordion-collapse collapse" aria-labelledby="headingNine" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul>
-                <% groups.filter((group) => group.classNumber == 9).forEach(function(group) { %>
+                <% groups.filter((group) => group.class_number == 9).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group.group_id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -234,9 +234,9 @@
           <div id="collapseTen" class="accordion-collapse collapse" aria-labelledby="headingTen" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul>
-                <% groups.filter((group) => group.classNumber == 10).forEach(function(group) { %>
+                <% groups.filter((group) => group.class_number == 10).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group.group_id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>
@@ -254,9 +254,9 @@
           <div id="collapseElev" class="accordion-collapse collapse" aria-labelledby="headingElev" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul>
-                <% groups.filter((group) => group.classNumber == 11).forEach(function(group) { %>
+                <% groups.filter((group) => group.class_number == 11).forEach(function(group) { %>
                     <li>
-                      <a href=<%= `${globalLink}/groups/${group._id}` %>>
+                      <a href=<%= `${globalLink}/groups/${group.group_id}` %>>
                         <strong><%= group.name %></strong>
                       </a>
                     </li>

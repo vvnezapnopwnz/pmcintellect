@@ -8,9 +8,9 @@ router.post('/login', authController.login);
 // router.get('/login', authController.isLoggedIn, authController.loginPage);
 router.get('/logout', authController.logout);
 
-router.use(authController.isLoggedIn)
+// router.use(authController.isLoggedIn)
 
-router.get('/profile', userController.profilePage);
+router.get('/profile', authController.isLoggedIn, userController.profilePage);
 
 
 

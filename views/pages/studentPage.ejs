@@ -14,20 +14,15 @@
         <div class="col">
             <div class="student__info flex-column">
                 <h4>
-                    <%= studentInfo.surname %> <%= studentInfo.name %>
+                    <%= student.name %>
                 </h4>
                 <h5>
                     Класс ученика:
-                    <%= studentInfo.classNumber %>
+                    <%= student.class_number %>
                 </h5>
                 <h5>
                     Предметы ученика:
                 </h5>
-                <% studentInfo.subjects.forEach(function(subject) { %>
-                    <strong>
-                        <%= subject %>
-                    </strong>
-                    <% }); %>
             </div>
         </div>
     </div>
@@ -44,19 +39,6 @@
                    <th>Набранный балл</th>
                    <th>% от максимума</th>
                 </tr>
-                <% thisStudentResults.forEach(function(test) { %>
-      
-                <tr>
-                   <td class="date"><%= new Date(test.studentDate).toLocaleDateString('ru-RU') %></td>
-                   <td><%= test.studentGroupName %></td>
-                   <td><%= test.studentSubject %></td>
-                   <td><%= test.studentTestFormat %></td>
-                   <td><%= test.studentQuestionsQuantity %></td>
-                   <td><%= test.studentGrade %></td>
-                   <td class="percents"><%= test.percentOfMaximum %></td>
-                   
-                </tr>
-                <% }); %>
              </table>
 
 
