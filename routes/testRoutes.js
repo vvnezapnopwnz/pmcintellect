@@ -5,12 +5,12 @@ const testController = require('./../controllers/testController');
 const router = express.Router();
 
 // router.param('id', tourController.checkID);
-router.get('/new', testController.addTestPage);
-router.post('/new', testController.addTest);
+// router.get('/new', testController.addTestPage);
+// router.post('/new', testController.addTest);
 
-router
-  .route('/:id')
-  .get(testController.getTest)
+// router
+  // .route('/:id')
+  // .get(testController.getTest)
 
 
 

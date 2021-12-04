@@ -1,6 +1,5 @@
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
-// const User = require('./../models/userModel');
 const globalLink = require('./../app').globalLink;
 const db = require('./../db');
 
@@ -15,6 +14,7 @@ const signToken = id => {
 const createSendToken = (user, statusCode, res) => {
   console.log(user.username)
   console.log(user.user_id)
+
     const token = signToken(user.user_id);
     const cookieOptions = {
       expires: new Date(
@@ -22,8 +22,8 @@ const createSendToken = (user, statusCode, res) => {
       ),
       httpOnly: true
     };
-    if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-  
+   cookieOptions.secure = true;
+    console.log(token)
     res.cookie('jwt', token, cookieOptions);
   
     // Remove password from output
@@ -97,7 +97,7 @@ exports.login = async (req, res, next) => {
 
 // Only for rendered pages, no errors!
 exports.isLoggedIn = async (req, res, next) => {
-  console.log('LoggedIN middlware')
+  console.log('LoggedIn middlware')
   if (req.cookies.jwt) {
       // 1) verify token
       const decoded = await promisify(jwt.verify)(
@@ -116,8 +116,10 @@ exports.isLoggedIn = async (req, res, next) => {
           return next();
     
           // console.log('DATA:', data)
-        });
-
+        })
+        .catch(function (err) {
+          res.redirect(globalLink)
+        })
 
 
 
@@ -128,6 +130,8 @@ exports.isLoggedIn = async (req, res, next) => {
       // // 3) Check if user changed password after the token was issued
       // if (currentUser.changedPasswordAfter(decoded.id)) {
       //   return next();
+      } else {
+        res.redirect(globalLink)
       }
 
       // THERE IS A LOGGED IN USER

@@ -17,22 +17,22 @@
           </h4>
           <h5>
               Класс:
-              <%= group.classNumber %>
+              <%= group.class_number %>
           </h5>
       </div>
       <hr>
           <h4>Добавить ученика в группу</h4>
-          <form action=<%= `${globalLink}/groups/${group._id}/addStudent` %> method='POST'>
+          <form action=<%= `${globalLink}/groups/${group.group_id}/addStudent` %> method='POST'>
 
               <div class="students__list">
 
                 <label for="InputStudents" class="form-label">Укажите имя</label>
                   <div class="students__add d-flex">
-                      <select name="students" type="select" class="form-control w-50" id="InputStudents">
+                      <select name="student" type="select" class="form-control w-50" id="InputStudents">
                         <option value="">Выберите ученика</option>
-                        <% availableStudents.forEach(function(student) { %>
-                          <option class="available__option" value="<%= student.surname %> <%= student.name %>">
-                            <%= student.surname %> <%= student.name %>
+                        <% possibleNewStudents.forEach(function(student) { %>
+                          <option class="available__option" value="<%= student.student_id %>">
+                            <%= student.name %>
                           </option>
                           <% }); %>
                         </select>

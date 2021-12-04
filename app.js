@@ -13,7 +13,6 @@ exports.globalLink = process.env.NODE_DEST;
 const userRouter = require('./routes/userRoutes');
 const groupRouter = require('./routes/groupRoutes');
 const studentRouter = require('./routes/studentRoutes');
-const testRouter = require('./routes/testRoutes');
 
 const app = express();
 
@@ -36,6 +35,5 @@ app
   app.use('/users', userRouter);
   app.use('/groups', groupRouter);
   app.use('/students', studentRouter);
-  app.use('/tests',testRouter); 
   
   module.exports = app;

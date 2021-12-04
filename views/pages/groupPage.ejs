@@ -17,7 +17,7 @@
           </h4>
           <h4 class="btn btn-success">
               Класс:
-              <%= group.classNumber %>
+              <%= group.class_number %>
           </h4>
       </div>
       </div>
@@ -54,7 +54,41 @@
             <a href=<%= `${globalLink}/groups/${group.group_id}/addStudent` %> class="btn btn-primary my-2">
             Добавить ученика в эту группу
             </a>
-            <button type="button" class="btn btn-danger my-2">Удалить ученика из группы(no)</button>
+            <a href=<%= `${globalLink}/groups/${group.group_id}/removeStudent` %> class="btn btn-danger my-2">
+              Удалить ученика из группы
+              </a>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="subjects__content">
+            <div class="accordion" id="accordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSubject">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject" aria-expanded="true" aria-controls="collapseSubject">
+                    Предметы группы
+                  </button>
+                </h2>
+                <div id="collapseSubject" class="accordion-collapse collapse" aria-labelledby="headingSubject" data-bs-parent="#accordion">
+                  <div class="accordion-body d-flex flex-column">
+                    <% subjects.forEach(function(subject) { %>
+                    <div class="student__profile">
+                      <button class="btn btn-secondary my-2">
+                        <strong><%= subject.name %></strong>
+                      </button>
+                    </div>
+
+                      <% }); %>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <a href=<%= `${globalLink}/groups/${group.group_id}/addSubject` %> class="btn btn-primary my-2">
+            Добавить предмет в эту группу
+            </a>
+            <a href=<%= `${globalLink}/groups/${group.group_id}/removeSubject` %> class="btn btn-danger my-2">
+              Удалить предмет из группы
+              </a>
           </div>
         </div>
 
@@ -62,18 +96,26 @@
 
     <div class="row d-flex group__block my-4">
       <div class="col py-2">
-        <h4 class="py-2">Тесты</h4>
+        <h4 class="text-center">Тесты</h4>
         <div class="tests__content">
           <a href=<%= `${globalLink}/groups/${group.group_id}/addTest` %> class="btn btn-primary my-2">
           Добавить тест в эту группу
-          </a>
-          <button type="button" class="btn btn-danger my-2">Удалить тест из группы(no)</button>
+          </a>          
+          <a href=<%= `${globalLink}/groups/${group.group_id}/removeTest` %> class="btn btn-danger my-2">
+            Удалить тест из группы
+            </a>
         </div>
-        <div class="table-responsive-lg">
+    </div>
+    </div>
+
+    <% subjects.forEach(function(subject) { %>
+      
+      <div class="row d-flex flex-column group__block my-3">
+        <h4 class="text-center my-2">Результаты по предмету: <%= subject.name %></h4>
+      <div class="table-responsive-lg">
         <table class="table table-striped table-hover table-bordered border-primary">
           <tr>
              <th>Дата проведения</th>
-             <th>Группа</th>
              <th>Предмет</th>
              <th>Количество сдающих</th>
              <th>Формат тестирования</th>
@@ -82,68 +124,85 @@
              <th>% от максимума</th>
              <th>Подробнее</th>
           </tr>
-        
+          <% tests.filter((test) => test.subject_name == subject.name).sort(function(a, b) { return new Date(a.date) - new Date(b.date); }).forEach(function(test) { %>
+          <tr>
+              <th class="date_<%= subject.id %>"><%= test.date.toLocaleDateString('ru-RU') %></th>
+              <th><%= test.subject_name %></th>
+              <th class="quantity_<%= subject.id %>"><%= test.result.count %></th>
+              <th><%= test.format %></th>
+              <th><%= test.max_points %></th>
+              <th><%= Math.round(test.result.avg) %></th>
+              <th class="percent_<%= subject.id %>"><%= Math.round(test.percent) %></th>
+              <th>
+                <a href=<%= `${globalLink}/tests/${test.test_id}/` %> class="btn btn-warning my-2">
+                <strong>Перейти</strong>
+                </a>
+              </th>
+          </tr>
+          <% }); %>
        </table>
       </div>
-    </div>
-    </div>
 
-    <div class="row d-flex group__block my-4">
       <div class="col py-2">
-        <div id="chart">
+        <div id="chart_<%= subject.id %>">
         </div>
-         
-
-
 
       </div>
     </div> 
 
+    <script> 
+      var options = {
+                series: [{
+                name: 'Количество сдающих',
+                type: 'column',
+                data: Array.from(document.querySelectorAll('.quantity_<%= subject.id %>')).map((el) => el.innerHTML),
+              }, {
+                name: '% от максимума',
+                type: 'line',
+                data: Array.from(document.querySelectorAll('.percent_<%= subject.id %>')).map((el) => el.innerHTML),
+              }],
+                chart: {
+                height: 350,
+                type: 'line',
+              },
+              stroke: {
+                width: [0, 4]
+              },
+              title: {
+                text: 'График успеваемости группы'
+              },
+              dataLabels: {
+                enabled: true,
+                enabledOnSeries: [1]
+              },
+              labels: Array.from(document.querySelectorAll('.date_<%= subject.id %>')).map((el) => el.innerHTML),
+              xaxis: {
+                type: 'date'
+              },
+              yaxis: [{
+                title: {
+                  text: 'Количество сдающих'
+                },
+              
+              }, {
+                opposite: true,
+                title: {
+                  text: '% от максимума',
+                }
+              }]
+              };
+      
+              var chart_<%= subject.id %> = new ApexCharts(document.querySelector("#chart_<%= subject.id %>"), options).render();
+      </script>
+
+
+
+    <% }); %>
+
 
 </div>
 
-<script>
-const dates = Array.from(document.querySelectorAll('.date')).map((el) => el.innerHTML);
-const percents = Array.from(document.querySelectorAll('.percents')).map((el) => el.innerHTML);
 
-var options = {
-  series: [{
-    name: "% от максимума",
-    data: percents
-        }],
-  chart: {
-  height: 350,
-  type: 'line',
-  zoom: {
-    enabled: false
-  }
-  },
-dataLabels: {
-  enabled: true
-},
-stroke: {
-  curve: 'straight'
-},
-title: {
-  text: 'Общая успеваемость группы за период',
-  align: 'center'
-},
-grid: {
-  row: {
-    colors: ['#f3f3f3', 'transparent'],
-    opacity: 0.5
-  },
-},
-xaxis: {
-  categories: dates,
-},
-};
-
-        var chart = new ApexCharts(document.querySelector("#chart"), options);
-        chart.render();
-
-
-</script>
 
 
 <%- include ("../partials/footer.ejs") %>

@@ -1,108 +1,116 @@
-const Group = require('./../models/groupModel');
-const Student = require('./../models/studentModel');
-const Test = require('./../models/testModel');
 const globalLink = require('./../app').globalLink;
+const db = require('./../db');
+
 
 exports.addTestPage = async (req, res, next) => {
-    const groupId = req.params.id
+    const groupId = req.params.id;
+    let group;
+    let students;
+    let subjects;
 
-    const group = await Group.findById(groupId);
-
-    // const availableStudents = await Student.find({classNumber: group.classNumber });
-
-    res.status(200).render('./updatePages/addTest', {
+    db.one(`SELECT * from groups WHERE group_id = ${groupId}`)
+    .then((groupData) => group = groupData)
+    .then(() => db.manyOrNone(`SELECT * from group_students WHERE group_id = ${groupId}`))
+    .then((thisGroupStudentsIds) => thisGroupStudentsIds.reduce((acc, {student_id}) => {
+        const newAcc = acc.then((contents) => 
+        db.one(`SELECT * from students WHERE student_id = ${student_id}`)
+        .then((students) => contents.concat(students))
+        );
+        return newAcc;
+    }, Promise.resolve([]))
+    .then((studentsData) => students = studentsData))
+    .then(() => db.manyOrNone(`SELECT * from group_subjects WHERE group_id = ${groupId}`))
+    .then((thisGroupSubjects) => thisGroupSubjects.reduce((acc, {subject_id}) => {
+        const newAcc = acc.then((contents) =>
+        db.one(`SELECT * from subjects WHERE id = ${subject_id}`)
+        .then((subjects) => contents.concat(subjects))
+        );
+        return newAcc;
+    }, Promise.resolve([]))
+    .then((subjectsData) => subjects = subjectsData))
+    .then(() => res.status(200).render('updatePages/addTest',{
         group,
+        students,
+        subjects,
         globalLink,
-    });
+    }))
+
 };
 
 exports.addTest = async (req, res, next) => {
-    const groupId = req.params.id
-
-    const date = req.body.date;
-    const groupName = req.body.name;
+    const groupId = req.params.id;
+    const date = req.body.testing_date;
     const subject = req.body.subject;
-    const format = req.body.format;
-    const questionsQuantity = req.body.questionsQuantity;
-    const data = req.body;
-    const grades = data.grades;
-    const studentNames = data.studentNames
-    let averageGrade = 0;
+    const testData = req.body;
+    const studentsIds = [testData.students].flat();
+    const studentsPoints = [testData.student_points].flat();
+    const maxPoints = testData.max_points;
+    const format = testData.testing_format;
 
-    let counter = 0;
-    const gradesArr = studentNames.map((studentName) => {
-        averageGrade += Number(grades[counter]);
-
-        const student =  {
-        };
-
-        student.studentName = studentName
-        student.studentGrade = Number(grades[counter]);
-        counter++;
-
-        return student;
+    const studentsTests = studentsIds.map((studentId, index) => {
+        const studentTest = {};
+        studentTest.testingDate = date;
+        studentTest.studentId = Number(studentId);
+        studentTest.studentPoints = Number(studentsPoints[index]);
+        studentTest.maxPoints = testData.max_points;
+        studentTest.testFormat = testData.testing_format;
+        studentTest.testSubject = subject;
+        return studentTest;
     });
-    
-    averageGrade = averageGrade / grades.length;
 
-    const newTest = await Test.create({
-        date: date,
-        groupName: groupName,
-        subject: subject,
-        format: format,
-        questionsQuantity: questionsQuantity,
-        studentGrades: gradesArr,
-        averageGrade: averageGrade,
-    })
-    console.log(newTest)
+    db.query(`INSERT INTO group_tests(date, group_id, subject_id, format, max_points)
+        VALUES('${date}', ${groupId}, '${subject}', '${format}', ${maxPoints}) RETURNING test_id`)
+        .then((returning_id) => {
+            db.tx(t => {
+                const testId = returning_id[0].test_id;
+                const queries = studentsTests.map( test => {
+                    return t.none(`INSERT INTO student_results(test_id, student_id, points)
+                        VALUES(${testId}, ${test.studentId}, ${test.studentPoints})`);
+                });
+                return t.batch(queries);
+            })
+            .then( () => res.redirect(`${globalLink}/groups/${groupId}`));
+        });
 
-    res.status(200).redirect(`${globalLink}/groups/${groupId}/`)
 };
 
 
-exports.getTest = async (req, res, next) => {
 
+exports.removeTestPage = async (req, res, next) => {
+    const groupId = req.params.id;
+    let tests;
 
+    db.manyOrNone(`SELECT * from group_tests WHERE group_id = ${groupId}`)
+    .then((testsData) => tests = testsData)
+    .then(() => {
 
-    const testId = req.params.id;
-
-    const thisTestInfo = await Test.findById(testId)
-
-    const groupId = await Group.findOne({ name: thisTestInfo.groupName })
-        .then((groupData) => groupData._id);
-
-    await Test.findById(testId)
-        .then((testData) => {
-            const questionsQuantity = testData.questionsQuantity;
-
-            const allGradesInfo = testData.studentGrades.map((gradeInfo) => {
-
-                const studentName = gradeInfo.studentName;
-
-                const studentGrade = gradeInfo.studentGrade;
-
-                const percentOfMaximum = Math.round(studentGrade / questionsQuantity * 100);
-
-                const fullInfo = {
-                    studentGrade,
-                    studentName,
-                    percentOfMaximum,
-                };
-
-                return fullInfo;
-
+        db.tx(t => {
+            const queries = tests.map( test => {
+                return t.manyOrNone(`SELECT * from subjects WHERE id = ${test.subject_id}`)
+                .then((subjectData) => test.subjectName = subjectData[0].name);
             });
+            return t.batch(queries);
+        })
+        .then(() => db.oneOrNone(`SELECT * from groups WHERE group_id = ${groupId}`))
+        .then((group) => res.status(200).render('./removePages/removeTest', {
+            globalLink,
+            tests,
+            group,
+        }));
+    });
 
-            return allGradesInfo;
+};
 
-        }).then((allGradesInfo) => {
 
-            res.status(201).render('./pages/testPage', {
-                groupId,
-                thisTestInfo,
-                allGradesInfo,
-                globalLink,
-            });
-        });
 
+
+
+exports.removeTest = async (req, res, next) => {
+    const groupId = req.params.id;
+    test = req.body.test;
+
+    db.query(`DELETE FROM student_results WHERE test_id = ${test}`)
+    .then(() => db.query(`DELETE FROM group_tests WHERE test_id = ${test}`))
+    .then(() => res.redirect(`${globalLink}/groups/${groupId}`))
+    .catch((err) => res.status(500).send(err))
 };

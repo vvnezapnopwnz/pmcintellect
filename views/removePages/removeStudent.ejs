@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+  <div class="row  my-3">
+      <div class="col-6 student__block p-3">
+        <div class="group__info flex-column my-2">
+          <h4>
+            Группа:  <%= group.name %>
+          </h4>
+          <h5>
+              Класс:
+              <%= group.class_number %>
+          </h5>
+      </div>
+      <hr>
+
+      <h4>Убрать ученика из группы</h4>
+      <form action=<%= `${globalLink}/groups/${group.group_id}/removeStudent` %> method='POST'>
+
+          <div class="students__list">
+
+            <label for="InputStudents" class="form-label">Укажите имя</label>
+              <div class="students__add d-flex">
+                  <select name="student" type="select" class="form-control w-50" id="InputStudents">
+                    <option value="">Выберите ученика</option>
+                    <% students.forEach(function(student) { %>
+                      <option class="available__option" value="<%= student.student_id %>">
+                        <%= student.name %>
+                      </option>
+                      <% }); %>
+                    </select>
+                  <button type="button" class="add__student__button btn btn-primary mx-1">+</button>
+              </div>
+          </div>
+        <button type="submit" class="btn btn-primary my-4">Убрать</button>
+
+      </form>
+    </div>
+  </div>
+
+</div>
