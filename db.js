@@ -1,15 +1,15 @@
-const pg = require('pg');
+// const pg = require('pg');
 const pgp = require('pg-promise')(/*options*/)
 
-const { Client } = require('pg');
+// const { Client } = require('pg');
 
-const client = new Client({
-    user: 'jsasjjko',
-    host: 'abul.db.elephantsql.com',
-    database: 'jsasjjko',
-    password: 'fEMWij6GR_o-APTBeUKdBks-GYgMXl2t',
-    port: 5432,
-});
+// const client = new Client({
+//     user: 'jsasjjko',
+//     host: 'abul.db.elephantsql.com',
+//     database: 'jsasjjko',
+//     password: 'fEMWij6GR_o-APTBeUKdBks-GYgMXl2t',
+//     port: 5432,
+// });
 
 
 const db = pgp(

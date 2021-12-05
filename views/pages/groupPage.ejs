@@ -124,7 +124,7 @@
              <th>% от максимума</th>
              <th>Подробнее</th>
           </tr>
-          <% tests.filter((test) => test.subject_name == subject.name).sort(function(a, b) { return new Date(a.date) - new Date(b.date); }).forEach(function(test) { %>
+          <% student.results.filter((result) => result.subject.name == subject.name).sort(function(a, b) { return new Date(a.date) - new Date(b.date); }).forEach(function(test) { %>
           <tr>
               <th class="date_<%= subject.id %>"><%= test.date.toLocaleDateString('ru-RU') %></th>
               <th><%= test.subject_name %></th>

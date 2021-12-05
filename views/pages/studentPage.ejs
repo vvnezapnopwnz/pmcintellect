@@ -27,75 +27,95 @@
         </div>
     </div>
 
-    <div class="row d-flex student__block my-4">
-        <div class="col">
-            <table class="table table-striped table-hover table-bordered border-primary">
-                <tr>
-                   <th>Дата проведения</th>
-                   <th>Группа</th>
-                   <th>Предмет</th>
-                   <th>Формат тестирования</th>
-                   <th>Максимум баллов</th>
-                   <th>Набранный балл</th>
-                   <th>% от максимума</th>
-                </tr>
-             </table>
 
 
-        </div>
+    <% subjects.forEach(function(subject) { %>
+      <div class="row d-flex flex-column group__block my-3">
+        <h4 class="text-center my-2">Результаты по предмету: <%= subject.name %></h4>
+      <div class="table-responsive-lg">
+        <table class="table table-striped table-hover table-bordered border-primary">
+          <tr>
+             <th>Дата проведения</th>
+             <th>Предмет</th>
+             <th>Формат тестирования</th>
+             <th>Максимум баллов</th>
+             <th>Набранные баллы</th>
+             <th>% от максимума</th>
+          </tr>
+          <% student.results.filter((result) => result.subject_name == subject.name).sort(function(a, b) { return new Date(a.test_info.date) - new Date(b.test_info.date); }).forEach(function(result) { %>
+          <tr>
+            <th class="date_<%= subject.id %>"><%= result.test_info.date.toLocaleDateString('ru-RU') %></th>
+            <th><%= result.test_info.subject_name %></th>
+            <th><%= result.test_info.format %></th>
+            <th><%= result.test_info.max_points %></th>
+            <th><%= result.points %></th>
+            <th class="percent_<%= subject.id %>"><%= Math.round((result.points / result.test_info.max_points) * 100) %></th>
+          </tr>
+        <% }); %>
+      </table>
+    </div>
+
+
+    <div class="col py-2">
+      <div id="chart_<%= subject.id %>">
+      </div>
 
     </div>
-    
-    <div class="row d-flex group__block my-4">
-        <div class="col py-2">
-          <div id="chart">
-          </div>
-        </div>
-    </div> 
+  </div> 
 
+  <script> 
+    var options = {
+              series: [{
+              name: 'Количество сдающих',
+              type: 'column',
+              data: Array.from(document.querySelectorAll('.quantity_<%= subject.id %>')).map((el) => el.innerHTML),
+            }, {
+              name: '% от максимума',
+              type: 'line',
+              data: Array.from(document.querySelectorAll('.percent_<%= subject.id %>')).map((el) => el.innerHTML),
+            }],
+              chart: {
+              height: 350,
+              type: 'line',
+            },
+            stroke: {
+              width: [0, 4]
+            },
+            title: {
+              text: 'График успеваемости группы'
+            },
+            dataLabels: {
+              enabled: true,
+              enabledOnSeries: [1]
+            },
+            labels: Array.from(document.querySelectorAll('.date_<%= subject.id %>')).map((el) => el.innerHTML),
+            xaxis: {
+              type: 'date'
+            },
+            yaxis: [{
+              title: {
+                text: 'Количество сдающих'
+              },
+            
+            }, {
+              opposite: true,
+              title: {
+                text: '% от максимума',
+              }
+            }]
+            };
+    
+            var chart_<%= subject.id %> = new ApexCharts(document.querySelector("#chart_<%= subject.id %>"), options).render();
+    </script>
+
+
+
+
+
+
+
+    <% }); %>
 </div>
 
-<script>
-    const dates = Array.from(document.querySelectorAll('.date')).map((el) => el.innerHTML);
-    const percents = Array.from(document.querySelectorAll('.percents')).map((el) => el.innerHTML);
-    
-    var options = {
-      series: [{
-        name: "% от максимума",
-        data: percents
-            }],
-      chart: {
-      height: 350,
-      type: 'line',
-      zoom: {
-        enabled: false
-      }
-      },
-    dataLabels: {
-      enabled: true
-    },
-    stroke: {
-      curve: 'straight'
-    },
-    title: {
-      text: 'Динамика успеваемости ученика',
-      align: 'center'
-    },
-    grid: {
-      row: {
-        colors: ['#f3f3f3', 'transparent'],
-        opacity: 0.5
-      },
-    },
-    xaxis: {
-      categories: dates,
-    },
-    };
-    
-            var chart = new ApexCharts(document.querySelector("#chart"), options);
-            chart.render();
-    
-    
-    </script>
 
 <%- include ("../partials/footer.ejs") %>
