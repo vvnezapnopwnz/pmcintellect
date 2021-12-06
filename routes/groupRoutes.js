@@ -2,6 +2,7 @@ const express = require('express');
 const groupController = require('./../controllers/groupController');
 const testController = require('./../controllers/testController');
 const authController = require('./../controllers/authController');
+const reviewController = require('./../controllers/reviewController');
 const router = express.Router();
 
 router.use(authController.isLoggedIn)
@@ -33,5 +34,17 @@ router
 .post('/:id/addTest', testController.addTest)
 .get('/:id/removeTest', testController.removeTestPage)
 .post('/:id/removeTest', testController.removeTest)
+
+router
+.get('/:id/addReview', reviewController.addReviewPage)
+
+
+
+
+
+
+
+
+
 
 module.exports = router;

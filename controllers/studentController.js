@@ -59,22 +59,13 @@ exports.getStudent = async (req, res, next) => {
   db.one(`SELECT * from students WHERE student_id = ${studentId}`)
   .then((data) => student = data)
   .then((results) => student.results = results)
-  .then(() => db.manyOrNone(`SELECT * FROM student_results
+  .then(() => db.manyOrNone(`SELECT * FROM student_results a 
+  JOIN group_tests b ON 
+  a.test_id = b.test_id
+  JOIN subjects c ON
+  b.subject_id = c.id
    WHERE student_id = ${student.student_id}`)
   .then((results) => student.results = results))
-  .then(() => db.task(t => {
-
-    const queries = student.results.map((result) => {
-
-      return db.oneOrNone(`SELECT * FROM group_tests
-       WHERE test_id = ${result.test_id}`)
-       .then((test) => result.test_info = test)
-       .then(() => db.oneOrNone(`SELECT * FROM subjects WHERE
-       id = ${result.test_info.subject_id}`))
-       .then((subjectData) => result.subject = subjectData)
-    });
-    return t.batch(queries);
-  }))
   .then(() => res.status(200)
   // .render('./pages/studentPage', {
   //     student,
@@ -82,7 +73,6 @@ exports.getStudent = async (req, res, next) => {
   //   }))
   .json({
     student,
-    subjects: [...new Set(student.results.map((result) => result.subject))], 
   }))
   .catch(function (error) {
     console.log(error);

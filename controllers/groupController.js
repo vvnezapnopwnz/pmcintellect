@@ -52,16 +52,11 @@ exports.getGroup = async (req, res, next) => {
                 return newAcc;
             }, Promise.resolve([]))
             .then((thisStudents) => students = thisStudents))
-    .then(() => 
-        db.manyOrNone(`SELECT * from group_subjects WHERE group_id = ${groupId}`))
-        .then((groupSubjectsData) => groupSubjectsIds = groupSubjectsData)
-        .then(() => groupSubjectsIds.reduce((acc, {subject_id}) => {
-            const newAcc = acc.then((contents) =>
-            db.manyOrNone(`SELECT * from subjects WHERE id = ${subject_id}`)
-            .then((data) => contents.concat(data)))
-            return newAcc;
-        }, Promise.resolve([]))
-        .then((thisSubjects) => subjects = thisSubjects))
+    .then(() => db.manyOrNone(`SELECT * from group_subjects a
+        JOIN subjects b
+        ON a.subject_id = b.id 
+        where group_id = ${groupId}`)
+    .then((groupSubjectsData) => subjects = groupSubjectsData))
     .then(() => 
     db.query(`SELECT * from group_tests WHERE group_id = ${groupId}`))
     .then((testsData) => tests = testsData.map((test) => {
@@ -88,7 +83,7 @@ exports.getGroup = async (req, res, next) => {
         });
         return t.batch(queries);
 
-        }).then(() => res.status(200).render('./pages/groupPage',{
+        }).then(() => res.status(200).json({
             tests,
             group,
             students,
@@ -299,31 +294,18 @@ exports.removeSubjectFromGroupPage = async (req, res, next) => {
     const groupId = req.params.id;
 
     let  group;
-    let groupSubjectsIds;
-
     db.one(`SELECT * from groups WHERE group_id = ${groupId}`).then((groupData) => {
         group = groupData;
-        return db.manyOrNone(`SELECT subject_id from group_subjects WHERE group_id = ${groupId}`);
+        return db.manyOrNone(`SELECT * from group_subjects a
+        JOIN subjects b
+        ON a.subject_id = b.id
+        WHERE group_id = ${groupId}`);
     })
-    .then((thisSubjectsIds) => {
-        groupSubjectsIds = thisSubjectsIds;
-
-        groupSubjectsIds.reduce((acc, {subject_id}) => {
-            console.log(subject_id)
-            const newAcc = acc.then((contents) => 
-                db.any(`SELECT * from subjects WHERE id = ${subject_id}`)
-                .then((subjects) => contents.concat(subjects))
-            );
-            return newAcc;
-        }, Promise.resolve([]))
         .then((subjects) => res.status(200).render('./removePages/removeSubject', {
             group,
             subjects,
             globalLink,
         }));
-    });
-
-
 };
 
 exports.removeSubjectFromGroup = async (req, res, next) => {
@@ -335,3 +317,15 @@ exports.removeSubjectFromGroup = async (req, res, next) => {
         .then(() => res.redirect(`${globalLink}/groups/${groupId}/`));
 
 };
+
+// SELECT * FROM student_results a 
+// JOIN group_tests b ON 
+// a.test_id = b.test_id
+// JOIN subjects c ON
+// b.subject_id = c.id
+
+
+// SELECT * from group_subjects a
+// JOIN subjects b
+// ON a.subject_id = b.id 
+// where group_id = 1
