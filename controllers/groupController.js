@@ -83,7 +83,7 @@ exports.getGroup = async (req, res, next) => {
         });
         return t.batch(queries);
 
-        }).then(() => res.status(200).json({
+        }).then(() => res.status(200).render('./pages/groupPage', {
             tests,
             group,
             students,

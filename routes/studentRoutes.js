@@ -15,6 +15,12 @@ const router = express.Router();
   router.get('/delete', authController.isLoggedIn, studentController.deleteStudentPage);
   router.post('/delete', authController.isLoggedIn, studentController.deleteStudent);
 
+  router
+.get('/:id/addSubject', studentController.addSubjectToStudentPage)
+.post('/:id/addSubject', studentController.addSubjectToStudent)
+// .get('/:id/removeSubject', studentController.removeSubjectFromStudentPage)
+// .post('/:id/removeSubject', studentController.removeSubjectFromStudent)
+
 
   router
   .route('/:id')

@@ -12,10 +12,19 @@ exports.addReviewPage = async (req, res, next) => {
     .then(() => db.manyOrNone(`SELECT * from group_subjects a
     JOIN subjects b ON b.id = a.subject_id
     WHERE group_id = ${groupId}`)
-    .then((subjects) => res.status(200).json( {
-        group,
-        subjects,
-        globalLink
-    })));
+    .then((subjects) => {
+        db.manyOrNone(`SELECT * FROM group_students a
+        JOIN students b
+        ON a.student_id = b.student_id WHERE group_id = ${groupId}`)
+        .then((students) => {
+            res.status(200).render('./updatePages/addReview', {
+                group,
+                subjects,
+                globalLink,
+                students
+            })
+        })
+    })
+);
 
-}
+};

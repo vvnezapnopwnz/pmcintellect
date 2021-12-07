@@ -66,13 +66,17 @@ exports.getStudent = async (req, res, next) => {
   b.subject_id = c.id
    WHERE student_id = ${student.student_id}`)
   .then((results) => student.results = results))
-  .then(() => res.status(200)
+  .then(() => db.manyOrNone(`SELECT * FROM student_subjects a
+  JOIN subjects b ON a.subject_id = b.id WHERE student_id = ${studentId}`))
+  .then((subjects) => res.status(200)
   // .render('./pages/studentPage', {
   //     student,
   //     globalLink,
   //   }))
-  .json({
+  .render('./pages/studentPage', {
     student,
+    subjects,
+    globalLink
   }))
   .catch(function (error) {
     console.log(error);
@@ -100,3 +104,42 @@ exports.getAll = async (req, res, next) => {
   });
 };
 
+exports.addSubjectToStudentPage = async (req, res, next) => {
+const studentId = req.params.id;
+
+db.oneOrNone(`SELECT * FROM students WHERE student_id = ${studentId}`)
+.then((student) => {
+  db.manyOrNone(`SELECT * from student_subjects a
+  INNER JOIN  subjects b
+  ON b.id = a.subject_id
+  WHERE a.student_id = ${studentId}`)
+  .then((studentSubjectsData) => {
+    const studentSubjects = studentSubjectsData.map((subject) => subject.id);
+    db.manyOrNone(`SELECT * FROM subjects`)
+    .then((subjects) => subjects.filter((subject) => {
+      if (studentSubjects.includes(subject.id)) {
+        return;
+      } else {
+        return subject;
+      }
+    })).then((availableSubjects) => res.status(200).render('./updatePages/addSubjectReview', {
+        student,
+        availableSubjects,
+        globalLink,
+    }))
+    })
+})
+
+
+
+};
+
+
+exports.addSubjectToStudent = async (req, res, next) => {
+  const studentId = req.params.id;
+  const subjectId = req.body.subject;
+
+  db.oneOrNone(`INSERT INTO student_subjects(student_id, subject_id) Values(${studentId}, ${subjectId})`)
+  .then(() => res.status(200).redirect(`${globalLink}/students/${studentId}`));
+  
+};

@@ -23,6 +23,13 @@
                 <h5>
                     Предметы ученика:
                 </h5>
+                <div class="subjects_content my-2">
+                  <% subjects.forEach(function(subject) { %>
+                    <button class="btn btn-secondary"><%= subject.name %></button>
+                    <% }); %>
+                </div>
+
+
             </div>
         </div>
     </div>
@@ -42,14 +49,14 @@
              <th>Набранные баллы</th>
              <th>% от максимума</th>
           </tr>
-          <% student.results.filter((result) => result.subject_name == subject.name).sort(function(a, b) { return new Date(a.test_info.date) - new Date(b.test_info.date); }).forEach(function(result) { %>
+          <% student.results.filter((result) => result.subject_id == subject.subject_id).sort(function(a, b) { return new Date(a.date) - new Date(b.date); }).forEach(function(result) { %>
           <tr>
-            <th class="date_<%= subject.id %>"><%= result.test_info.date.toLocaleDateString('ru-RU') %></th>
-            <th><%= result.test_info.subject_name %></th>
-            <th><%= result.test_info.format %></th>
-            <th><%= result.test_info.max_points %></th>
+            <th class="date_<%= subject.id %>"><%= result.date.toLocaleDateString('ru-RU') %></th>
+            <th><%= result.subject_name %></th>
+            <th><%= result.format %></th>
+            <th><%= result.max_points %></th>
             <th><%= result.points %></th>
-            <th class="percent_<%= subject.id %>"><%= Math.round((result.points / result.test_info.max_points) * 100) %></th>
+            <th class="percent_<%= subject.id %>"><%= Math.round((result.points / result.max_points) * 100) %></th>
           </tr>
         <% }); %>
       </table>
