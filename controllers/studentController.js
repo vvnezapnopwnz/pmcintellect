@@ -68,16 +68,25 @@ exports.getStudent = async (req, res, next) => {
   .then((results) => student.results = results))
   .then(() => db.manyOrNone(`SELECT * FROM student_subjects a
   JOIN subjects b ON a.subject_id = b.id WHERE student_id = ${studentId}`))
-  .then((subjects) => res.status(200)
-  // .render('./pages/studentPage', {
-  //     student,
-  //     globalLink,
-  //   }))
-  .render('./pages/studentPage', {
-    student,
-    subjects,
-    globalLink
-  }))
+  .then((subjects) => 
+  
+    db.manyOrNone(`SELECT b.posting_date, a.record_id, a.review_id, a.student_id,
+    a.attendance, a.activity, a.homework, b.group_id,
+    c.name
+    FROM student_records a
+    JOIN group_reviews b
+    ON a.review_id = b.review_id
+    JOIN subjects c ON
+    b.subject_id = c.id
+    WHERE student_id = ${student.student_id}`)
+    .then((records) => 
+    res.status(200)
+    .render('./pages/studentPage', {
+      student,
+      subjects,
+      records,
+      globalLink,
+    })))
   .catch(function (error) {
     console.log(error);
     // res.redirect(`${globalLink}/`);

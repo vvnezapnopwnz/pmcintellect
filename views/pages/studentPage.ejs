@@ -101,12 +101,6 @@
             },
             yaxis: [{
               title: {
-                text: 'Количество сдающих'
-              },
-            
-            }, {
-              opposite: true,
-              title: {
                 text: '% от максимума',
               }
             }]
@@ -116,13 +110,121 @@
     </script>
 
 
-
-
-
-
-
     <% }); %>
+
+    <div class="row d-flex flex-column group__block my-3">
+      <div class="col">
+        <h4 class="text-center my-2">Ревью занятий</h4>
+
+        <div class="table-responsive-lg">
+          <table class="table table-striped table-hover table-bordered border-primary">
+            <tr>
+               <th>Дата проведения</th>
+               <th>Предмет</th>
+               <th>Посещаемость</th>
+               <th>Активность</th>
+               <th>Домашнее задание</th>
+            </tr>
+            <% records.forEach(function(record) { %>
+            <tr>
+                <th class=""><%= record.posting_date.toLocaleDateString('ru-RU') %></th>
+                <th><%= record.name %></th>
+                <th><% if(record.attendance) { %>
+                  <p class="attendance">Посетил</p>
+                  <% } else { %>
+                  <p class="attendance">Отсутствовал</p>
+
+                <% } %>
+                  </th>
+                  <th><% if(record.activity) { %>
+                    <p class="activity">Активен</p>
+                    <% } else { %>
+                      <p class="activity">Не активен</p>
+                  <% } %>
+                    </th>
+                    <th><% if(record.homework) { %>
+                      <p class="homework">Выполнил</p>
+                      <% } else { %>
+                        <p class="homework">Не выполнил</p>
+                    <% } %>
+                      </th>
+            </tr>
+            <% }); %>
+         </table>
+        </div>
+
+      </div>
+
+      <div class="col">
+        <div class="col py-2">
+          <div id="chart_records">
+          </div>
+    
+        </div>
+
+
+      </div>
+
+    </div>
+
 </div>
+
+
+<script>
+
+  const attendance = Array.from(document.querySelectorAll('.attendance'))
+  .map((el) => el.innerHTML)
+  const attended = Array.from(document.querySelectorAll('.attendance'))
+  .map((el) => el.innerHTML).filter((el) => el == 'Посетил');
+
+  const activity = Array.from(document.querySelectorAll('.activity'))
+  .map((el) => el.innerHTML)
+  const active = Array.from(document.querySelectorAll('.activity'))
+  .map((el) => el.innerHTML).filter((el) => el == 'Активен');
+
+  const homework = Array.from(document.querySelectorAll('.homework'))
+  .map((el) => el.innerHTML)
+  const doneHomework = Array.from(document.querySelectorAll('.homework'))
+  .map((el) => el.innerHTML).filter((el) => el == 'Выполнил');
+
+
+console.log(Math.round(((attended.length / attendance.length)
+                       + (active.length / activity.length)
+                      + (doneHomework.length / homework.length)) / 3 ))
+
+
+      var options = {
+          series: [Math.round(attended.length / attendance.length * 100),
+           Math.round(active.length / activity.length * 100), 
+           Math.round(doneHomework.length / homework.length * 100)],
+          chart: {
+          height: 350,
+          type: 'radialBar',
+        },
+        plotOptions: {
+          radialBar: {
+            dataLabels: {
+              name: {
+                fontSize: '18px',
+                color: '#3377FF',
+              },
+            },
+            
+          }
+        },
+        fill: {
+          opacity: 1.5,
+          colors: ['#3377FF', '#FF3396', '#3BDD51' ],
+          type: 'gradient',
+        },
+        labels: ['Посещаемость', 'Активность', 'Выполнение ДЗ'],
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart_records"), options);
+        chart.render();
+
+
+</script>
 
 
 <%- include ("../partials/footer.ejs") %>

@@ -33,25 +33,17 @@ const newGroup = await Group.create(req.body);
 exports.getGroup = async (req, res, next) => {
     const groupId = req.params.id;
     let group;
-    let groupStudentsIds;
     let students;
-    let groupSubjectsIds;
     let subjects;
     let tests;
 
     db.one(`SELECT * from groups WHERE group_id = '${groupId}'`)
     .then((groupData) => group = groupData)
-    .then(() => db.manyOrNone(`SELECT * from group_students WHERE group_id = '${groupId}'`))
-    .then((groupStudentsData) => groupStudentsIds = groupStudentsData)
-    .then(() =>  groupStudentsIds.reduce((acc, {student_id}) => {
-            const newAcc = acc.then((contents) => 
-                db.manyOrNone(`SELECT * from students WHERE student_id = '${student_id}'`)
-                .then((data) => contents.concat(data)))
-                console.log(group);
-                console.log(globalLink)
-                return newAcc;
-            }, Promise.resolve([]))
-            .then((thisStudents) => students = thisStudents))
+    .then(() => db.manyOrNone(`SELECT * from group_students a
+    JOIN students b ON 
+    a.student_id = b.student_id
+    WHERE group_id = ${groupId}`))
+    .then((groupStudentsData) => students = groupStudentsData)
     .then(() => db.manyOrNone(`SELECT * from group_subjects a
         JOIN subjects b
         ON a.subject_id = b.id 
@@ -82,12 +74,22 @@ exports.getGroup = async (req, res, next) => {
             });
         });
         return t.batch(queries);
-
-        }).then(() => res.status(200).render('./pages/groupPage', {
+        
+        })
+        .then(() => db.query(`SELECT a.review_id, a.posting_date, a.subject_id, c.name
+        from group_reviews a
+        JOIN student_records b
+        ON a.review_id = b.review_id
+        JOIN subjects c ON a.subject_id = c.id
+        WHERE a.group_id = ${groupId}
+        GROUP BY a.review_id,c.name
+        `))
+        .then((reviews) => res.status(200).render('./pages/groupPage', {
             tests,
             group,
             students,
             subjects,
+            reviews,
             globalLink
         }))
     })

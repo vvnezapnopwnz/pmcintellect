@@ -33,14 +33,35 @@ exports.addReviewPage = async (req, res, next) => {
 
 exports.addReview = async (req, res, next) => {
 
-const data = req.body
+    new Promise ((resolve, reject) => {
+        console.log(req.params.id)
+        console.log(req.body.subject)
+        console.log(req.body.date)
 
-res.status(200).json({
-    data
-})
+        const students = req.body.students.map((student_id) => {
 
+            const student = { id: Number(student_id) };
+            student.attendance = req.body[`attendance_${student_id}`]
+            student.activity = req.body[`activity_${student_id}`]
+            student.homework = req.body[`homework_${student_id}`]
+            return student;
+         });
 
+        resolve(students)
 
-
-
+    }).then((students) => db.task(t => {
+        
+        return t.one(`INSERT INTO group_reviews(group_id, subject_id, posting_date)
+            VALUES(${req.params.id}, ${req.body.subject}, '${req.body.reviewing_date}') RETURNING review_id`)
+    }).then(({ review_id }) => db.tx(tt => {
+        const queries = students.map((student) => {
+            console.log(review_id)
+            console.log(student)
+            return tt.none(`INSERT INTO student_records(review_id, student_id, attendance, activity, homework)
+            VALUES(${review_id}, ${student.id}, ${student.attendance}, ${student.activity}, ${student.homework})`)
+        });
+        return tt.batch(queries);
+    })
+    ).then(() => 
+        res.redirect(`${globalLink}/groups/${req.params.id}`)));
 };
