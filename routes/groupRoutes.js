@@ -37,7 +37,7 @@ router
 
 router
 .get('/:id/addReview', reviewController.addReviewPage)
-
+.post('/:id/addReview', reviewController.addReview)
 
 
 

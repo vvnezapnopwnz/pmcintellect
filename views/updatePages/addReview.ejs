@@ -2,6 +2,8 @@
 <html>
 <head>
   <%- include ("../partials/header.ejs") %>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.min.css" integrity="sha512-8vq2g5nHE062j3xor4XxPeZiPjmRDh6wlufQlfC6pdQ/9urJkU07NM0tEREeymP++NczacJ/Q59ul+/K2eYvcg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.css" integrity="sha512-J5tsMaZISEmI+Ly68nBDiQyNW6vzBoUlNHGsH8T3DzHTn2h9swZqiMeGm/4WMDxAphi5LMZMNA30LvxaEPiPkg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -10,7 +12,7 @@
 
 <div class="container">
   <div class="row  my-3">
-    <div class="col-6 student__block p-3">
+    <div class="col-md-6 student__block p-3">
         <div class="group__info flex-column my-2">
           <h4>
             Группа:  <%= group.name %>
@@ -45,56 +47,70 @@
                   </select>
             </div>
         </div>
+      </div>  
+    </div>   
 
-        <div class="students__list d-flex flex-column justify-content-end">
-          <div class="d-flex justify-content-end">
-            <label for="InputStudents" class="form-label">Имя ученика</label>
-            <div class="chars d-flex justify-content-end">
-              <label for="InputStudents" class="form-label mx-2">Присутствие</label>
-              <label for="InputStudents" class="form-label">Активность</label>
-              <label for="InputStudents" class="form-label">Домашнее задание</label>
+    <div class="row  my-3">
+      <div class="col-md-6 student__block p-3">
+
+        <div class="students__list d-flex flex-column justify-content-end my-2">
+          <h4 class="font-weight-bold text-center mb-4">Характристики</h4>
+
+            <% students.forEach(function(student) { %>
+              <div class="students__add d-flex flex-column my-2">
+                <div class="name">
+                  <select name="students" style="pointer-events: none;"type="select" class="form-control btn btn-primary" id="InputStudents">
+                    <option class="available__option" value="<%= student.student_id %>">
+                      <%= student.name %>
+                    </option>
+                  </select>
+                </div>
+
+                <div class="row d-flex flex-column records_content">
+                  <div class="block d-flex my-1" style="width: auto;">
+                      <input type="radio" value="yes" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
+                      <label style="
+                      padding-right: 40px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="attendance_y_<%= student.student_id %>">Посетил</label>
+                    
+                      <input type="radio" value="no" class="btn-check" name="attendance_<%= student.student_id %>" id="attendance_no_<%= student.student_id %>" autocomplete="off">
+                      <label class="btn btn-outline-danger flex-grow-1" for="attendance_no_<%= student.student_id %>">Пропустил</label>
+                  </div>
+
+
+                  <div class="block d-flex my-1">
+                    <input type="radio" class="btn-check " name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
+                    <label style="
+                    padding-right: 45px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="activity_y_<%= student.student_id %>">Активен</label>
+                  
+                    <input type="radio" class="btn-check" name="activity_<%= student.student_id %>" id="activity_no_<%= student.student_id %>" autocomplete="off">
+                    <label class="btn btn-outline-danger flex-grow-1" for="activity_no_<%= student.student_id %>">Не активен</label>
+                  </div>
+
+
+                  <div class="block d-flex my-1" style="width: auto;">
+                    <input type="radio" class="btn-check " name="homework_<%= student.student_id %>" id="homework_y_<%= student.student_id %>" autocomplete="off" >
+                    <label class="btn btn-outline-primary mx-2 flex-grow-1" for="homework_y_<%= student.student_id %>">ДЗ есть</label>
+              
+                    <input type="radio" class="btn-check" name="homework_<%= student.student_id %>" id="homework_no_<%= student.student_id %>" autocomplete="off">
+                    <label class="btn btn-outline-danger flex-grow-1" for="homework_no_<%= student.student_id %>">ДЗ нет</label>
+                  </div>
+                </div>
+              </div>
+<hr>
+              <% }); %>
+              <button type="submit" class="btn btn-primary my-4 w-75" style="margin:auto">Добавить</button>
             </div>
 
           </div>
 
 
-            <% students.forEach(function(student) { %>
-              <div class="students__add d-flex my-1">
-
-                <select name="students" type="select" class="form-control w-50" id="InputStudents">
-                  <option class="available__option" value="<%= student.student_id %>">
-                    <%= student.name %>
-                  </option>
-                </select>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                  <label class="form-check-label" for="flexRadioDefault1">
-                    Да
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                  <label class="form-check-label" for="flexRadioDefault1">
-                    Да
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                  <label class="form-check-label" for="flexRadioDefault1">
-                    Да
-                  </label>
-                </div>
-              </div>
-            <% }); %>
-        </div>
-
-        <button type="submit" class="btn btn-primary my-4">Добавить</button>
 
       </form>
     </div>
 
   </div>
 </div>
+
 
 
     <%- include ("../partials/footer.ejs") %>
