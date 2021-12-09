@@ -36,7 +36,7 @@ router
 .post('/:id/removeTest', testController.removeTest)
 
 router
-.get('/:id/addReview', reviewController.addReviewPage)
+.get('/:id/:subject_id/addReview', reviewController.addReviewPage)
 .post('/:id/addReview', reviewController.addReview)
 
 

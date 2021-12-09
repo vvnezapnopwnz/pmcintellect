@@ -111,10 +111,14 @@
     <div class="row d-flex group__block my-4">
       <div class="col py-2">
         <h4 class="text-center">Ревью</h4>
+        <h5 class="text-center">Добавить характристики эту группу</h5>
         <div class="review__content">
-          <a href=<%= `${globalLink}/groups/${group.group_id}/addReview` %> class="btn btn-primary my-2">
-          Добавить ревью эту группу
-          </a>          
+          <% subjects.forEach(function(subject) { %>
+          <a href=<%= `${globalLink}/groups/${group.group_id}/${subject.subject_id}/addReview` %> class="btn btn-secondary my-2">
+            <%= subject.name %>
+          </a>    
+          
+          <% }); %>
           <a href=<%= `${globalLink}/groups/${group.group_id}/removeReview` %> class="btn btn-danger my-2">
             Удалить ревьюи группы
             </a>
@@ -223,7 +227,7 @@
                <th>Предмет</th>
                <th>Подробнее</th>
             </tr>
-            <% reviews.forEach(function(review) { %>
+            <% reviews.sort(function(a, b) { return new Date(a.posting_date) - new Date(b.posting_date); }).forEach(function(review) { %>
             <tr>
                 <th class=""><%= review.posting_date.toLocaleDateString('ru-RU') %></th>
                 <th><%= review.name %></th>

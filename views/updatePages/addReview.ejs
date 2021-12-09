@@ -26,27 +26,21 @@
       <h4>Добавить ревью в группу</h4>
       <form action=<%= `${globalLink}/groups/${group.group_id}/addReview` %> method='POST'>
 
-        <div class="review_date__list my-3">
+        <div class="subjects__list mt-3">
+          <div class="subjects__add d-flex">
+            <select name="subject" style="pointer-events: none;" type="select" class="form-control btn btn-secondary btn-lg" id="InputSubject">
+                  <option class="available__option" value="<%= subject.subject_id %>">
+                    <%= subject.name %>
+                  </option>
+            </select>
+          </div>
+        </div>
 
+        <div class="review_date__list my-3">
           <label for="FormControlInputDate" class="form-label">Укажите дату занятия</label>
           <input name="reviewing_date" type="date" class="form-control w-50" id="FormControlInputDate">                
-
         </div>
 
-        <div class="subjects__list mt-3">
-
-          <label for="InputSubjects" class="form-label">Укажите предмет</label>
-            <div class="subjects__add d-flex">
-                <select name="subject" type="select" class="form-control w-50" id="InputSubjects">
-                  <option value="">Выберите предмет</option>
-                  <% subjects.forEach(function(subject) { %>
-                    <option class="available__option" value="<%= subject.id %>">
-                      <%= subject.name %>
-                    </option>
-                    <% }); %>
-                  </select>
-            </div>
-        </div>
       </div>  
     </div>   
 
@@ -99,6 +93,9 @@
 <hr>
               <% }); %>
               <button type="submit" class="btn btn-primary my-4 w-75" style="margin:auto">Добавить</button>
+              <a href="<%= `${globalLink}/groups/${group.group_id}/` %>" class="btn btn-light w-50" style="margin:auto">
+                Вернуться на страницу группы
+              </a>
             </div>
 
           </div>
@@ -106,10 +103,11 @@
 
 
       </form>
+
     </div>
 
   </div>
-</div>
+
 
 
 

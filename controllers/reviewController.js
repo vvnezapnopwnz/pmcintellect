@@ -6,20 +6,29 @@ const db = require('./../db');
 exports.addReviewPage = async (req, res, next) => {
     const groupId = req.params.id;
     let group;
+    const subjectId = req.params.subject_id;
+    console.log(subjectId)
 
     db.one(`SELECT * FROM groups WHERE group_id = ${groupId}`)
     .then((groupData) => group = groupData)
-    .then(() => db.manyOrNone(`SELECT * from group_subjects a
+    .then(() => db.oneOrNone(`SELECT * from group_subjects a
     JOIN subjects b ON b.id = a.subject_id
-    WHERE group_id = ${groupId}`)
-    .then((subjects) => {
-        db.manyOrNone(`SELECT * FROM group_students a
+    WHERE a.subject_id = ${subjectId} AND a.group_id = ${groupId}`)
+    .then((subject) => {
+        console.log(subject)
+        db.manyOrNone(`SELECT b.student_id, c.id, b.name
+        FROM student_subjects a
         JOIN students b
-        ON a.student_id = b.student_id WHERE group_id = ${groupId}`)
+        ON a.student_id = b.student_id
+        JOIN subjects c
+        ON a.subject_id = c.id
+        JOIN group_students d
+        ON b.student_id = d.student_id
+        WHERE c.id = ${subjectId} AND d.group_id = ${groupId}`)
         .then((students) => {
             res.status(200).render('./updatePages/addReview', {
                 group,
-                subjects,
+                subject,
                 globalLink,
                 students
             })
@@ -65,3 +74,32 @@ exports.addReview = async (req, res, next) => {
     ).then(() => 
         res.redirect(`${globalLink}/groups/${req.params.id}`)));
 };
+
+
+
+
+exports.getReview = async (req, res, next) => {
+const reviewId = req.params.id;
+
+    db.manyOrNone(`SELECT a.review_id, a.group_id, d.name, e.name
+    AS group_name,
+    c.name AS subject_name, b.attendance, b.activity,
+    b.homework
+    FROM group_reviews a
+    JOIN student_records b
+    ON a.review_id = b.review_id
+    JOIN subjects c
+    ON a.subject_id = c.id
+    JOIN students d
+    ON b.student_id = d.student_id
+    JOIN groups e
+    ON a.group_id = e.group_id
+    WHERE a.review_id = ${reviewId}`)
+    .then((records) => res.status(200).json({
+        records: records,
+        group: records[0],
+    }))
+
+
+
+}

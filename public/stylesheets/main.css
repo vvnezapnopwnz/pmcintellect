@@ -40,7 +40,7 @@ body {
   box-shadow: 0 1px 10px rgb(0 0 0 / 25%);
 }
 
-.students__content, .tests__content, .review__content {
+.students__content, .tests__content {
   display:flex;
   flex-direction: column;
   width: 100%;
@@ -51,6 +51,17 @@ body {
   box-shadow: 0 1px 10px rgb(0 0 0 / 25%);
 }
 
+.review__content {
+  display:flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 30px auto;
+  background-color: #a8a586;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 1px 10px rgb(0 0 0 / 25%);
+
+}
 
 .subjects__content {
   display:flex;

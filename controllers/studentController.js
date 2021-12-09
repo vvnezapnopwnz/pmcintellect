@@ -131,7 +131,7 @@ db.oneOrNone(`SELECT * FROM students WHERE student_id = ${studentId}`)
       } else {
         return subject;
       }
-    })).then((availableSubjects) => res.status(200).render('./updatePages/addSubjectReview', {
+    })).then((availableSubjects) => res.status(200).render('./updatePages/addStudentSubject', {
         student,
         availableSubjects,
         globalLink,
