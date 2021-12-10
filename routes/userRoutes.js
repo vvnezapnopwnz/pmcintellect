@@ -12,6 +12,4 @@ router.get('/logout', authController.logout);
 
 router.get('/profile', authController.isLoggedIn, userController.profilePage);
 
-
-
 module.exports = router;

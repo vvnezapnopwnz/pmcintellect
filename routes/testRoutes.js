@@ -1,5 +1,5 @@
 const express = require('express');
-const testController = require('./../controllers/testController');
+const testController = require('../controllers/testController');
 // const authController = require('./../controllers/authController');
 
 const router = express.Router();
@@ -10,10 +10,6 @@ const router = express.Router();
 
 router
   .route('/:id')
-  .get(testController.getTest)
-
-
-
-
+  .get(testController.getTest);
 
 module.exports = router;

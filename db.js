@@ -1,5 +1,5 @@
 // const pg = require('pg');
-const pgp = require('pg-promise')(/*options*/)
+const pgp = require('pg-promise')(/* options */);
 
 // const { Client } = require('pg');
 
@@ -11,11 +11,8 @@ const pgp = require('pg-promise')(/*options*/)
 //     port: 5432,
 // });
 
-
 const db = pgp(
-  'postgres://jsasjjko:fEMWij6GR_o-APTBeUKdBks-GYgMXl2t@abul.db.elephantsql.com/jsasjjko'
+  'postgres://jsasjjko:fEMWij6GR_o-APTBeUKdBks-GYgMXl2t@abul.db.elephantsql.com/jsasjjko',
 );
-
-
 
 module.exports = db;
