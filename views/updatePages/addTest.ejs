@@ -66,20 +66,16 @@
             <% students.forEach(function(student) { %>
               <div class="students__add d-flex my-1">
 
-                <select name="students" type="select" class="form-control w-50" id="InputStudents">
+                <select disabled name="students" type="select" class="form-control w-50" id="InputStudents">
                   <option class="available__option" value="<%= student.student_id %>">
                     <%= student.name %>
                   </option>
                 </select>
                 <input name="student_points" type="number" class="form-control w-25 mx-1" id="FormControlInputStudentPoints">      
-                <button type="button" class="add__student__button btn btn-danger mx-1">-</button>
+                <button type="button" class="remove__button btn btn-danger mx-1">-</button>
               </div>
             <% }); %>
         </div>
-
-
-
-
         <button type="submit" class="btn btn-primary my-4">Добавить</button>
 
       </form>
@@ -90,3 +86,21 @@
 
 
     <%- include ("../partials/footer.ejs") %>
+
+<script>
+
+const removeButton = Array.from(document.querySelectorAll('.remove__button'));
+const studentsList = document.querySelector('.students__list');
+removeButton.forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    const divWithSelect = el.parentElement;
+    divWithSelect.parentElement.removeChild(divWithSelect);
+  })
+})
+
+
+
+
+
+
+</script>
