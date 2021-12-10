@@ -114,3 +114,38 @@ exports.removeTest = async (req, res, next) => {
     .then(() => res.redirect(`${globalLink}/groups/${groupId}`))
     .catch((err) => res.status(500).send(err))
 };
+
+
+
+
+
+
+
+
+exports.getTest = async (req, res, next) => {
+
+    const testId = req.params.id;
+    db.query(`SELECT a.test_id, a.date, a.group_id,
+    a.format, a.max_points, b.student_id, b.points, 
+    d.name AS student_name, e.name AS subject_name
+    FROM group_tests a
+    JOIN student_results b
+    ON a.test_id = b.test_id
+    JOIN group_students c
+    ON b.student_id = c.student_id
+    JOIN students d
+    ON c.student_id = d.student_id
+    JOIN subjects e
+    ON a.subject_id = e.id 
+    WHERE a.test_id = ${testId}`).then((results) => res.status(200)
+    .render('./pages/testPage', {
+        results,
+        group: results[0],
+        globalLink,
+    }))
+
+
+
+
+
+};

@@ -8,9 +8,9 @@ const router = express.Router();
 // router.get('/new', testController.addTestPage);
 // router.post('/new', testController.addTest);
 
-// router
-  // .route('/:id')
-  // .get(testController.getTest)
+router
+  .route('/:id')
+  .get(testController.getTest)
 
 
 

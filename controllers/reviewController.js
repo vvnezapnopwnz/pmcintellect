@@ -81,8 +81,8 @@ exports.addReview = async (req, res, next) => {
 exports.getReview = async (req, res, next) => {
 const reviewId = req.params.id;
 
-    db.manyOrNone(`SELECT a.review_id, a.group_id, d.name, e.name
-    AS group_name,
+    db.manyOrNone(`SELECT a.review_id, a.posting_date, a.group_id, d.name, e.name
+    AS group_name, b.student_id,
     c.name AS subject_name, b.attendance, b.activity,
     b.homework
     FROM group_reviews a
@@ -95,9 +95,10 @@ const reviewId = req.params.id;
     JOIN groups e
     ON a.group_id = e.group_id
     WHERE a.review_id = ${reviewId}`)
-    .then((records) => res.status(200).json({
+    .then((records) => res.status(200).render('./pages/reviewPage', {
         records: records,
         group: records[0],
+        globalLink,
     }))
 
 

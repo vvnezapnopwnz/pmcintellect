@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+
+    <div class="row d-flex  my-4">
+        <div class="test__block col-lg-6">
+            <div class="student__info flex-column">
+                <h4>
+                    Информация о ревью
+                </h4>
+                <div class="groupInfo d-flex align-items-center my-2">
+                    <h5>
+                        Группа: 
+                    </h5>
+                    <a href=<%= `${globalLink}/groups/${group.group_id}` %> class="mx-2 btn btn-warning w-25">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-arrow-in-up-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M6.364 13.5a.5.5 0 0 0 .5.5H13.5a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 1h-10A1.5 1.5 0 0 0 2 2.5v6.636a.5.5 0 1 0 1 0V2.5a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H6.864a.5.5 0 0 0-.5.5z"/>
+                            <path fill-rule="evenodd" d="M11 5.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793l-8.147 8.146a.5.5 0 0 0 .708.708L10 6.707V10.5a.5.5 0 0 0 1 0v-5z"/>
+                          </svg>
+                          <%= group.group_name %>
+                    </a>
+                </div>
+                <h5>
+                    Предмет:
+                    <%= group.subject_name %>
+                </h5>
+                <h5>
+                    Дата проведения занятия:
+                    <%= new Date(group.posting_date).toLocaleDateString('ru-RU') %>
+                </h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="row d-flex student__block my-4">
+        <div class="col">
+            <table class="table table-striped table-hover table-bordered border-primary">
+                <tr>
+                   <th>Имя ученика</th>
+                   <th>Посещаемость</th>
+                   <th>Активность</th>
+                   <th>Выполнение ДЗ</th>
+                </tr>
+                <%     records.forEach(function(record) { %>
+      
+                <tr>
+                   <td class="names">
+                    <a href=<%= `${globalLink}/students/${record.student_id}/` %> class="btn btn-warning my-2">
+                        <%= record.name %>
+                       </a>
+                    </td>
+                   <th><% if(record.attendance) { %>
+                    <p class="attendance">Посетил</p>
+                    <% } else { %>
+                    <p class="attendance">Отсутствовал</p>
+  
+                  <% } %>
+                   </th>
+                   <th><% if(record.activity) { %>
+                    <p class="activity">Активен</p>
+                    <% } else { %>
+                      <p class="activity">Не активен</p>
+                  <% } %>
+                    </th>
+                    <th><% if(record.homework) { %>
+                      <p class="homework">Выполнил</p>
+                      <% } else { %>
+                        <p class="homework">Не выполнил</p>
+                    <% } %>
+                    </th>
+                   
+                </tr>
+                <% }); %>
+             </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="row d-flex group__block my-4">
+        <div class="col py-2">
+          <div id="chart">
+          </div>
+        </div>
+    </div> 
+    
+</div>
+
+<%- include ("../partials/footer.ejs") %>

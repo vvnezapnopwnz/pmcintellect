@@ -8,8 +8,8 @@ const router = express.Router();
 router.use(authController.isLoggedIn)
 
 
-router.post('/new', groupController.newGroup);
-router.get('/new', groupController.newGroupPage);
+router.post('/new', groupController.createGroup);
+router.get('/new', groupController.createGroupPage);
 
 
 router

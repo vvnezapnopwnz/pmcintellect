@@ -1,30 +1,21 @@
 const globalLink = require('./../app').globalLink;
 const db = require('./../db');
 
-exports.newGroupPage = async (req, res, next) => {
+exports.createGroupPage = async (req, res, next) => {
 
-
-
-    res.status(200).render('./createPages/group');
-
-
-
+    res.status(200).render('./createPages/group', {
+        globalLink,
+    });
 
 };
 
-exports.newGroup = async (req, res, next) => {
+exports.createGroup = async (req, res, next) => {
     
+    const groupData = req.body;
 
-const newGroup = await Group.create(req.body);
-
-  
-    //   res.status(201).redirect(`/groups/${group.id}`);
-
-
-    res.json({
-        data: newGroup
-
-    })
+    db.oneOrNone(`INSERT INTO groups(name, class_number)
+        VALUES('${groupData.name}', ${Number(groupData.class_number)})` + 'RETURNING group_id')
+        .then(({ group_id }) => res.status(200).redirect(`${globalLink}/groups/${group_id}`));
 
 };
 
