@@ -1,5 +1,3 @@
-const User = require('./../models/userModel');
-const Group = require('./../models/groupModel');
 const globalLink = require('./../app').globalLink;
 const db = require('./../db');
 

@@ -17,14 +17,12 @@
     <div class="row d-flex auth__block my-4">
       <div class="col-sm-6 mt-4">
         <h4>Ученик? Введите ID</h4>
-        <form action=<%= `${globalLink}/students` %> method='POST'>
           <div class="mb-3">
             <label for="studentId" class="form-label">ID ученика</label>
-            <input type="number" class="form-control" id="studentId" aria-describedby="">
+            <input number="student_id" type="number" class="form-control" id="studentId" aria-describedby="">
             <div class="form-text">Введите ID</div>
           </div>
-          <button type="submit" class="btn btn-primary">Перейти</button>
-        </form>
+          <button onclick="getStudent()" type="submit" class="btn btn-primary">Перейти</button>
       </div>
 
       <div class="col-sm-6 mt-4">
@@ -47,3 +45,17 @@
 
   <%- include ("../partials/footer.ejs") %>
 
+<script>
+
+const getStudent = () => {
+  const student_id = document.getElementById("studentId").value;
+  window.location = `${window.location.href}views/${student_id}`;
+}
+
+
+
+
+
+
+
+</script>

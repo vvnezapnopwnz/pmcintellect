@@ -58,7 +58,6 @@ exports.getStudent = async (req, res, next) => {
 
   db.one(`SELECT * from students WHERE student_id = ${studentId}`)
   .then((data) => student = data)
-  .then((results) => student.results = results)
   .then(() => db.manyOrNone(`SELECT * FROM student_results a 
   JOIN group_tests b ON 
   a.test_id = b.test_id

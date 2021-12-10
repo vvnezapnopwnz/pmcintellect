@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'development') {
 
 exports.globalLink = process.env.NODE_DEST;
 
-
+const viewRouter = require('./routes/viewRoutes');
 const userRouter = require('./routes/userRoutes');
 const groupRouter = require('./routes/groupRoutes');
 const studentRouter = require('./routes/studentRoutes');
@@ -34,6 +34,7 @@ app
   app.use(express.urlencoded({ extended: true, limit: '10kb' }));
   app.use(cookieParser());
 
+  app.use('/views', viewRouter);
   app.use('/users', userRouter);
   app.use('/groups', groupRouter);
   app.use('/students', studentRouter);
