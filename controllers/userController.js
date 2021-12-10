@@ -2,19 +2,13 @@ const globalLink = require('./../app').globalLink;
 const db = require('./../db');
 
 exports.profilePage = async (req, res, next) => {
-  const user = req.body;
-  const params = req;
-  console.log(res.locals);
 
-  let groups;
-
-  db.manyOrNone(`SELECT * from groups`)
-  .then(function (data) {
-    groups = data;
-    console.log(data);
+  db.manyOrNone(`SELECT * from groups WHERE active`)
+  .then(function (groups) {
     res.status(200).render('./pages/profilePage', {
       groups,
-      globalLink
+      globalLink,
+      user: res.locals.user,
     })
   })
   .catch(function (error) {

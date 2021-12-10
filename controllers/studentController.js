@@ -88,7 +88,7 @@ exports.getStudent = async (req, res, next) => {
     })))
   .catch(function (error) {
     console.log(error);
-    // res.redirect(`${globalLink}/`);
+    res.redirect(`${globalLink}/`);
   })
 
 
@@ -99,7 +99,7 @@ exports.getStudent = async (req, res, next) => {
 exports.getAll = async (req, res, next) => {
   let students;
 
-  db.manyOrNone(`SELECT * from students`)
+  db.manyOrNone(`SELECT * from students WHERE active`)
   .then(function (data) {
     students = data;
     res.status(200).render('./pages/studentsAll', {
@@ -111,6 +111,8 @@ exports.getAll = async (req, res, next) => {
     res.redirect(`${globalLink}/`);
   });
 };
+
+
 
 exports.addSubjectToStudentPage = async (req, res, next) => {
 const studentId = req.params.id;
@@ -136,8 +138,10 @@ db.oneOrNone(`SELECT * FROM students WHERE student_id = ${studentId}`)
         globalLink,
     }))
     })
-})
-
+}).catch((err) => res.status(500).json({
+  error: err.message,
+  text: 'Возникла ошибка, обратитесь в технический отдел'
+  }));
 
 
 };
@@ -148,6 +152,11 @@ exports.addSubjectToStudent = async (req, res, next) => {
   const subjectId = req.body.subject;
 
   db.oneOrNone(`INSERT INTO student_subjects(student_id, subject_id) Values(${studentId}, ${subjectId})`)
-  .then(() => res.status(200).redirect(`${globalLink}/students/${studentId}`));
+  .then(() => res.status(200).redirect(`${globalLink}/students/${studentId}`))
+  .catch((err) => res.status(500).json({
+    error: err.message,
+    text: 'Возникла ошибка, обратитесь в технический отдел'
+  }));
+  
   
 };

@@ -32,10 +32,9 @@ const createSendToken = (user, statusCode, res) => {
     // if(user.role !== 'admin') {
       res.redirect(`${globalLink}/users/profile`);
 
-    };
+};
 
   
-
 
 
 exports.login = async (req, res, next) => {
@@ -53,35 +52,12 @@ exports.login = async (req, res, next) => {
       console.log('Success')
       createSendToken(user, 200, res);
     }
-
-
-    // console.log('DATA:', data)
   })
   .catch(function (error) {
     console.log('ERROR:', error)
   });
 
-
-//     const { email, password } = req.body;
-
-//     if (!email || !password) {
-//       return next(new Error('Please provide email and password!', 400));
-//     }
-
-//     const user = await User.findOne({ email }).select('+password');
-
-
-// console.log(user)
-
-  
-//     if (!user || !(await user.correctPassword(password, user.password))) {
-//       return next(new Error('Incorrect email or password', 401));
-//     }
-  
-//     createSendToken(user, 200, res);
-
 };
-
 
 
   exports.logout = (req, res) => {
@@ -104,35 +80,18 @@ exports.isLoggedIn = async (req, res, next) => {
         req.cookies.jwt,
         process.env.JWT_SECRET
       );
-        console.log(decoded)
-      // 2) Check if user still exists
-      // const currentUser = await User.findById(decoded.id);
-
         db.one(`SELECT * from users WHERE user_id = '${decoded.id}'`)
         .then(function (data) {
           // user = data;
           console.log(data)
           res.locals.user = data;
           return next();
-    
-          // console.log('DATA:', data)
         })
         .catch(function (err) {
           res.redirect(globalLink)
         })
-
-
-
-      // if (!currentUser) {
-      //   return next();
-      // }
-
-      // // 3) Check if user changed password after the token was issued
-      // if (currentUser.changedPasswordAfter(decoded.id)) {
-      //   return next();
       } else {
         res.redirect(globalLink)
       }
 
-      // THERE IS A LOGGED IN USER
 };

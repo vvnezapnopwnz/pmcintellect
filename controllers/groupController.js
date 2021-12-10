@@ -84,25 +84,6 @@ exports.getGroup = async (req, res, next) => {
             globalLink
         }))
     })
-
-    // .then(() => db.tx(t => {
-        
-    //     const queries = tests.map((test) => {
-    //         return t.manyOrNone(`SELECT * from student_results WHERE test_id = 
-    //         ${test.test_id}`);
-    //     });
-    //     return t.batch(queries);
-    // }).then((resultsData) => results = resultsData))
-    // .then(() => {
-
-
-
-
-
-
-
-
-    // })
     .catch(function (error) {
         console.log('ERROR:', error)
       
@@ -113,19 +94,6 @@ exports.getGroup = async (req, res, next) => {
 };
 
 
-// [
-//     {
-//       "test_id": 16,
-//       "date": "2021-12-02T18:00:00.000Z",
-//       "group_id": 1,
-//       "subject_id": 3,
-//       "format": "test",
-//       "max_points": 15
-//     }
-//   ]
-
-//students
-
 
 exports.addStudentToGroupPage = async (req, res, next) => {
     const groupId = req.params.id;
@@ -135,7 +103,7 @@ exports.addStudentToGroupPage = async (req, res, next) => {
         .then((groupData) => {
             const { class_number } = groupData;
             group = groupData;
-            return db.manyOrNone(`SELECT * from students WHERE class_number = ${ class_number }`)
+            return db.manyOrNone(`SELECT * from students WHERE active AND class_number = ${ class_number }`)
         })
         .then((availableStudents) => {
             allAvailableStudents = availableStudents;
