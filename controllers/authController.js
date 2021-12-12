@@ -8,8 +8,7 @@ const signToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, {
 });
 
 const createSendToken = (user, statusCode, res) => {
-  console.log(user.username);
-  console.log(user.user_id);
+
 
   const token = signToken(user.user_id);
   const cookieOptions = {
@@ -19,7 +18,6 @@ const createSendToken = (user, statusCode, res) => {
     httpOnly: true,
   };
   cookieOptions.secure = true;
-  console.log(token);
   res.cookie('jwt', token, cookieOptions);
 
   // Remove password from output
@@ -38,9 +36,8 @@ exports.login = async (req, res, next) => {
       user = data;
 
       if (!user.email || user.password !== password) {
-        console.log('Wrong email or password');
+        res.status(401).send({ message: 'Неверный email или пароль',});
       } else {
-        console.log('Success');
         createSendToken(user, 200, res);
       }
     })
@@ -57,9 +54,8 @@ exports.logout = (req, res) => {
   res.status(200).redirect(`${globalLink}`);
 };
 
-// Only for rendered pages, no errors!
 exports.isLoggedIn = async (req, res, next) => {
-  console.log('LoggedIn middlware');
+  console.log('is logged in')
   if (req.cookies.jwt) {
     // 1) verify token
     const decoded = await promisify(jwt.verify)(
@@ -68,9 +64,8 @@ exports.isLoggedIn = async (req, res, next) => {
     );
     db.one(`SELECT * from users WHERE user_id = '${decoded.id}'`)
       .then((data) => {
-        // user = data;
-        console.log(data);
         res.locals.user = data;
+        console.log('checked')
         return next();
       })
       .catch((err) => {

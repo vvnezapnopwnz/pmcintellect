@@ -1,4 +1,3 @@
-/* eslint-disable */
 const { globalLink } = require('../app');
 const db = require('../db');
 
@@ -39,3 +38,42 @@ JOIN subjects b ON a.subject_id = b.id WHERE student_id = ${student_id}`))
       res.redirect(`${globalLink}/`);
     });
 };
+
+exports.getDashboardOverview = async (req, res, next) => {
+
+  db.task(t => {
+    let groups;
+    let students;
+    let users;
+    return t.one(`SELECT count(group_id) FROM groups where active`)
+    .then((groupsData) => groups = groupsData)
+    .then(() => t.one(`SELECT count(student_id) from students where active`))
+    .then((studentsData) => students = studentsData)
+    .then(() => t.any(`SELECT * from users where active`))
+    .then((usersData) => users = usersData)
+    .then(() => t.any(`select a.test_id, a.date, a.group_id, 
+    c.name as subject_name,
+    d.name as group_name, a.format,
+    a.max_points, avg(b.points),
+    count(b.student_id)
+    from group_tests a
+    JOIN student_results b
+    ON a.test_id = b.test_id
+    JOIN subjects c
+    ON a.subject_id = c.id
+    JOIN groups d
+    ON a.group_id = d.group_id
+    GROUP BY a.test_id, d.name, c.name
+    ORDER BY a.date DESC
+    LIMIT 10`))
+    .then((tests) => res.status(200).render('./pages/dashboardPage',{
+      groups,
+      students,
+      users,
+      globalLink,
+      tests,
+    }))
+
+  
+  })
+}

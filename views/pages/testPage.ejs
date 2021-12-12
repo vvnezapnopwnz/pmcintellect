@@ -56,7 +56,7 @@
                    <td class="names"><%= result.student_name %></td>
                    <td><%= result.points %></td>
                    <td><%= result.max_points %></td>
-                   
+                   <td class="percents"><%= Math.round(result.points / result.max_points * 100) %></td>
                 </tr>
                 <% }); %>
              </table>

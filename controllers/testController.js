@@ -31,39 +31,42 @@ exports.addTestPage = async (req, res, next) => {
     }));
 };
 
+
+
+
+
+
 exports.addTest = async (req, res, next) => {
-  const groupId = req.params.id;
-  const date = req.body.testing_date;
-  const { subject } = req.body;
-  const testData = req.body;
-  const studentsIds = [testData.students].flat();
-  const studentsPoints = [testData.student_points].flat();
-  const maxPoints = testData.max_points;
-  const format = testData.testing_format;
 
-  const studentsTests = studentsIds.map((studentId, index) => {
-    const studentTest = {};
-    studentTest.testingDate = date;
-    studentTest.studentId = Number(studentId);
-    studentTest.studentPoints = Number(studentsPoints[index]);
-    studentTest.maxPoints = testData.max_points;
-    studentTest.testFormat = testData.testing_format;
-    studentTest.testSubject = subject;
-    return studentTest;
-  });
-
-  db.query(`INSERT INTO group_tests(date, group_id, subject_id, format, max_points)
-        VALUES('${date}', ${groupId}, '${subject}', '${format}', ${maxPoints}) RETURNING test_id`)
-    .then((returning_id) => {
-      db.tx((t) => {
-        const testId = returning_id[0].test_id;
-        const queries = studentsTests.map((test) => t.none(`INSERT INTO student_results(test_id, student_id, points)
-                        VALUES(${testId}, ${test.studentId}, ${test.studentPoints})`));
-        return t.batch(queries);
-      })
-        .then(() => res.redirect(`${globalLink}/groups/${groupId}`));
+  db.task(t => {
+    const groupId = req.params.id;
+    const { subject, testing_date, testing_format, 
+      max_points, students, student_points } = req.body;
+    const studentIds = [students].flat();
+    const studentPoints = [student_points].flat();
+  
+    const studentResults = studentIds.map((studentId, index) => {
+      const studentTest = {};
+      studentTest.studentId = Number(studentId);
+      studentTest.studentPoints = Number(studentPoints[index]);
+      return studentTest;
     });
+      return t.one(`INSERT INTO group_tests(date, group_id, subject_id, format, max_points)
+        VALUES('${testing_date}', ${groupId}, ${subject}, '${testing_format}', ${max_points})
+          RETURNING test_id`)
+        .then(({ test_id }) => db.tx(tt => {
+          const queries = studentResults.map((result) => {
+              return tt.none(`INSERT INTO student_results(test_id, student_id, points)
+                VALUES(${test_id}, ${result.studentId}, ${result.studentPoints})`);
+          });
+          return tt.batch(queries);
+        }))
+        .then(() => res.status(200).redirect(`${globalLink}/groups/${groupId}`));
+  });
 };
+
+
+
 
 exports.removeTestPage = async (req, res, next) => {
   const groupId = req.params.id;
@@ -88,7 +91,7 @@ exports.removeTestPage = async (req, res, next) => {
 
 exports.removeTest = async (req, res, next) => {
   const groupId = req.params.id;
-  test = req.body.test;
+  const test = req.body.test;
 
   db.query(`DELETE FROM student_results WHERE test_id = ${test}`)
     .then(() => db.query(`DELETE FROM group_tests WHERE test_id = ${test}`))

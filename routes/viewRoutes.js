@@ -7,4 +7,5 @@ router
   .route('/:id')
   .get(viewController.getStudentView);
 
+
 module.exports = router;
