@@ -39,7 +39,7 @@
                     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                       <div class="accordion-body">
 
-                          <% students.filter((student) => student.class_number == 1).forEach(function(student) { %>
+                          <% students.filter((student) => student.class_number == 2).forEach(function(student) { %>
                                 <a class="btn btn-secondary btn-sm m-1" href=<%= `${globalLink}/students/${student.student_id}` %>>
                                   <strong><%= student.name %></strong>
                                 </a>
@@ -56,7 +56,7 @@
                     <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                       <div class="accordion-body">
 
-                          <% students.filter((student) => student.class_number == 1).forEach(function(student) { %>
+                          <% students.filter((student) => student.class_number == 3).forEach(function(student) { %>
                                 <a class="btn btn-secondary btn-sm m-1" href=<%= `${globalLink}/students/${student.student_id}` %>>
                                   <strong><%= student.name %></strong>
                                 </a>
