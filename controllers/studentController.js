@@ -33,10 +33,17 @@ exports.deleteStudentPage = async (req, res, next) => {
 exports.deleteStudent = async (req, res, next) => {
   const studentForDeletion = req.body.student;
 
-  db.task((t) => t.query(`DELETE FROM student_results WHERE student_id = ${studentForDeletion}`)
-    .then(() => db.query(`DELETE FROM group_students WHERE student_id = ${studentForDeletion}`))
-    .then(() => db.query(`DELETE FROM students WHERE student_id = ${studentForDeletion}`))
-    .then(() => res.status(200).redirect(`${globalLink}/students/`))).catch((err) => res.status(500).redirect(`${globalLink}`));
+  db.task(t => {
+
+    return t.query(`UPDATE students SET active = false WHERE student_id = ${studentForDeletion}`)
+    .then(() => res.redirect(`${globalLink}/students/`))
+
+  })
+
+  // db.task((t) => t.query(`DELETE FROM student_results WHERE student_id = ${studentForDeletion}`)
+  //   .then(() => db.query(`DELETE FROM group_students WHERE student_id = ${studentForDeletion}`))
+  //   .then(() => db.query(`DELETE FROM students WHERE student_id = ${studentForDeletion}`))
+  //   .then(() => res.status(200).redirect(`${globalLink}/students/`))).catch((err) => res.status(500).redirect(`${globalLink}`));
 };
 
 exports.getStudent = async (req, res, next) => {

@@ -244,3 +244,20 @@ exports.removeSubjectFromGroup = async (req, res, next) => {
 // JOIN subjects b
 // ON a.subject_id = b.id
 // where group_id = 1
+
+exports.removeGroupPage = async (req, res, next) => {
+
+
+
+
+
+
+
+};
+
+
+exports.removeGroup = async (req, res, next) => {
+
+
+  
+}

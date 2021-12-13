@@ -90,7 +90,7 @@ exports.removeReviewPage = async (req, res, next) => {
 
   db.task(t=> {
     const groupId = req.params.id;
-
+    console.log(groupId)
     return t.manyOrNone(`select distinct a.review_id, b.name as group_name, 
       a.posting_date,
       d.name as subject_name from group_reviews a
@@ -105,7 +105,7 @@ exports.removeReviewPage = async (req, res, next) => {
         res.status(200).render('./removePages/removeReview', {
           reviews,
           globalLink,
-          group: groupId,
+          groupId,
         })
       });
   });
@@ -118,15 +118,13 @@ exports.removeReviewPage = async (req, res, next) => {
 exports.removeReview = async (req, res, next) => {
 
   db.task(t=> {
-
-    const body = req.body;
-    res.status(200).json({
-      body,
-    })
-
-    
+    const reviewId = req.body.review;
+    const groupId = req.params.id;
+    return t.query(`delete from student_records where review_id = ${reviewId}`)
+    .then(() => t.query(`delete from group_reviews where review_id = ${reviewId}`))
+    .then(() => res.status(200).redirect(`${globalLink}/groups/${groupId}`))
   });
 
-}
+};
 
 

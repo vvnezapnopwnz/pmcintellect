@@ -11,7 +11,7 @@ exports.addTestPage = async (req, res, next) => {
     .then((groupData) => group = groupData)
     .then(() => db.manyOrNone(`SELECT * from group_students WHERE group_id = ${groupId}`))
     .then((thisGroupStudentsIds) => thisGroupStudentsIds.reduce((acc, { student_id }) => {
-      const newAcc = acc.then((contents) => db.one(`SELECT * from students WHERE student_id = ${student_id}`)
+      const newAcc = acc.then((contents) => db.oneOrNone(`SELECT * from students WHERE(student_id = ${student_id} AND active)`)
         .then((students) => contents.concat(students)));
       return newAcc;
     }, Promise.resolve([]))
