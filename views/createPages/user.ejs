@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+    <div class="row  my-3">
+        <div class="col-6-lg student__block">
+            <h4>Добавить пользователя</h4>
+            <form action=<%= `${globalLink}/users/new` %> method='POST'>
+              <div class="mb-1">
+                <label for="inputName" class="form-label">Имя</label>
+                <div id="" class="form-text">Введите имя пользователя</div>
+                <input name="username" type="text" class="form-control w-50" id="inputName" aria-describedby="NameHelp">
+              </div>
+              <div class="mb-3">
+                <label for="InputEmail" class="form-label">Email</label>
+                <div id="" class="form-text">Укажите email</div>
+                <input name="email" type="email" class="form-control w-50" id="InputEmail">
+              </div>
+              <div class="mb-3">
+                <label for="InputPassword" class="form-label">Пароль</label>
+                <div id="" class="form-text">Укажите пароль</div>
+                <input name="password" type="password" class="form-control w-50" id="InputPassword">
+              </div>
+              <div class="mb-3">
+                <label for="InputRole" class="form-label">Роль</label>
+                <div id="" class="form-text">Укажите роль</div>
+              <select name="role" type="text" class="form-select w-50">
+                <option selected>Укажите роль</option>
+                <option value="admin">Администратор системы</option>
+                <option value="assistant">Ассистент</option>
+                <option value="trainer">Тренер</option>
+                <option value="manager">Менеджер</option>
+              </select>
+              </div>
+              <button type="submit" class="btn btn-primary my-4">
+                Добавить пользователя
+                </button>
+            </form>
+            <a href=<%= `${globalLink}/users/dashboard` %> class="btn btn-light m-2 w-25">
+                Вернуться назад
+            </a>
+        </div>
+    </div>
+</div>
+      
+      <%- include ("../partials/footer.ejs") %>
