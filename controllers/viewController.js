@@ -77,3 +77,23 @@ exports.getDashboardOverview = async (req, res, next) => {
   
   })
 }
+
+exports.getManagersOverview = async (req, res, next) => {
+
+  db.task(t => {
+    let students;
+
+    return t.manyOrNone('SELECT * from students WHERE active')
+    .then((data) => {
+      students = data;
+      res.status(200).render('./pages/managersView', {
+        students,
+        globalLink,
+      });
+    })
+    .catch((error) => {
+      res.redirect(`${globalLink}/`);
+    });
+  });
+
+};
