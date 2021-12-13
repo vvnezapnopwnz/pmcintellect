@@ -119,7 +119,7 @@ exports.removeReview = async (req, res, next) => {
 
   db.task(t=> {
 
-    const body = req.params;
+    const body = req.body;
     res.status(200).json({
       body,
     })

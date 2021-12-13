@@ -42,7 +42,6 @@ exports.deleteStudent = async (req, res, next) => {
 exports.getStudent = async (req, res, next) => {
   const studentId = req.params.id;
   let student;
-
   db.one(`SELECT * from students WHERE student_id = ${studentId}`)
     .then((data) => student = data)
     .then(() => db.manyOrNone(`SELECT * FROM student_results a 
