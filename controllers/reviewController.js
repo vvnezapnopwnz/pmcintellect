@@ -84,3 +84,49 @@ exports.getReview = async (req, res, next) => {
       globalLink,
     }));
 };
+
+
+exports.removeReviewPage = async (req, res, next) => {
+
+  db.task(t=> {
+    const groupId = req.params.id;
+
+    return t.manyOrNone(`select distinct a.review_id, b.name as group_name, 
+      a.posting_date,
+      d.name as subject_name from group_reviews a
+      JOIN groups b
+      ON a.group_id = b.group_id
+      JOIN student_records c
+      ON a.review_id = c.review_id
+      JOIN subjects d
+      ON a.subject_id = d.id
+      where a.group_id = ${groupId}`)
+      .then((reviews) => {
+        res.status(200).render('./removePages/removeReview', {
+          reviews,
+          globalLink,
+          group: groupId,
+        })
+      });
+  });
+  
+}
+
+
+
+
+exports.removeReview = async (req, res, next) => {
+
+  db.task(t=> {
+
+    const body = req.params;
+    res.status(200).json({
+      body,
+    })
+
+    
+  });
+
+}
+
+

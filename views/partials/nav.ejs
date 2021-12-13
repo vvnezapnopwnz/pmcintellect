@@ -15,6 +15,11 @@
         <li class="nav-item">
           <a class="nav-link"href=<%= `${globalLink}/users/dashboard` %>>Дашборд</a>
         </li>
+        <% if(user.role == 'manager' ){ %>
+          <li class="nav-item">
+            <a class="nav-link"href=<%= `${globalLink}/users/managers` %>>Дашборд для колл-центра</a>
+          </li>
+          <% } %>
       </ul>
       <span class="navbar-text">
         <a class="nav-link"href=<%= `${globalLink}/users/logout` %>>Выйти</a>

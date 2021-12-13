@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+  <div class="row  my-3">
+      <div class="col student__block p-3">
+        <div class="group__info flex-column my-2">
+            <div class="group__info flex-column my-2">
+                <h4>
+                  Группа:  <%=reviews[0].group_name %>
+                </h4>
+            </div>
+            <hr>
+      <h4>Убрать тест из группы</h4>
+      <h5>Нужные вам характеристики  можно найти по параметрам: дата, предмет</h5>
+      <form action=<%= `${globalLink}/groups/${group.group_id}/removeReview` %> method='POST'>
+
+          <div class="reviews__list">
+
+            <label for="InputReviews" class="form-label">Укажите Ревью (характеристики) для удаления</label>
+              <div class="reviews__add d-flex">
+                  <select name="review" type="select" class="form-select form-select-lg w-50" id="InputReview" aria-label="Удаление характеристик">
+                    <option value="">Выберите ревью</option>
+                    <% reviews.sort(function(a, b) { return new Date(a.posting_date) - new Date(b.posting_date); }).forEach(function(review) { %>
+                      <option class="available__option" value="<%= review.review_id %>">
+                        Дата: <%= review.posting_date.toLocaleDateString('ru-RU') %>,
+                          Предмет: <%= review.subject_name %>
+                      </option>
+                      <% }); %>
+                    </select>
+              </div>
+          </div>
+        <button type="submit" class="btn btn-primary my-4">Убрать</button>
+
+      </form>
+    </div>
+  </div>
+
+</div>

@@ -35,6 +35,8 @@ router
 
 router
   .get('/:id/:subject_id/addReview', reviewController.addReviewPage)
-  .post('/:id/addReview', reviewController.addReview);
+  .post('/:id/addReview', reviewController.addReview)
+  .get('/:id/removeReview', reviewController.removeReviewPage)
+  .post('/:id/removeReview', reviewController.removeReview);
 
 module.exports = router;
