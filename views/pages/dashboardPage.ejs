@@ -36,6 +36,10 @@
                             <% users.filter((user) => user.role == "trainer").forEach(function(user) { %>
                                     <p class="btn btn-secondary btn-sm" title="<%= user.email %>"><%= user.username %></p>
                             <% }); %>
+                            <p>Менеджеры</p>
+                            <% users.filter((user) => user.role == "manager").forEach(function(user) { %>
+                                    <p class="btn btn-secondary btn-sm" title="<%= user.email %>"><%= user.username %></p>
+                            <% }); %>
                         </div>
                       </div>
                     </div>
