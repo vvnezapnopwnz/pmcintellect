@@ -164,9 +164,51 @@
       <div class="col py-2">
         <div id="chart_<%= subject.id %>">
         </div>
+      </div>
 
+      
+      <div class="accordion" id="accordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingSubject_<%= subject.id %>">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject_<%= subject.id %>" aria-expanded="true" aria-controls="collapseSubject_<%= subject.id %>">
+              Характеристики по предмету: <%= subject.name %>
+            </button>
+          </h2>
+          <div id="collapseSubject_<%= subject.id %>" class="accordion-collapse collapse" aria-labelledby="headingSubject_<%= subject.id %>" data-bs-parent="#accordion">
+            <div class="accordion-body d-flex flex-column bg-warning">
+
+                <div class="table-responsive-lg">
+                  <table class="table table-striped table-hover table-bordered border-primary">
+                    <tr>
+                       <th>Дата проведения</th>
+                       <th>Предмет</th>
+                       <th>Посещаемость</th>
+                       <th>Активность</th>
+                       <th>Выполнение ДЗ</th>
+                       <th>Подробнее</th>
+                    </tr>
+                    <% reviews.filter((review) => review.name == subject.name).sort(function(a, b) { return new Date(b.posting_date) - new Date(a.posting_date); }).forEach(function(review) { %>
+                    <tr>
+                        <th class="date"><%= review.posting_date.toLocaleDateString('ru-RU') %></th>
+                        <th><%= review.name %></th>
+                        <th class="attendance"><%= review.attendance %>/<%= review.marked_attendance %></th>
+                        <th class="activity"><%= review.activity %>/<%= review.marked_activity %></th>
+                        <th class="homework"><%= review.homework %>/<%= review.marked_homework %></th>
+                        <th>
+                          <a href=<%= `${globalLink}/reviews/${review.review_id}/` %> class="btn btn-warning my-2">
+                          <strong>Перейти</strong>
+                          </a>
+                        </th>
+                    </tr>
+                    <% }); %>
+                 </table>
+                </div>
+              </div>
+          </div>
+        </div>
       </div>
     </div> 
+
 
     <script> 
       var options = {
@@ -214,36 +256,7 @@
       </script>
 
 
-
     <% }); %>
-    <div class="row d-flex flex-column group__block my-3">
-      <div class="col">
-        <h4 class="text-center">Ревью группы</h4>
-
-        <div class="table-responsive-lg">
-          <table class="table table-striped table-hover table-bordered border-primary">
-            <tr>
-               <th>Дата проведения</th>
-               <th>Предмет</th>
-               <th>Подробнее</th>
-            </tr>
-            <% reviews.sort(function(a, b) { return new Date(a.posting_date) - new Date(b.posting_date); }).forEach(function(review) { %>
-            <tr>
-                <th class=""><%= review.posting_date.toLocaleDateString('ru-RU') %></th>
-                <th><%= review.name %></th>
-                <th>
-                  <a href=<%= `${globalLink}/reviews/${review.review_id}/` %> class="btn btn-warning my-2">
-                  <strong>Перейти</strong>
-                  </a>
-                </th>
-            </tr>
-            <% }); %>
-         </table>
-        </div>
-
-      </div>
-
-    </div>
 
 </div>
 

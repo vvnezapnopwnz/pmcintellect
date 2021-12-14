@@ -10,7 +10,7 @@
 
 <div class="container">
   <div class="row  my-3">
-      <div class="col-6 student__block p-3">
+      <div class="col-lg-6 student__block p-3">
         <div class="group__info flex-column my-2">
           <h4>
             Группа:  <%= group.name %>
@@ -27,7 +27,7 @@
               <div class="students__list">
 
                 <label for="InputStudents" class="form-label">Укажите имя</label>
-                  <div class="students__add d-flex">
+                  <div class="students__add d-flex mb-4">
                       <select name="student" type="select" class="form-control w-50" id="InputStudents">
                         <option value="">Выберите ученика</option>
                         <% possibleNewStudents.forEach(function(student) { %>
@@ -38,8 +38,10 @@
                         </select>
                   </div>
               </div>
-            <button type="submit" class="btn btn-primary my-4">Добавить</button>
-
+              <div class="buttons d-flex flex-column justify-content-center">
+                <button type="submit" class="btn btn-primary my-2 w-50">Добавить</button>
+                <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
+              </div>
           </form>
         </div>
       </div>

@@ -15,6 +15,7 @@ exports.createGroup = async (req, res, next) => {
     .then(({ group_id }) => res.status(200).redirect(`${globalLink}/groups/${group_id}`));
 };
 
+
 exports.getGroup = async (req, res, next) => {
 
   db.task(t => {
@@ -37,14 +38,19 @@ exports.getGroup = async (req, res, next) => {
         ON a.subject_id = b.id 
         where a.group_id = ${groupId}`)
     .then((groupSubjectsData) => subjects = groupSubjectsData))
-    .then(() => t.query(`SELECT a.review_id, a.posting_date, a.subject_id, c.name
-      from group_reviews a
-      JOIN student_records b
-      ON a.review_id = b.review_id
-      JOIN subjects c ON a.subject_id = c.id
-      WHERE a.group_id = ${groupId}
-      GROUP BY a.review_id,c.name
-      `))
+    .then(() => t.query(`SELECT a.review_id,  a.posting_date, c.name,
+    count(b.attendance) AS marked_attendance,
+    count(*) filter (where b.attendance) as attendance,
+    count(b.activity) AS marked_activity,
+    count(*) filter (where b.activity) as activity,
+    count(b.homework) AS marked_homework,
+    count(*) filter (where b.homework) as homework
+    from group_reviews a
+    JOIN student_records b
+    ON a.review_id = b.review_id
+    JOIN subjects c ON a.subject_id = c.id
+    WHERE a.group_id = 7
+    GROUP BY a.review_id, c.name`))
     .then((reviewsData) => reviews = reviewsData)
     .then(() => t.query(`SELECT * from group_tests WHERE group_id = ${groupId}`))
     .then((testsData) => tests = testsData.map((test) => {
@@ -89,37 +95,33 @@ exports.getGroup = async (req, res, next) => {
 };
 
 exports.addStudentToGroupPage = async (req, res, next) => {
-  const groupId = req.params.id;
-  let group;
-  let allAvailableStudents;
-  db.one(`SELECT * from groups WHERE group_id = ${groupId}`)
-    .then((groupData) => {
-      const { class_number } = groupData;
-      group = groupData;
-      return db.manyOrNone(`SELECT * from students WHERE active AND class_number = ${class_number}`);
-    })
-    .then((availableStudents) => {
-      allAvailableStudents = availableStudents;
-      allAvailableStudents.reduce((acc, { student_id }) => {
-        const newAcc = acc.then((contents) => db.manyOrNone(`SELECT * from group_students WHERE group_id = ${groupId} AND student_id = ${student_id}`)
-          .then((data) => contents.concat(data)));
-        return newAcc;
-      }, Promise.resolve([]))
-        .then((thisGroupStudents) => {
-          const ids = thisGroupStudents.map((student) => student.student_id);
-          const possibleNewStudents = allAvailableStudents.filter((student) => {
-            if (!ids.includes(student.student_id)) {
-              return student.student_id;
-            }
-          });
-          res.status(200).render('./updatePages/addStudent', {
-            group,
-            possibleNewStudents,
-            globalLink,
-          });
-        });
-    });
+
+  db.task(t => {
+
+    const groupId = req.params.id;
+    let group;
+
+    return t.oneOrNone(`SELECT * from groups WHERE group_id = ${groupId}`)
+    .then((groupData) => group = groupData)
+    .then(() => t.manyOrNone(`SELECT * from group_students a
+      JOIN students b
+      ON a.student_id = b.student_id
+      WHERE a.group_id <> ${groupId}`)
+      .then((possibleNewStudents) => res.status(200).render('./updatePages/addStudent', {
+        group,
+        possibleNewStudents,
+        globalLink,
+      })))
+      .catch((error) => res.status(500).json({
+        error
+      }))
+
+  });
 };
+
+
+
+
 
 exports.addStudentToGroup = async (req, res, next) => {
   const groupId = req.params.id;
@@ -184,7 +186,6 @@ exports.addSubjectToGroupPage = async (req, res, next) => {
     .then(() => db.manyOrNone(`SELECT * from group_subjects WHERE group_id = ${groupId}`)
       .then((groupSubjects) => {
         groupSubjectsIds = groupSubjects.map((subject) => subject.subject_id);
-        console.log(groupSubjectsIds);
       }))
     .then(() => allSubjects.filter((subject) => {
       console.log(subject.id);

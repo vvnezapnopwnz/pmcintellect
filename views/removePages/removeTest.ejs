@@ -29,8 +29,8 @@
           <div class="tests__list">
 
             <label for="InputTests" class="form-label">Укажите тест для удаления</label>
-              <div class="tests__add d-flex">
-                  <select name="test" type="select" class="form-select form-select-lg w-50" id="InputTests" aria-label="Удаление теста">
+              <div class="tests__add d-flex mb-4">
+                  <select name="test" type="select" class="form-select form-select-lg w-75" id="InputTests" aria-label="Удаление теста">
                     <option value="">Выберите тест</option>
                     <% tests.sort(function(a, b) { return new Date(a.date) - new Date(b.date); }).forEach(function(test) { %>
                       <option class="available__option" value="<%= test.test_id %>">
@@ -42,7 +42,10 @@
                     </select>
               </div>
           </div>
-        <button type="submit" class="btn btn-primary my-4">Убрать</button>
+          <div class="buttons d-flex flex-column justify-content-center">
+            <button type="submit" class="btn btn-primary my-2 w-50">Убрать</button>
+            <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
+          </div>
 
       </form>
     </div>

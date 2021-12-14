@@ -322,7 +322,7 @@
                        <form action=<%= `${globalLink}/students/delete` %> method='POST'>
                             <div class="students__list">
                               <label for="InputStudents" class="form-label">Укажите имя</label>
-                                <div class="students__add d-flex">
+                                <div class="students__add d-flex mb-4">
                                     <select name="student" type="select" class="form-control w-50" id="InputStudents">
                                       <option value="">Выберите ученика</option>
                                       <% students.filter((student) => student.class_number == 11).forEach(function(student) { %>
@@ -333,7 +333,10 @@
                                       </select>
                                 </div>
                             </div>
-                          <button type="submit" class="btn btn-danger my-4">Удалить</button>
+                            <div class="buttons d-flex flex-column justify-content-center">
+                              <button type="submit" class="btn btn-primary my-2 w-50">Убрать</button>
+                              <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
+                            </div>
                         </form>
 
 

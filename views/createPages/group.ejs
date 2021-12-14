@@ -10,7 +10,7 @@
 
 <div class="container">
     <div class="row  my-3">
-        <div class="col-6-lg student__block">
+        <div class="col-lg-6 student__block">
             <h4>Создать группу</h4>
             <form action=<%= `${globalLink}/groups/new` %> method='POST'>
               <div class="mb-1">
@@ -23,9 +23,10 @@
                 <div id="" class="form-text">Укажите класс</div>
                 <input name="class_number" type="number" class="form-control w-50" id="InputClassNumber">
               </div>
-
-
-              <button type="submit" class="btn btn-primary my-4">Создать группу</button>
+              <div class="buttons d-flex flex-column justify-content-center mt-4">
+                <button type="submit" class="btn btn-primary my-2 w-50">Создать группу</button>
+                <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
+              </div>
             </form>
           </div>
         </div>

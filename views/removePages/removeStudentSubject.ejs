@@ -25,7 +25,7 @@
           <div class="subjects__list">
 
             <label for="InputSubjects" class="form-label">Укажите предмет</label>
-              <div class="subjects__add d-flex">
+              <div class="subjects__add d-flex mb-4">
                   <select name="subject" type="select" class="form-control w-50" id="InputSubjects">
                     <option value="">Выберите предмет</option>
                     <% subjects.forEach(function(subject) { %>
@@ -36,8 +36,10 @@
                     </select>
               </div>
           </div>
-        <button type="submit" class="btn btn-primary my-4">Убрать</button>
-
+          <div class="buttons d-flex flex-column justify-content-center">
+            <button type="submit" class="btn btn-primary my-2 w-50">Убрать</button>
+            <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
+          </div>
       </form>
     </div>
   </div>
