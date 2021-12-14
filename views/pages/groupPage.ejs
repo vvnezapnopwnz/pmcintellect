@@ -170,8 +170,8 @@
       <div class="accordion" id="accordion">
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingSubject_<%= subject.id %>">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject_<%= subject.id %>" aria-expanded="true" aria-controls="collapseSubject_<%= subject.id %>">
-              Характеристики по предмету: <%= subject.name %>
+            <button class="accordion-button d-block text-center bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject_<%= subject.id %>" aria-expanded="true" aria-controls="collapseSubject_<%= subject.id %>">
+              <h5 class="text-light">Характеристики по предмету: <%= subject.name %></h5>
             </button>
           </h2>
           <div id="collapseSubject_<%= subject.id %>" class="accordion-collapse collapse" aria-labelledby="headingSubject_<%= subject.id %>" data-bs-parent="#accordion">
