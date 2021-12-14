@@ -139,3 +139,40 @@ exports.addSubjectToStudent = async (req, res, next) => {
       text: 'Возникла ошибка, обратитесь в технический отдел',
     }));
 };
+
+
+exports.removeSubjectFromStudentPage = async (req, res, next) => {
+
+
+  db.task(t => {
+    const studentId = req.params.id;
+
+    return t.manyOrNone(`SELECT a.student_id, a.subject_id,
+    b.name AS subject_name, c.name as student_name, c.class_number 
+    from student_subjects a
+    JOIN subjects b ON 
+    a.subject_id = b.id
+	  JOIN students c ON
+	  a.student_id = c.student_id
+	  where a.student_id = ${studentId}`)
+    .then((subjects) => res.status(200).render('./removePages/removeStudentSubject', {
+      globalLink,
+      subjects,
+      studentId,
+    }));
+  });
+
+};
+
+
+exports.removeSubjectFromStudent = async (req, res, next) => {
+
+  db.task(t => {
+    const studentId = req.params.id;
+    const subject = req.body.subject;
+    return t.query(`DELETE FROM student_subjects WHERE student_id = ${studentId} AND subject_id = ${subject}`)
+    .then(()=> res.status(200).redirect(`${globalLink}/students/${studentId}`))
+  })
+
+
+}

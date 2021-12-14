@@ -14,9 +14,9 @@ router.post('/delete', authController.isLoggedIn, studentController.deleteStuden
 
 router
   .get('/:id/addSubject', studentController.addSubjectToStudentPage)
-  .post('/:id/addSubject', studentController.addSubjectToStudent);
-// .get('/:id/removeSubject', studentController.removeSubjectFromStudentPage)
-// .post('/:id/removeSubject', studentController.removeSubjectFromStudent)
+  .post('/:id/addSubject', studentController.addSubjectToStudent)
+  .get('/:id/removeSubject', studentController.removeSubjectFromStudentPage)
+  .post('/:id/removeSubject', studentController.removeSubjectFromStudent)
 
 router
   .route('/:id')

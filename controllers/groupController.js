@@ -16,25 +16,37 @@ exports.createGroup = async (req, res, next) => {
 };
 
 exports.getGroup = async (req, res, next) => {
-  const groupId = req.params.id;
-  let group;
-  let students;
-  let subjects;
-  let tests;
 
-  db.one(`SELECT * from groups WHERE group_id = '${groupId}'`)
+  db.task(t => {
+    const groupId = req.params.id;
+    let group;
+    let students;
+    let subjects;
+    let tests;
+    let reviews;
+
+    return t.one(`SELECT * from groups WHERE group_id = '${groupId}'`)
     .then((groupData) => group = groupData)
-    .then(() => db.manyOrNone(`SELECT * from group_students a
+    .then(() => t.manyOrNone(`SELECT * from group_students a
     JOIN students b ON 
     a.student_id = b.student_id
-    WHERE group_id = ${groupId}`))
+    WHERE a.group_id = ${groupId} AND b.active = true`))
     .then((groupStudentsData) => students = groupStudentsData)
-    .then(() => db.manyOrNone(`SELECT * from group_subjects a
+    .then(() => t.manyOrNone(`SELECT * from group_subjects a
         JOIN subjects b
         ON a.subject_id = b.id 
-        where group_id = ${groupId}`)
-      .then((groupSubjectsData) => subjects = groupSubjectsData))
-    .then(() => db.query(`SELECT * from group_tests WHERE group_id = ${groupId}`))
+        where a.group_id = ${groupId}`)
+    .then((groupSubjectsData) => subjects = groupSubjectsData))
+    .then(() => t.query(`SELECT a.review_id, a.posting_date, a.subject_id, c.name
+      from group_reviews a
+      JOIN student_records b
+      ON a.review_id = b.review_id
+      JOIN subjects c ON a.subject_id = c.id
+      WHERE a.group_id = ${groupId}
+      GROUP BY a.review_id,c.name
+      `))
+    .then((reviewsData) => reviews = reviewsData)
+    .then(() => t.query(`SELECT * from group_tests WHERE group_id = ${groupId}`))
     .then((testsData) => tests = testsData.map((test) => {
       test.subject_name = subjects.filter((subject) => {
         if (subject.id == test.subject_id) {
@@ -45,23 +57,15 @@ exports.getGroup = async (req, res, next) => {
       return test;
     }))
     .then(() => {
-      db.tx((t) => {
-        const queries = tests.map((test) => t.manyOrNone(`SELECT count(student_id), avg(points) from student_results WHERE test_id = 
-            ${test.test_id} GROUP BY test_id`).then((results) => {
+      t.tx((tt) => {
+        const queries = tests.map((test) => tt.manyOrNone(`SELECT count(student_id), avg(points) from student_results WHERE test_id = 
+          ${test.test_id} GROUP BY test_id`).then((results) => {
           test.result = results[0];
           test.percent = (test.result.avg / test.max_points) * 100;
         }));
-        return t.batch(queries);
+        return tt.batch(queries);
       })
-        .then(() => db.query(`SELECT a.review_id, a.posting_date, a.subject_id, c.name
-        from group_reviews a
-        JOIN student_records b
-        ON a.review_id = b.review_id
-        JOIN subjects c ON a.subject_id = c.id
-        WHERE a.group_id = ${groupId}
-        GROUP BY a.review_id,c.name
-        `))
-        .then((reviews) => res.status(200).render('./pages/groupPage', {
+        .then(() => res.status(200).render('./pages/groupPage', {
           tests,
           group,
           students,
@@ -77,6 +81,11 @@ exports.getGroup = async (req, res, next) => {
         error,
       });
     });
+  })
+
+
+
+
 };
 
 exports.addStudentToGroupPage = async (req, res, next) => {
@@ -234,20 +243,18 @@ exports.removeSubjectFromGroup = async (req, res, next) => {
     .then(() => res.redirect(`${globalLink}/groups/${groupId}/`));
 };
 
-// SELECT * FROM student_results a
-// JOIN group_tests b ON
-// a.test_id = b.test_id
-// JOIN subjects c ON
-// b.subject_id = c.id
 
-// SELECT * from group_subjects a
-// JOIN subjects b
-// ON a.subject_id = b.id
-// where group_id = 1
 
 exports.removeGroupPage = async (req, res, next) => {
 
+  db.task(t => {
 
+    return t.manyOrNone(`SELECT * from groups where active`)
+    .then((groups) => res.status(200).render('./removePages/removeGroup', {
+      groups,
+      globalLink,
+    }))
+  })
 
 
 
@@ -258,6 +265,11 @@ exports.removeGroupPage = async (req, res, next) => {
 
 exports.removeGroup = async (req, res, next) => {
 
+  db.task(t => {
+    const groupId = req.body.group_id;
+    return t.query(`UPDATE groups SET active = false WHERE group_id = ${groupId}`)
+           .then(() => res.redirect(`${globalLink}/users/profile/`))
 
+  })
   
 }

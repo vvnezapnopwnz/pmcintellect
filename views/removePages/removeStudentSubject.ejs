@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+  <div class="row  my-3">
+      <div class="col-6 student__block p-3">
+        <div class="group__info flex-column my-2">
+          <h4>
+            Ученик:  <%= subjects[0].student_name %>
+          </h4>
+
+      </div>
+      <hr>
+
+      <h4>Убрать предмет у ученика</h4>
+      <form action=<%= `${globalLink}/students/${studentId}/removeSubject` %> method='POST'>
+
+          <div class="subjects__list">
+
+            <label for="InputSubjects" class="form-label">Укажите предмет</label>
+              <div class="subjects__add d-flex">
+                  <select name="subject" type="select" class="form-control w-50" id="InputSubjects">
+                    <option value="">Выберите предмет</option>
+                    <% subjects.forEach(function(subject) { %>
+                      <option class="available__option" value="<%= subject.subject_id %>">
+                        <%= subject.subject_name %>
+                      </option>
+                      <% }); %>
+                    </select>
+              </div>
+          </div>
+        <button type="submit" class="btn btn-primary my-4">Убрать</button>
+
+      </form>
+    </div>
+  </div>
+
+</div>

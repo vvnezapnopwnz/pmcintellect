@@ -2,33 +2,37 @@ const { globalLink } = require('../app');
 const db = require('../db');
 
 exports.addTestPage = async (req, res, next) => {
-  const groupId = req.params.id;
-  let group;
-  let students;
-  let subjects;
 
-  db.one(`SELECT * from groups WHERE group_id = ${groupId}`)
-    .then((groupData) => group = groupData)
-    .then(() => db.manyOrNone(`SELECT * from group_students WHERE group_id = ${groupId}`))
-    .then((thisGroupStudentsIds) => thisGroupStudentsIds.reduce((acc, { student_id }) => {
-      const newAcc = acc.then((contents) => db.oneOrNone(`SELECT * from students WHERE(student_id = ${student_id} AND active)`)
-        .then((students) => contents.concat(students)));
-      return newAcc;
-    }, Promise.resolve([]))
-      .then((studentsData) => students = studentsData))
-    .then(() => db.manyOrNone(`SELECT * from group_subjects WHERE group_id = ${groupId}`))
-    .then((thisGroupSubjects) => thisGroupSubjects.reduce((acc, { subject_id }) => {
-      const newAcc = acc.then((contents) => db.one(`SELECT * from subjects WHERE id = ${subject_id}`)
-        .then((subjects) => contents.concat(subjects)));
-      return newAcc;
-    }, Promise.resolve([]))
-      .then((subjectsData) => subjects = subjectsData))
-    .then(() => res.status(200).render('updatePages/addTest', {
-      group,
-      students,
-      subjects,
-      globalLink,
-    }));
+  db.task(t => {
+    const groupId = req.params.id;
+    let group;
+    let students;
+    let subjects;
+
+    return t.oneOrNone(`SELECT * from groups WHERE group_id = ${groupId}`)
+      .then((groupData) => group = groupData)
+      .then(() => db.manyOrNone(`SELECT * from group_students WHERE group_id = ${groupId}`))
+      .then((thisGroupStudentsIds) => thisGroupStudentsIds.reduce((acc, { student_id }) => {
+        const newAcc = acc.then((contents) => db.oneOrNone(`SELECT * from students WHERE(student_id = ${student_id} AND active)`)
+          .then((students) => contents.concat(students)));
+        return newAcc;
+      }, Promise.resolve([]))
+        .then((studentsData) => students = studentsData))
+      .then(() => db.manyOrNone(`SELECT * from group_subjects WHERE group_id = ${groupId}`))
+      .then((thisGroupSubjects) => thisGroupSubjects.reduce((acc, { subject_id }) => {
+        const newAcc = acc.then((contents) => db.one(`SELECT * from subjects WHERE id = ${subject_id}`)
+          .then((subjects) => contents.concat(subjects)));
+        return newAcc;
+      }, Promise.resolve([]))
+        .then((subjectsData) => subjects = subjectsData))
+      .then(() => res.status(200).render('updatePages/addTest', {
+        group,
+        students,
+        subjects,
+        globalLink,
+      }));
+  });
+
 };
 
 
