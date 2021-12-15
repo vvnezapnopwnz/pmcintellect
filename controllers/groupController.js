@@ -49,7 +49,7 @@ exports.getGroup = async (req, res, next) => {
     JOIN student_records b
     ON a.review_id = b.review_id
     JOIN subjects c ON a.subject_id = c.id
-    WHERE a.group_id = 7
+    WHERE a.group_id = ${groupId}
     GROUP BY a.review_id, c.name`))
     .then((reviewsData) => reviews = reviewsData)
     .then(() => t.query(`SELECT * from group_tests WHERE group_id = ${groupId}`))
@@ -108,8 +108,8 @@ exports.addStudentToGroupPage = async (req, res, next) => {
     FULL JOIN group_students b
     ON a.student_id = b.student_id
           WHERE 
-        a.class_number = 4 AND b.group_id <> 33 
-        OR b.group_id IS NULL AND a.class_number = 4`)
+        a.class_number = ${group.class_number} AND b.group_id <> ${groupId}
+        OR b.group_id IS NULL AND a.class_number = ${group.class_number}`)
       .then((possibleNewStudents) => res.status(200).render('./updatePages/addStudent', {
         group,
         possibleNewStudents,
