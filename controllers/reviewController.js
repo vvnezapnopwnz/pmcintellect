@@ -41,12 +41,12 @@ exports.addReviewPage = async (req, res, next) => {
 };
 
 exports.addReview = async (req, res, next) => {
+  
   new Promise((resolve, reject) => {
-    console.log(req.params.id);
-    console.log(req.body.subject);
-    console.log(req.body.date);
 
-    const students = req.body.students.map((student_id) => {
+    const studentsData = [req.body.students].flat();
+
+    const students = studentsData.map((student_id) => {
       const student = { id: Number(student_id) };
       student.attendance = req.body[`attendance_${student_id}`];
       student.activity = req.body[`activity_${student_id}`];
