@@ -103,12 +103,13 @@ exports.addStudentToGroupPage = async (req, res, next) => {
 
     return t.oneOrNone(`SELECT * from groups WHERE group_id = ${groupId}`)
     .then((groupData) => group = groupData)
-    .then(() => t.manyOrNone(`SELECT * from students a
+    .then(() => t.manyOrNone(`SELECT a.student_id, a.name, a.class_number
+     from students a
     FULL JOIN group_students b
     ON a.student_id = b.student_id
-    WHERE 
-    a.class_number = ${group.class_number} AND b.group_id <> ${groupId} 
-    OR b.group_id IS NULL AND a.class_number = ${group.class_number}`)
+          WHERE 
+        a.class_number = 4 AND b.group_id <> 33 
+        OR b.group_id IS NULL AND a.class_number = 4`)
       .then((possibleNewStudents) => res.status(200).render('./updatePages/addStudent', {
         group,
         possibleNewStudents,
