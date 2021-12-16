@@ -65,7 +65,7 @@ exports.isLoggedIn = async (req, res, next) => {
     db.one(`SELECT * from users WHERE user_id = '${decoded.id}'`)
       .then((data) => {
         res.locals.user = data;
-        console.log(res.locals.user)
+        console.log(res.locals.user.username + ` - role: ${res.locals.user.role}`)
         console.log(req.get('host') + req.originalUrl)
         return next();
       })

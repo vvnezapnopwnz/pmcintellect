@@ -1,6 +1,6 @@
 const express = require('express');
 const testController = require('../controllers/testController');
-// const authController = require('./../controllers/authController');
+const authController = require('./../controllers/authController');
 
 const router = express.Router();
 
@@ -10,6 +10,6 @@ const router = express.Router();
 
 router
   .route('/:id')
-  .get(testController.getTest);
+  .get(authController.isLoggedIn, testController.getTest);
 
 module.exports = router;

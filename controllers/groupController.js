@@ -147,7 +147,6 @@ exports.removeStudentFromGroupPage = async (req, res, next) => {
   })
     .then((groupStudents) => {
       groupStudentsIds = groupStudents.map((student) => student.student_id);
-      console.log(groupStudentsIds);
 
       groupStudentsIds.reduce((acc, student_id) => {
         const newAcc = acc.then((contents) => db.manyOrNone(`SELECT * from students WHERE student_id = ${student_id}`)
@@ -155,7 +154,6 @@ exports.removeStudentFromGroupPage = async (req, res, next) => {
         return newAcc;
       }, Promise.resolve([]))
         .then((students) => {
-          console.log(students);
           res.status(200).render('./removePages/removeStudent', {
             group,
             students,
@@ -192,7 +190,6 @@ exports.addSubjectToGroupPage = async (req, res, next) => {
         groupSubjectsIds = groupSubjects.map((subject) => subject.subject_id);
       }))
     .then(() => allSubjects.filter((subject) => {
-      console.log(subject.id);
       if (groupSubjectsIds.includes(subject.id)) {
         return;
       }

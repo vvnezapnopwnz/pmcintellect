@@ -4,7 +4,7 @@ const db = require('../db');
 exports.createStudentPage = async (req, res, next) => {
   res.status(200).render('./createPages/student', {
     globalLink,
-  }).catch((err) => res.status(500).redirect(`${globalLink}/`));
+  });
 };
 
 exports.createStudent = async (req, res, next) => {

@@ -15,7 +15,7 @@ exports.addReviewPage = async (req, res, next) => {
     JOIN subjects b ON b.id = a.subject_id
     WHERE a.subject_id = ${subjectId} AND a.group_id = ${groupId}`)
       .then((subject) => {
-        console.log(subject);
+        console.log(subject.name);
         db.manyOrNone(`SELECT b.student_id, c.id, b.name
         FROM student_subjects a
         JOIN students b
@@ -101,7 +101,6 @@ exports.removeReviewPage = async (req, res, next) => {
 
   db.task(t=> {
     const groupId = req.params.id;
-    console.log(groupId)
     return t.manyOrNone(`select distinct a.review_id, b.name as group_name, 
       a.posting_date,
       d.name as subject_name from group_reviews a
