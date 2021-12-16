@@ -66,6 +66,7 @@ exports.isLoggedIn = async (req, res, next) => {
       .then((data) => {
         res.locals.user = data;
         console.log(res.locals.user)
+        console.log(req.get('host') + req.originalUrl)
         return next();
       })
       .catch((err) => {
