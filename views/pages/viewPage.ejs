@@ -23,7 +23,7 @@
                 </h5>
                 <div class="subjects_content my-2">
                   <% subjects.forEach(function(subject) { %>
-                    <button class="btn btn-secondary"><%= subject.name %></button>
+                    <button class="btn btn-secondary m-1"><%= subject.name %></button>
                     <% }); %>
                 </div>
 
@@ -35,7 +35,9 @@
 
 
     <% subjects.forEach(function(subject) { %>
-      <div class="row d-flex flex-column group__block my-3">
+
+    <% if(student.results.filter((result) => result.subject_id == subject.subject_id).length !== 0) {  %>
+      <div class="row d-flex flex-column group__block my-1">
         <h4 class="my-2 text-primary">Результаты тестов по предмету: <%= subject.name %></h4>
       <div class="table-responsive-lg">
         <table class="table table-striped table-hover table-bordered border-primary">
@@ -56,17 +58,14 @@
             <th><%= result.points %></th>
             <th class="percent_<%= subject.id %>"><%= Math.round((result.points / result.max_points) * 100) %></th>
           </tr>
-        <% }); %>
-      </table>
-    </div>
-
-
-    <div class="col py-2">
-      <div id="chart_<%= subject.id %>">
+          <% }); %>
+        </table>
       </div>
-
-    </div>
-
+      <div class="col py-2">
+        <div id="chart_<%= subject.id %>">
+        </div>
+      </div>
+      </div>
   <script> 
     var options = {
               series: [{
@@ -106,7 +105,11 @@
             var chart_<%= subject.id %> = new ApexCharts(document.querySelector("#chart_<%= subject.id %>"), options).render();
     </script>
 
+        <% } %>
+        
 
+        <% if(records.filter((record) => record.name == subject.name).length !== 0) { %>
+        <div class="row d-flex flex-column group__block my-1">
         <div class="accordion" id="accordion">
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingSubject_<%= subject.id %>">
@@ -158,64 +161,67 @@
           </div>
         </div>
       </div>
+        <script>
+
+          const attendance = Array.from(document.querySelectorAll('.attendance'))
+          .map((el) => el.innerHTML)
+          const attended = Array.from(document.querySelectorAll('.attendance'))
+          .map((el) => el.innerHTML).filter((el) => el == 'Посетил');
+        
+          const activity = Array.from(document.querySelectorAll('.activity'))
+          .map((el) => el.innerHTML)
+          const active = Array.from(document.querySelectorAll('.activity'))
+          .map((el) => el.innerHTML).filter((el) => el == 'Активен');
+        
+          const homework = Array.from(document.querySelectorAll('.homework'))
+          .map((el) => el.innerHTML)
+          const doneHomework = Array.from(document.querySelectorAll('.homework'))
+          .map((el) => el.innerHTML).filter((el) => el == 'Выполнил');
+        
+        
+        console.log(Math.round(((attended.length / attendance.length)
+                               + (active.length / activity.length)
+                              + (doneHomework.length / homework.length)) / 3 ))
+        
+        
+              var options = {
+                  series: [Math.round(attended.length / attendance.length * 100),
+                   Math.round(active.length / activity.length * 100), 
+                   Math.round(doneHomework.length / homework.length * 100)],
+                  chart: {
+                  height: 350,
+                  type: 'radialBar',
+                },
+                plotOptions: {
+                  radialBar: {
+                    dataLabels: {
+                      name: {
+                        fontSize: '18px',
+                        color: '#3377FF',
+                      },
+                    },
+                    
+                  }
+                },
+                fill: {
+                  opacity: 1.5,
+                  colors: ['#3377FF', '#FF3396', '#3BDD51' ],
+                  type: 'gradient',
+                },
+                labels: ['Посещаемость', 'Активность', 'Выполнение ДЗ'],
+                };
+        
+                var chart = new ApexCharts(document.querySelector("#chart_records"), options);
+                chart.render();
+        
+        
+        </script>
+<% } %>
+
 <% }); %>
 
 
 </div>
 
 
-<script>
 
-  const attendance = Array.from(document.querySelectorAll('.attendance'))
-  .map((el) => el.innerHTML)
-  const attended = Array.from(document.querySelectorAll('.attendance'))
-  .map((el) => el.innerHTML).filter((el) => el == 'Посетил');
-
-  const activity = Array.from(document.querySelectorAll('.activity'))
-  .map((el) => el.innerHTML)
-  const active = Array.from(document.querySelectorAll('.activity'))
-  .map((el) => el.innerHTML).filter((el) => el == 'Активен');
-
-  const homework = Array.from(document.querySelectorAll('.homework'))
-  .map((el) => el.innerHTML)
-  const doneHomework = Array.from(document.querySelectorAll('.homework'))
-  .map((el) => el.innerHTML).filter((el) => el == 'Выполнил');
-
-
-console.log(Math.round(((attended.length / attendance.length)
-                       + (active.length / activity.length)
-                      + (doneHomework.length / homework.length)) / 3 ))
-
-
-      var options = {
-          series: [Math.round(attended.length / attendance.length * 100),
-           Math.round(active.length / activity.length * 100), 
-           Math.round(doneHomework.length / homework.length * 100)],
-          chart: {
-          height: 350,
-          type: 'radialBar',
-        },
-        plotOptions: {
-          radialBar: {
-            dataLabels: {
-              name: {
-                fontSize: '18px',
-                color: '#3377FF',
-              },
-            },
-            
-          }
-        },
-        fill: {
-          opacity: 1.5,
-          colors: ['#3377FF', '#FF3396', '#3BDD51' ],
-          type: 'gradient',
-        },
-        labels: ['Посещаемость', 'Активность', 'Выполнение ДЗ'],
-        };
-
-        var chart = new ApexCharts(document.querySelector("#chart_records"), options);
-        chart.render();
-
-
-</script>
