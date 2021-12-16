@@ -37,7 +37,7 @@
     <% subjects.forEach(function(subject) { %>
 
     <% if(student.results.filter((result) => result.subject_id == subject.subject_id).length !== 0) {  %>
-      <div class="row d-flex flex-column group__block my-1">
+      <div class="row d-flex flex-column group__block mb-1 mt-3">
         <h4 class="my-2 text-primary">Результаты тестов по предмету: <%= subject.name %></h4>
       <div class="table-responsive-lg">
         <table class="table table-striped table-hover table-bordered border-primary">
@@ -69,7 +69,6 @@
   <script> 
     var options = {
               series: [{
-              name: 'Количество сдающих',
               type: 'column',
               data: Array.from(document.querySelectorAll('.quantity_<%= subject.id %>')).map((el) => el.innerHTML),
             }, {
@@ -106,7 +105,7 @@
     </script>
 
         <% } %>
-        
+
 
         <% if(records.filter((record) => record.name == subject.name).length !== 0) { %>
         <div class="row d-flex flex-column group__block my-1">
