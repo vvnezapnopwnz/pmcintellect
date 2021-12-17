@@ -82,12 +82,8 @@
   </div> 
 
   <script> 
-    var options = {
+var options = {
               series: [{
-              name: 'Количество сдающих',
-              type: 'column',
-              data: Array.from(document.querySelectorAll('.quantity_<%= subject.id %>')).map((el) => el.innerHTML),
-            }, {
               name: '% от максимума',
               type: 'line',
               data: Array.from(document.querySelectorAll('.percent_<%= subject.id %>')).map((el) => el.innerHTML),
@@ -97,7 +93,10 @@
               type: 'line',
             },
             stroke: {
-              width: [0, 4]
+              width: [4, 4]
+            },
+            markers: {
+              size: 3
             },
             title: {
               text: 'График успеваемости группы'
@@ -113,7 +112,9 @@
             yaxis: [{
               title: {
                 text: '% от максимума',
-              }
+              },
+              max: 100,
+              min: 0,
             }]
             };
     
