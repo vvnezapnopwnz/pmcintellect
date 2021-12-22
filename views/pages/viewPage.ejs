@@ -33,8 +33,8 @@
     </div>
 
     <% if(student.trials.length > 0) { %>
-    <div class="row d-flex flex-column group__block mb-1 mt-3">
-        <h4 class="my-2 text-primary">Результаты по пробному тестированию ЕНТ</h4>
+    <div class="row d-flex flex-column group__block mb-1 mt-3 align-items-center">
+        <h3 class="my-3 text-primary text-center">Результаты по пробному тестированию ЕНТ</h3>
       <div class="table-responsive-lg">
         <table class="table table-striped table-hover table-bordered border-primary">
           <tr>
@@ -45,9 +45,7 @@
             <th>Мат. грамотность</th>
             <th>Математика</th>
             <th>Физика&emsp;</th>
-            <th>Геометрия</th>
-            <th>Биология</th>
-            <th>Химия&emsp;</th>
+            <th>География</th>
           </tr>
           <% student.trials.sort(function(a, b) { return new Date(a.trial_date) - new Date(b.trial_date); }).forEach(function(trial) { %>
           <tr>
@@ -86,114 +84,355 @@
               <%= trial.geography_result %> из 45
               <% } %>
             </th>
-            <th class="trials_biology_result">
-              <% if(trial.biology_result) { %>
-              <%= trial.biology_result %> из 45
-              <% } %>
-            </th>
-            <th class="trials_chemistry+results">
-              <% if(trial.chemistry_result) { %>
-              <%= trial.chemistry_result %> из 45
-              <% } %>
-            </th>
           </tr>
           <% }); %>
         </table>
       </div>
-      <div class="col py-2">
-        <div id="ent_trials_chart">
-        </div>
+
+              <h5 class="text-center text-primary mt-2">Графики динамики успеваемости по предметам</h5>
+              <div class="row d-flex flex-column border rounded">
+                <div class="col py-2">
+                  <div id="ent_history_kaz_chart">
+                  </div>
+                </div>
+  
+                <div class="col py-2">
+                  <div id="reading_literacy_chart">
+                  </div>
+                </div>
+  
+                <div class="col py-2">
+                  <div id="math_literacy_chart">
+                  </div>
+                </div>
+  
+                <div class="col py-2">
+                  <div id="mathematics_chart">
+                  </div>
+                </div>
+  
+                <div class="col py-2">
+                  <div id="physics_chart">
+                  </div>
+                </div>
+
+              </div>
+
+
+
       </div>
-    </div>
 
 
-    <script>
-      const trials_dates = Array.from(document.querySelectorAll('.trials_date'));
-      const mathematics_results = Array.from(document.querySelectorAll('.mathematics_result'));
-      const history_kaz_results = Array.from(document.querySelectorAll('.history_kaz_result'));
-      const reading_literacy_results = Array.from(document.querySelectorAll('.reading_literacy_result'));
-      const mathematics_results = Array.from(document.querySelectorAll('.math_literacy_result'));
-      const physics_results = Array.from(document.querySelectorAll('.physics_result'));
-      const geography_results = Array.from(document.querySelectorAll('.geography_result'));
-      const biology_results = Array.from(document.querySelectorAll('.bioligy_result'));
-      const chemistry_results = Array.from(document.querySelectorAll('.chemistry_result'))
+<script>
+const trials_dates = Array.from(document.querySelectorAll('.trials_date')).map((el) => el.innerText);
 
-      var options = {
-          series: [
-          {
-            name: "High - 2013",
-            data: [28, 29, 33, 36, 32, 32, 33]
-          },
-          {
-            name: "Low - 2013",
-            data: [12, 11, 14, 18, 17, 13, 13]
-          }
-        ],
-          chart: {
-          height: 350,
-          type: 'line',
-          dropShadow: {
-            enabled: true,
-            color: '#000',
-            top: 18,
-            left: 7,
-            blur: 10,
-            opacity: 0.2
-          },
-          toolbar: {
-            show: false
-          }
-        },
-        colors: ['#77B6EA', '#545454'],
-        dataLabels: {
-          enabled: true,
-        },
-        stroke: {
-          curve: 'smooth'
-        },
-        title: {
-          text: 'Average High & Low Temperature',
-          align: 'left'
-        },
-        grid: {
-          borderColor: '#e7e7e7',
-          row: {
-            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-            opacity: 0.5
-          },
-        },
-        markers: {
-          size: 1
-        },
-        xaxis: {
-          categories: trials_dates,
-          title: {
-            text: 'Month'
-          }
-        },
-        yaxis: {
-          title: {
-            text: 'Temperature'
-          },
-          min: 5,
-          max: 40
-        },
-        legend: {
-          position: 'top',
-          horizontalAlign: 'right',
-          floating: true,
-          offsetY: -25,
-          offsetX: -5
-        }
-        };
-
-        var chart = new ApexCharts(document.querySelector("#ent_trials_chart"), options);
-        chart.render();
+const mathematics_results = Array.from(document.querySelectorAll('.trials_mathematics_result')).map((el) => el.innerText.split(' ')[0])
+const history_kaz_results = Array.from(document.querySelectorAll('.trials_history_kaz_result')).map((el) => el.innerText.split(' ')[0]);
+const reading_literacy_results = Array.from(document.querySelectorAll('.trials_reading_literacy_result')).map((el) => el.innerText.split(' ')[0]);
+const math_literacy_results = Array.from(document.querySelectorAll('.trials_math_literacy_result')).map((el) => el.innerText.split(' ')[0]);
+const physics_results = Array.from(document.querySelectorAll('.trials_physics_result'))
+  .map((el) => {
+      if(el.innerText.split(' ')[0] == '') {
+        return;
+      } else {
+        return   el.innerText.split(' ')[0];
+      }
+    });
+const geography_results = Array.from(document.querySelectorAll('.trials_geography_result'))
+  .map((el) => {
+    if(el.innerText.split(' ')[0] == '') {
+      return;
+    } else {
+      return   el.innerText.split(' ')[0];
+    }
+  });
 
 
+if(history_kaz_results.length > 0) {
+  var options = {
+    series: [{
+      name: "История Казахстана",
+      data: history_kaz_results
+    }],
+    chart: {
+    height: 200,
+    type: 'line',
+    zoom: {
+      enabled: false
+      },
+      toolbar: {
+        show: false
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: 'straight'
+    },
+    title: {
+      text: 'История Казахстана',
+      align: 'left'
+    },
+    grid: {
+      row: {
+        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+        opacity: 0.5
+      },
+    },
+    xaxis: {
+      categories: trials_dates,
+    },
+    yaxis: {
+      max: 15,
+      min: 0,
+      tickAmount: 3,
+    }
+  };
+  var chart = new ApexCharts(document.querySelector("#ent_history_kaz_chart"), options);
+  chart.render();
+};
 
 
-    </script>
+if(reading_literacy_results.length > 0) {
+  var options = {
+    series: [{
+      name: "Грамотность чтения",
+      data: reading_literacy_results
+    }],
+    chart: {
+    height: 200,
+    type: 'line',
+    zoom: {
+      enabled: false
+      },
+      toolbar: {
+        show: false
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: 'straight'
+    },
+    title: {
+      text: 'Грамотность чтения',
+      align: 'left'
+    },
+    grid: {
+      row: {
+        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+        opacity: 0.5
+      },
+    },
+    xaxis: {
+      categories: trials_dates,
+    },
+    yaxis: {
+      max: 20,
+      min: 0,
+      tickAmount: 3,
+    }
+  };
+  var chart = new ApexCharts(document.querySelector("#reading_literacy_chart"), options);
+  chart.render();
+};
+
+
+if(math_literacy_results.length > 0) {
+  var options = {
+    series: [{
+      name: "Математическая грамотность",
+      data: math_literacy_results
+    }],
+    chart: {
+    height: 200,
+    type: 'line',
+    zoom: {
+      enabled: false
+      },
+      toolbar: {
+        show: false
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: 'straight'
+    },
+    title: {
+      text: 'Математическая грамотность',
+      align: 'left'
+    },
+    grid: {
+      row: {
+        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+        opacity: 0.5
+      },
+    },
+    xaxis: {
+      categories: trials_dates,
+    },
+    yaxis: {
+      max: 15,
+      min: 0,
+      tickAmount: 3,
+    }
+  };
+  var chart = new ApexCharts(document.querySelector("#math_literacy_chart"), options);
+  chart.render();
+};
+
+
+
+if(mathematics_results.length > 0) {
+  var options = {
+    series: [{
+      name: "Математика",
+      data: mathematics_results
+    }],
+    chart: {
+    height: 200,
+    type: 'line',
+    zoom: {
+      enabled: false
+      },
+      toolbar: {
+        show: false
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: 'straight'
+    },
+    title: {
+      text: 'Математика',
+      align: 'left'
+    },
+    grid: {
+      row: {
+        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+        opacity: 0.5
+      },
+    },
+    xaxis: {
+      categories: trials_dates,
+    },
+    yaxis: {
+      max: 45,
+      min: 0,
+      tickAmount: 3,
+    }
+  };
+  var chart = new ApexCharts(document.querySelector("#mathematics_chart"), options);
+  chart.render();
+};
+
+
+if(physics_results.length > 0) {
+  var options = {
+    series: [{
+      name: "Физика",
+      data: physics_results
+    }],
+    chart: {
+    height: 200,
+    type: 'line',
+    zoom: {
+      enabled: false
+      },
+      toolbar: {
+        show: false
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: 'straight'
+    },
+    title: {
+      text: 'Физика',
+      align: 'left'
+    },
+    grid: {
+      row: {
+        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+        opacity: 0.5
+      },
+    },
+    xaxis: {
+      categories: trials_dates,
+    },
+    yaxis: {
+      max: 45,
+      min: 0,
+      tickAmount: 3,
+    }
+  };
+  var chart = new ApexCharts(document.querySelector("#physics_chart"), options);
+  chart.render();
+};
+
+
+
+
+
+if(geography_results.length > 0) {
+  var options = {
+    series: [{
+      name: "География",
+      data: geography_results,
+    }],
+    chart: {
+    height: 200,
+    type: 'line',
+    zoom: {
+      enabled: false
+      },
+      toolbar: {
+        show: false
+      }
+    },
+    dataLabels: { 
+      enabled: false
+    },
+    stroke: { 
+      curve: 'straight'
+    },
+    title: {  
+      text: 'География',
+      align: 'left'
+    },
+    grid: {
+      row: {
+        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+        opacity: 0.5
+      },
+    },
+    xaxis: {
+      categories: trials_dates,
+    },
+    yaxis: {
+      max: 45,
+      min: 0,
+      tickAmount: 3,
+    }
+  };
+  var chart = new ApexCharts(document.querySelector("#geography_chart"), options);
+  chart.render();
+};
+
+
+
+
+
+
+</script>
     <% } %>
 
 
