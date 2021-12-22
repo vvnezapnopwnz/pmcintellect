@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+  <div class="row  my-3">
+    <div class="col-lg-6 student__block p-3">
+        <div class="group__info flex-column my-2">
+          <h4>
+            Группа:  <%= group.name %>
+          </h4>
+          <h5>
+              Класс:
+              <%= group.class_number %>
+          </h5>
+        </div>
+      <hr>
+      <h4>Добавить Пробное тестирование NU в группу</h4>
+      <form action=<%= `${globalLink}/groups/${group.group_id}/addNUTrial` %> method='POST'>
+
+        <div class="trial_date__list my-3">
+
+          <label for="FormControlInputDate" class="form-label">Укажите дату пробного тестирования</label>
+          <input name="trial_date" type="date" class="form-control w-50" id="FormControlInputDate">                
+
+        </div>
+
+
+
+        <div class="students__list d-flex flex-column">
+
+          <label for="InputStudents" class="form-label">Укажите набранные баллы</label>
+            <% students.forEach(function(student) { %>
+
+              <div class="w-75 students__add d-flex flex-column bg-success rounded m-1 p-1" style="transition: 0.4s;">
+                <div class="student_name justify-content-between d-flex">
+                    <select style="pointer-events: none;" name="students" type="select" class="form-control w-50" id="InputStudents">
+                        <option class="available__option" value="<%= student.student_id %>">
+                          <%= student.name %>
+                        </option>
+                      </select>    
+                      <button type="button" class="remove__student__button btn btn-danger px-3 mx-1">x</button>
+                </div>
+                <div class="trial__subjects d-flex row m-2">
+                    <div class="required__trial__subjects col-6">
+                        <div class="math d-flex m-1 align-items-center">
+                            <label for="math__input" class="form-label text-warning">Math:&thinsp;&ensp;&ensp;&ensp;</label>
+                            <input name="math__<%= student.student_id %>" type="number" class="form-control mx-1" style="width:100px" id="math__input">   
+                        </div>
+                        <div class="critical__thinking d-flex m-1 align-items-center">
+                            <label for="critical__thinking__input" class="form-label text-warning">Critical Thinking: </label>
+                            <input name="critical__thinking__<%= student.student_id %>" type="number" class="form-control mx-1" style="width:100px" id="critical__thinking__input">   
+                        </div>
+
+                    </div>
+
+              </div>
+            </div>
+            <% }); %>
+
+        <div class="buttons d-flex flex-column justify-content-center">
+          <button type="submit" class="btn btn-primary my-2 w-50">Добавить</button>
+          <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+
+    <%- include ("../partials/footer.ejs") %>
+
+    <script>
+
+
+
+const removeStudentButton = Array.from(document.querySelectorAll('.remove__student__button'));
+// const studentsList = document.querySelector('.students__list');
+removeStudentButton.forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    const divWithSelect = el.parentElement.parentElement;
+    divWithSelect.style.opacity = 0;
+    setTimeout(() => divWithSelect.parentElement.removeChild(divWithSelect), 500);
+  })
+})
+
+    </script>

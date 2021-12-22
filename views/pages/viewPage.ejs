@@ -436,6 +436,177 @@ if(geography_results.length > 0) {
     <% } %>
 
 
+
+
+    <% if(student.nuTrials.length > 0) { %>
+      <div class="row d-flex flex-column group__block mb-1 mt-3 align-items-center">
+          <h3 class="my-3 text-primary text-center">Результаты по пробному тестам NU</h3>
+        <div class="table-responsive-lg">
+          <table class="table table-striped table-hover table-bordered border-primary">
+            <tr>
+              <th>Дата</th>
+              <th>Общий балл</th>
+              <th>Math</th>
+              <th>Critical thinking</th>
+            </tr>
+            <% student.nuTrials.sort(function(a, b) { return new Date(a.trial_date) - new Date(b.trial_date); }).forEach(function(trial) { %>
+            <tr>
+              <th class="trials_date"><%= trial.trial_date.toLocaleDateString('ru-RU') %></th>
+              <th>
+                <%= trial.math_result + trial.critical_thinking_result %> 
+  
+              </th>
+              <th class="trials_math_result">
+                <% if(trial.math_result) { %>
+                <%= trial.math_result %> из 15
+                <% } %>
+              </th>
+              <th class="trials_critical_thinking_result">
+                <% if(trial.critical_thinking_result) { %>
+                  <%= trial.critical_thinking_result %> из 20
+                  <% } %>
+              </th>
+
+            </tr>
+            <% }); %>
+          </table>
+        </div>
+  
+                <h5 class="text-center text-primary mt-2">Графики динамики успеваемости по предметам</h5>
+                <div class="row d-flex flex-column border rounded">
+                  <div class="col py-2">
+                    <div id="math_chart">
+                    </div>
+                  </div>
+    
+                  <div class="col py-2">
+                    <div id="critical_thinking_chart">
+                    </div>
+                  </div>
+  
+                </div>
+  
+  
+  
+        </div>
+  
+  
+  <script>
+  const trials_dates = Array.from(document.querySelectorAll('.trials_date')).map((el) => el.innerText);
+  
+  const math_results = Array.from(document.querySelectorAll('.trials_math_result')).map((el) => el.innerText.split(' ')[0])
+  const critical_thinking_results = Array.from(document.querySelectorAll('.trials_critical_thinking_result')).map((el) => el.innerText.split(' ')[0]);
+
+  
+  
+  if(critical_thinking_results.length > 0) {
+    var options = {
+      series: [{
+        name: "Critical thinking",
+        data: critical_thinking_results
+      }],
+      chart: {
+      height: 200,
+      type: 'line',
+      zoom: {
+        enabled: false
+        },
+        toolbar: {
+          show: false
+        }
+      },
+      dataLabels: { 
+        enabled: true
+      },
+      stroke: { 
+        width: [4, 4]
+      },
+      markers: {
+      size: 3
+      },
+      title: {
+        text: 'Critical thinking',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: trials_dates,
+      },
+      yaxis: {
+        max: 20,
+        min: 0,
+        tickAmount: 3,
+      }
+    };
+    var chart = new ApexCharts(document.querySelector("#critical_thinking_chart"), options);
+    chart.render();
+  };
+  
+  
+  if(math_results.length > 0) {
+    var options = {
+      series: [{
+        name: "Математика",
+        data: math_results,
+      }],
+      chart: {
+      height: 200,
+      type: 'line',
+      zoom: {
+        enabled: false
+        },
+        toolbar: {
+          show: false
+        }
+      },
+      dataLabels: { 
+        enabled: true
+      },
+      stroke: { 
+        width: [4, 4]
+      },
+      markers: {
+      size: 3
+      },
+      title: {  
+        text: 'Математика',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: trials_dates,
+      },
+      yaxis: {
+        max: 45,
+        min: 0,
+        tickAmount: 3,
+      }
+    };
+    var chart = new ApexCharts(document.querySelector("#math_chart"), options);
+    chart.render();
+  };
+  
+  
+  
+  
+  
+  
+  </script>
+      <% } %>
+
+
+
+
     <% subjects.forEach(function(subject) { %>
 
     <% if(student.results.filter((result) => result.subject_id == subject.subject_id).length !== 0) {  %>

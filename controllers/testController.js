@@ -204,3 +204,73 @@ exports.addEntTrial = async (req, res, next) => {
 
 
 };
+
+
+
+
+
+exports.addNUTrialPage = async (req, res, next) => {
+
+  db.task(t => {
+    const groupId = req.params.id;
+    let group;
+    let students;
+  
+    return t.oneOrNone(`SELECT * FROM groups WHERE group_id = ${groupId}`)
+    .then((groupData) => {
+      group = groupData;
+      return t.query(`SELECT * from students a
+      JOIN group_students b
+      ON a.student_id = b.student_id WHERE group_id = ${groupId}`)
+    })
+    .then((studentsData) => {
+      students = studentsData;
+    })
+    .then(() => res.status(200).render('./updatePages/addNuTrial', {
+      group,
+      students,
+      globalLink,
+    }))
+  
+  
+   });
+
+
+
+
+
+};
+
+
+
+exports.addNUTrial = async (req, res, next) => {
+  db.task(t => {
+
+    const groupId = req.params.id;
+    const studentsData = [req.body.students].flat();
+    const trialDate = req.body.trial_date;
+
+    const students = studentsData.map((student_id) => {
+      const student = { id: Number(student_id) };
+      student.math = req.body[`math__${student_id}`];
+      student.critical__thinking = req.body[`critical__thinking__${student_id}`];
+      return student;
+    });
+      
+
+    return t.one(`INSERT INTO group_nu_trials(group_id, trial_date) VALUES(${groupId}, '${trialDate}') RETURNING trial_id`)
+    .then(({ trial_id }) => db.tx((tt) => {
+      const queries = students.map((student) => {
+
+        return tt.none(`INSERT INTO student_nu_trials_results(trial_id, student_id,
+          math_result,   
+          critical_thinking_result) VALUES(${trial_id}, ${student.id}, ${student.math}, ${student.critical__thinking})`);
+      });
+
+      return tt.batch(queries);
+    }))
+  }).then(() => res.redirect(`${globalLink}/groups/${req.params.id}`))
+
+
+  
+};

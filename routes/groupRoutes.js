@@ -47,4 +47,11 @@ router
   // .get('/:id/removeEntTrials', testController.removeEntTrialPage)
   // .post('/:id/removeEntTrials', testController.removeEntTrialPage)
 
+  router
+  .get('/:id/addNUTrial', testController.addNUTrialPage)
+  .post('/:id/addNUTrial', testController.addNUTrial)
+  // .get('/:id/removeNUTrials', testController.removeNUTrialPage)
+  // .post('/:id/removeNUTrials', testController.removeNUTrialPage)
+
+
 module.exports = router;
