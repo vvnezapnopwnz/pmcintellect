@@ -32,6 +32,75 @@
         </div>
     </div>
 
+    <% if(student.trials.length > 0) { %>
+    <div class="row d-flex flex-column group__block mb-1 mt-3">
+        <h4 class="my-2 text-primary">Результаты по пробному тестированию ЕНТ</h4>
+      <div class="table-responsive-lg">
+        <table class="table table-striped table-hover table-bordered border-primary">
+          <tr>
+            <th>Дата проведения</th>
+            <th>История Каз-на</th>
+            <th>Грам-ть чтения</th>
+            <th>Мат. грамотность</th>
+            <th>Математика</th>
+            <th>Физика</th>
+            <th>Геометрия</th>
+            <th>Биология</th>
+            <th>Химия</th>
+          </tr>
+          <% student.trials.sort(function(a, b) { return new Date(a.trial_date) - new Date(b.trial_date); }).forEach(function(trial) { %>
+          <tr>
+            <th class="date"><%= trial.trial_date.toLocaleDateString('ru-RU') %></th>
+            <th>
+              <% if(trial.history_kaz_result) { %>
+              <%= trial.history_kaz_result %> из 15
+              <% } %>
+            </th>
+            <th>
+              <% if(trial.reading_literacy_result) { %>
+                <%= trial.reading_literacy_result %> из 20
+                <% } %>
+            </th>
+            <th>
+              <% if(trial.math_literacy_result) { %>
+              <%= trial.math_literacy_result %> из 15
+              <% } %>
+            </th>
+            <th>
+              <% if(trial.mathematics_result) { %>
+              <%= trial.mathematics_result %> из 45
+              <% } %>
+            </th>
+            <th>
+              <% if(trial.physics_result) { %>
+              <%= trial.physics_result %> из 45
+              <% } %>
+            </th>
+            <th>
+              <% if(trial.geography_result) { %>
+              <%= trial.geography_result %> из 45
+              <% } %>
+            </th>
+            <th>
+              <% if(trial.biology_result) { %>
+              <%= trial.biology_result %> из 45
+              <% } %>
+            </th>
+            <th>
+              <% if(trial.chemistry_result) { %>
+              <%= trial.chemistry_result %> из 45
+              <% } %>
+            </th>
+          </tr>
+          <% }); %>
+        </table>
+      </div>
+      <div class="col py-2">
+        <div id="chart">
+        </div>
+      </div>
+    </div>
+    <% } %>
 
 
     <% subjects.forEach(function(subject) { %>

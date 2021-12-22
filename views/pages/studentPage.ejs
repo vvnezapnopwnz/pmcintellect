@@ -63,7 +63,7 @@
           <% student.results.filter((result) => result.subject_id == subject.subject_id).sort(function(a, b) { return new Date(a.date) - new Date(b.date); }).forEach(function(result) { %>
           <tr>
             <th class="date_<%= subject.id %>"><%= result.date.toLocaleDateString('ru-RU') %></th>
-            <th><%= result.subject_name %></th>
+            <th><%= subject.name %></th>
             <th><%= result.format %></th>
             <th><%= result.max_points %></th>
             <th><%= result.points %></th>

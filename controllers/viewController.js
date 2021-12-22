@@ -9,23 +9,33 @@ exports.getStudentView = async (req, res, next) => {
   db.oneOrNone(`SELECT * from students WHERE student_id = ${student_id}`)
     .then((data) => student = data)
     .then(() => db.manyOrNone(`SELECT * FROM student_results a 
-JOIN group_tests b ON 
-a.test_id = b.test_id
-JOIN subjects c ON
-b.subject_id = c.id
- WHERE student_id = ${student_id}`)
-      .then((results) => student.results = results))
+                                JOIN group_tests b ON 
+                                a.test_id = b.test_id
+                                JOIN subjects c ON
+                                b.subject_id = c.id
+                                WHERE student_id = ${student_id}`)
+    .then((results) => student.results = results))
+    .then(() => db.manyOrNone(`select * from group_ent_trials a
+                              JOIN student_ent_trials_results b
+                              ON a.trial_id = b.trial_id
+                              WHERE b.student_id = ${student_id}`))
+    .then((trialsData) => {
+      student.trials = trialsData;
+    console.log(student.trials)
+    })
     .then(() => db.manyOrNone(`SELECT * FROM student_subjects a
-JOIN subjects b ON a.subject_id = b.id WHERE student_id = ${student_id}`))
-    .then((subjects) => db.manyOrNone(`SELECT b.posting_date, a.record_id, a.review_id, a.student_id,
-  a.attendance, a.activity, a.homework, b.group_id,
-  c.name
-  FROM student_records a
-  JOIN group_reviews b
-  ON a.review_id = b.review_id
-  JOIN subjects c ON
-  b.subject_id = c.id
-  WHERE student_id = ${student_id}`)
+                                JOIN subjects b ON a.subject_id = b.id
+                                WHERE student_id = ${student_id}`))
+    .then((subjects) => db.manyOrNone(`SELECT b.posting_date, a.record_id,
+                                a.review_id, a.student_id,
+                                a.attendance, a.activity, a.homework, b.group_id,
+                                c.name
+                                FROM student_records a
+                                JOIN group_reviews b
+                                ON a.review_id = b.review_id
+                                JOIN subjects c ON
+                                b.subject_id = c.id
+                                WHERE student_id = ${student_id}`)
       .then((records) => res.status(200)
         .render('./pages/viewPage', {
           student,
