@@ -124,3 +124,83 @@ exports.getTest = async (req, res, next) => {
       globalLink,
     }));
 };
+
+
+exports.addEntTrialPage = async (req, res, next) => {
+
+ db.task(t => {
+  const groupId = req.params.id;
+  let group;
+  let students;
+
+  return t.oneOrNone(`SELECT * FROM groups WHERE group_id = ${groupId}`)
+  .then((groupData) => {
+    group = groupData;
+    return t.query(`SELECT * from students a
+    JOIN group_students b
+    ON a.student_id = b.student_id WHERE group_id = ${groupId}`)
+  })
+  .then((studentsData) => {
+    students = studentsData;
+  })
+  .then(() => res.status(200).render('./updatePages/addEntTrial', {
+    group,
+    students,
+    globalLink,
+  }))
+
+
+ });
+
+};
+
+exports.addEntTrial = async (req, res, next) => {
+    
+  db.task(t => {
+
+    const groupId = req.params.id;
+    const studentsData = [req.body.students].flat();
+    const trialDate = req.body.trial_date;
+
+    const students = studentsData.map((student_id) => {
+      const student = { id: Number(student_id) };
+      student.history__kaz = req.body[`history__kaz__${student_id}`];
+      student.reading__literacy = req.body[`reading__literacy__${student_id}`];
+      student.math__literacy = req.body[`math__literacy__${student_id}`];
+      req.body[`mathematics__${student_id}`] ? student.mathematics = req.body[`mathematics__${student_id}`] : student.mathematics = null;
+      req.body[`physics__${student_id}`] ? student.physics = req.body[`physics__${student_id}`] : student.physics = null;
+      req.body[`geography__${student_id}`] ? student.geography = req.body[`geography__${student_id}`] : student.geography = null;
+      req.body[`biology__${student_id}`] ? student.biology = req.body[`biology__${student_id}`] : student.biology = null;
+      req.body[`chemistry__${student_id}`] ? student.chemistry = req.body[`chemistry__${student_id}`] : student.chemistry = null;
+      console.log(student)
+      return student;
+    });
+      
+    return t.one(`INSERT INTO group_ent_trials(group_id, trial_date) VALUES(${groupId}, '${trialDate}') RETURNING trial_id`)
+    .then(({ trial_id }) => db.tx((tt) => {
+      const queries = students.map((student) => {
+
+        return tt.none(`INSERT INTO student_ent_trials_results(trial_id,    student_id, history_kaz_result,   
+          reading_literacy_result,
+          math_literacy_result,
+          mathematics_result,
+          physics_result,
+          geography_result,
+          biology_result,
+          chemistry_result) VALUES(${trial_id}, ${student.id},
+            ${student.history__kaz},
+            ${student.reading__literacy},
+            ${student.math__literacy},
+            ${student.mathematics},
+            ${student.physics},
+            ${student.geography},
+            ${student.biology},
+            ${student.chemistry})`);
+      });
+
+      return tt.batch(queries);
+    }))
+  }).then(() => res.redirect(`${globalLink}/groups/${req.params.id}`))
+
+
+};

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+  <div class="row  my-3">
+    <div class="col-lg-7 student__block p-3">
+        <div class="group__info flex-column my-2">
+          <h4>
+            Группа:  <%= group.name %>
+          </h4>
+          <h5>
+              Класс:
+              <%= group.class_number %>
+          </h5>
+        </div>
+      <hr>
+      <h4>Добавить Пробное ЕНТ в группу</h4>
+      <form action=<%= `${globalLink}/groups/${group.group_id}/addEntTrial` %> method='POST'>
+
+        <div class="trial_date__list my-3">
+
+          <label for="FormControlInputDate" class="form-label">Укажите дату пробного тестирования</label>
+          <input name="trial_date" type="date" class="form-control w-50" id="FormControlInputDate">                
+
+        </div>
+
+
+
+        <div class="students__list d-flex flex-column">
+
+          <label for="InputStudents" class="form-label">Укажите набранные баллы</label>
+            <% students.forEach(function(student) { %>
+
+              <div class="students__add d-flex flex-column bg-success rounded m-1 p-1" style="transition: 0.4s;">
+                <div class="student_name justify-content-between d-flex">
+                    <select style="pointer-events: none;" name="students" type="select" class="form-control w-50" id="InputStudents">
+                        <option class="available__option" value="<%= student.student_id %>">
+                          <%= student.name %>
+                        </option>
+                      </select>    
+                      <button type="button" class="remove__student__button btn btn-danger px-3 mx-1">x</button>
+                </div>
+                <div class="trial__subjects d-flex row">
+                    <div class="required__trial__subjects col-6">
+                        <div class="history__kaz d-flex m-1 align-items-center">
+                            <label for="history__kaz__input" class="form-label text-warning">История Казахстана: </label>
+                            <input name="history__kaz__<%= student.student_id %>" type="number" class="form-control mx-1" style="width:70px" id="history__kaz__input">   
+                        </div>
+                        <div class="reading__literacy d-flex m-1 align-items-center">
+                            <label for="reading__literacy__input" class="form-label text-warning">Грамотность чтения: </label>
+                            <input name="reading__literacy__<%= student.student_id %>" type="number" class="form-control mx-1" style="width:70px" id="reading__literacy__input">   
+                        </div>
+                        <div class="math__literacy d-flex m-1 align-items-center">
+                            <label for="math__literacy__input" class="form-label text-warning">Матем. грамотность: </label>
+                            <input name="math__literacy__<%= student.student_id %>" type="number" class="form-control mx-1" style="width:70px" id="math__literacy__input">   
+                        </div>
+                    </div>
+                    <div class="unrequired__trial__subjects col-6">
+                        <div id="<%= student.student_id %>" class="btn-math btn btn-primary my-1 btn-sm">
+                            Добавить математику
+                        </div>
+                        <div id="<%= student.student_id %>" class="btn-physics btn btn-primary my-1 btn-sm">
+                            Добавить физику
+                        </div>
+                        <div id="<%= student.student_id %>" class="btn-geography btn btn-primary my-1 btn-sm">
+                            Добавить географию
+                        </div>
+                        <div id="<%= student.student_id %>" class="btn-biology btn btn-primary my-1 btn-sm">
+                            Добавить биологию
+                        </div>
+                        <div id="<%= student.student_id %>" class="btn-chemistry btn btn-primary my-1 btn-sm">
+                            Добавить химию
+                        </div>
+                    </div>
+                </div>
+
+              </div>
+            <% }); %>
+        </div>
+        <div class="buttons d-flex flex-column justify-content-center">
+          <button type="submit" class="btn btn-primary my-2 w-50">Добавить</button>
+          <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+
+    <%- include ("../partials/footer.ejs") %>
+
+<script>
+
+const removeStudentButton = Array.from(document.querySelectorAll('.remove__student__button'));
+// const studentsList = document.querySelector('.students__list');
+removeStudentButton.forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    const divWithSelect = el.parentElement.parentElement;
+    divWithSelect.style.opacity = 0;
+    setTimeout(() => divWithSelect.parentElement.removeChild(divWithSelect), 500);
+  })
+})
+
+const btnMath = Array.from(document.querySelectorAll('.btn-math'))
+btnMath.forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    const subjectsBlock = el.parentElement.parentElement.firstElementChild;
+    const mathBlock = document.createElement('div');
+    mathBlock.setAttribute('class', 'mathematics d-flex m-1 align-items-center');
+    mathBlock.insertAdjacentHTML('afterbegin', `<label for="mathematics__input" class="form-label text-warning">Математика:&emsp;&emsp;&emsp;&emsp;</label>
+      <input name="mathematics__${el.id}" type="number" class="form-control mx-1" style="width:70px" id="mathematics__input">`);
+
+    subjectsBlock.appendChild(mathBlock)
+    console.log(mathBlock)
+  }, { once: true})
+});
+
+const btnPhysics = Array.from(document.querySelectorAll('.btn-physics'))
+btnPhysics.forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    const subjectsBlock = el.parentElement.parentElement.firstElementChild;
+    const physicsBlock = document.createElement('div');
+    physicsBlock.setAttribute('class', 'physics d-flex m-1 align-items-center');
+    physicsBlock.insertAdjacentHTML('afterbegin', `<label for="physics__input" class="form-label text-warning">Физика:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</label>
+      <input name="physics__${el.id}" type="number" class="form-control mx-1" style="width:70px" id="physics__input">`);
+
+    subjectsBlock.appendChild(physicsBlock)
+    console.log(physicsBlock)
+  }, { once: true})
+});
+
+const btnGeography = Array.from(document.querySelectorAll('.btn-geography'))
+btnGeography.forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    const subjectsBlock = el.parentElement.parentElement.firstElementChild;
+    const geographyBlock = document.createElement('div');
+    geographyBlock.setAttribute('class', 'geography d-flex m-1 align-items-center');
+    geographyBlock.insertAdjacentHTML('afterbegin', `<label for="geography__input" class="form-label text-warning">География:&emsp;&emsp;&emsp;&emsp;&emsp;</label>
+      <input name="geography__${el.id}" type="number" class="form-control mx-1" style="width:70px" id="geography__input">`);
+
+    subjectsBlock.appendChild(geographyBlock)
+    console.log(geographyBlock)
+  }, { once: true})
+});
+
+const btnBiology = Array.from(document.querySelectorAll('.btn-biology'))
+btnBiology.forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    const subjectsBlock = el.parentElement.parentElement.firstElementChild;
+    const biologyBlock = document.createElement('div');
+    biologyBlock.setAttribute('class', 'biology d-flex m-1 align-items-center');
+    biologyBlock.insertAdjacentHTML('afterbegin', `<label for="biology__input" class="form-label text-warning">Биология:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</label>
+      <input name="biology__${el.id}" type="number" class="form-control mx-1" style="width:70px" id="biology__input">`);
+
+    subjectsBlock.appendChild(biologyBlock)
+    console.log(biologyBlock)
+  }, { once: true})
+});
+
+const btnChemistry = Array.from(document.querySelectorAll('.btn-chemistry'))
+btnChemistry.forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    const subjectsBlock = el.parentElement.parentElement.firstElementChild;
+    const chemistryBlock = document.createElement('div');
+    chemistryBlock.setAttribute('class', 'chemistry d-flex m-1 align-items-center');
+    chemistryBlock.insertAdjacentHTML('afterbegin', `<label for="chemistry__input" class="form-label text-warning">Химия:&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</label>
+      <input name="chemistry__${el.id}" type="number" class="form-control mx-1" style="width:70px" id="chemistry__input">`);
+
+    subjectsBlock.appendChild(chemistryBlock)
+    console.log(chemistryBlock)
+  }, { once: true})
+});
+
+
+</script>

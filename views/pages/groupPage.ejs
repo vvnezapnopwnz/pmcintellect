@@ -126,6 +126,23 @@
     </div>
     </div>
 
+    <% if(group.class_number == 11){ %>
+    <div class="row d-flex group__block my-4">
+      <div class="col py-2">
+        <h4 class="text-center">Пробное ЕНТ</h4>
+        <div class="tests__content">
+          <a href=<%= `${globalLink}/groups/${group.group_id}/addEntTrial` %> class="btn btn-primary my-2">
+          Добавить пробное ЕНТ в эту группу
+          </a>          
+          <a href=<%= `${globalLink}/groups/${group.group_id}/removeEntTrial` %> class="btn btn-danger my-2">
+            Удалить пробное ЕНТ из группы
+            </a>
+        </div>
+    </div>
+    </div>
+    <% } %>
+
+
     <% subjects.forEach(function(subject) { %>
       
       <div class="row d-flex flex-column group__block my-3">

@@ -41,4 +41,10 @@ router
   .get('/:id/removeReview', reviewController.removeReviewPage)
   .post('/:id/removeReview', reviewController.removeReview);
 
+  router
+  .get('/:id/addEntTrial', testController.addEntTrialPage)
+  .post('/:id/addEntTrial', testController.addEntTrial)
+  // .get('/:id/removeEntTrials', testController.removeEntTrialPage)
+  // .post('/:id/removeEntTrials', testController.removeEntTrialPage)
+
 module.exports = router;
