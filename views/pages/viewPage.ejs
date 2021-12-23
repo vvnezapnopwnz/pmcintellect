@@ -164,8 +164,15 @@ if(history_kaz_results.length > 0) {
         show: false
       }
     },
+    stroke: {
+      width: [4, 4]
+    },
+    markers: {
+      size: 4
+    },
     dataLabels: {
-      enabled: false
+      enabled: true,
+      enabledOnSeries: [1]
     },
     stroke: {
       curve: 'straight'
@@ -210,8 +217,15 @@ if(reading_literacy_results.length > 0) {
         show: false
       }
     },
+    stroke: {
+      width: [4, 4]
+    },
+    markers: {
+      size: 4
+    },
     dataLabels: {
-      enabled: false
+      enabled: true,
+      enabledOnSeries: [1]
     },
     stroke: {
       curve: 'straight'
@@ -256,8 +270,15 @@ if(math_literacy_results.length > 0) {
         show: false
       }
     },
+    stroke: {
+      width: [4, 4]
+    },
+    markers: {
+      size: 4
+    },
     dataLabels: {
-      enabled: false
+      enabled: true,
+      enabledOnSeries: [1]
     },
     stroke: {
       curve: 'straight'
@@ -303,8 +324,15 @@ if(mathematics_results.length > 0) {
         show: false
       }
     },
+    stroke: {
+      width: [4, 4]
+    },
+    markers: {
+      size: 4
+    },
     dataLabels: {
-      enabled: false
+      enabled: true,
+      enabledOnSeries: [1]
     },
     stroke: {
       curve: 'straight'
@@ -349,8 +377,15 @@ if(physics_results.length > 0) {
         show: false
       }
     },
+    stroke: {
+      width: [4, 4]
+    },
+    markers: {
+      size: 4
+    },
     dataLabels: {
-      enabled: false
+      enabled: true,
+      enabledOnSeries: [1]
     },
     stroke: {
       curve: 'straight'
@@ -398,8 +433,15 @@ if(geography_results.length > 0) {
         show: false
       }
     },
-    dataLabels: { 
-      enabled: false
+    stroke: {
+      width: [4, 4]
+    },
+    markers: {
+      size: 4
+    },
+    dataLabels: {
+      enabled: true,
+      enabledOnSeries: [1]
     },
     stroke: { 
       curve: 'straight'
@@ -434,9 +476,6 @@ if(geography_results.length > 0) {
 
 </script>
     <% } %>
-
-
-
 
     <% if(student.nuTrials.length > 0) { %>
       <div class="row d-flex flex-column group__block mb-1 mt-3 align-items-center">
@@ -653,6 +692,9 @@ var options = {
               height: 350,
               type: 'line',
             },
+            zoom: {
+  enabled: false
+  },
             stroke: {
               width: [4, 4]
             },
@@ -660,7 +702,7 @@ var options = {
               size: 3
             },
             title: {
-              text: 'График успеваемости группы'
+              text: 'График по предмету <%= subject.name %>'
             },
             dataLabels: {
               enabled: true,
@@ -803,3 +845,5 @@ var options = {
 
 
 
+
+<%- include ("../partials/footer.ejs") %>

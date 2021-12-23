@@ -46,29 +46,86 @@ exports.deleteStudent = async (req, res, next) => {
   //   .then(() => res.status(200).redirect(`${globalLink}/students/`))).catch((err) => res.status(500).redirect(`${globalLink}`));
 };
 
+// exports.getStudent = async (req, res, next) => {
+//   const studentId = req.params.id;
+//   let student;
+//   db.one(`SELECT * from students WHERE student_id = ${studentId}`)
+//     .then((data) => student = data)
+//     .then(() => db.manyOrNone(`SELECT * FROM student_results a 
+//   JOIN group_tests b ON 
+//   a.test_id = b.test_id
+//   JOIN subjects c ON
+//   b.subject_id = c.id
+//    WHERE student_id = ${student.student_id}`)
+//       .then((results) => student.results = results))
+//     .then(() => db.manyOrNone(`SELECT * FROM student_subjects a
+//   JOIN subjects b ON a.subject_id = b.id WHERE student_id = ${studentId}`))
+//     .then((subjects) => db.manyOrNone(`SELECT b.posting_date, a.record_id, a.review_id, a.student_id,
+//     a.attendance, a.activity, a.homework, b.group_id,
+//     c.name
+//     FROM student_records a
+//     JOIN group_reviews b
+//     ON a.review_id = b.review_id
+//     JOIN subjects c ON
+//     b.subject_id = c.id
+//     WHERE student_id = ${student.student_id}`)
+//       .then((records) => res.status(200)
+//         .render('./pages/studentPage', {
+//           student,
+//           subjects,
+//           records,
+//           globalLink,
+//         })))
+//     .catch((error) => {
+//       console.log(error);
+//       res.redirect(`${globalLink}/`);
+//     });
+// };
+
 exports.getStudent = async (req, res, next) => {
-  const studentId = req.params.id;
-  let student;
-  db.one(`SELECT * from students WHERE student_id = ${studentId}`)
+
+  db.task(t => {
+
+    const student_id = req.params.id;
+
+    let student;
+
+    return t.oneOrNone(`SELECT * from students WHERE student_id = ${student_id}`)
     .then((data) => student = data)
-    .then(() => db.manyOrNone(`SELECT * FROM student_results a 
-  JOIN group_tests b ON 
-  a.test_id = b.test_id
-  JOIN subjects c ON
-  b.subject_id = c.id
-   WHERE student_id = ${student.student_id}`)
-      .then((results) => student.results = results))
-    .then(() => db.manyOrNone(`SELECT * FROM student_subjects a
-  JOIN subjects b ON a.subject_id = b.id WHERE student_id = ${studentId}`))
-    .then((subjects) => db.manyOrNone(`SELECT b.posting_date, a.record_id, a.review_id, a.student_id,
-    a.attendance, a.activity, a.homework, b.group_id,
-    c.name
-    FROM student_records a
-    JOIN group_reviews b
-    ON a.review_id = b.review_id
-    JOIN subjects c ON
-    b.subject_id = c.id
-    WHERE student_id = ${student.student_id}`)
+    .then(() => t.manyOrNone(`SELECT * FROM student_results a 
+                                JOIN group_tests b ON 
+                                a.test_id = b.test_id
+                                JOIN subjects c ON
+                                b.subject_id = c.id
+                                WHERE student_id = ${student_id}`)
+    .then((results) => student.results = results))
+    .then(() => t.manyOrNone(`select * from group_ent_trials a
+                              JOIN student_ent_trials_results b
+                              ON a.trial_id = b.trial_id
+                              WHERE b.student_id = ${student_id}`))
+    .then((trialsData) => {
+      student.trials = trialsData;
+    })
+    .then(() => t.manyOrNone(`select * from group_nu_trials a
+                              JOIN student_nu_trials_results b
+                              ON a.trial_id = b.trial_id
+                              WHERE b.student_id = ${student_id}`))
+    .then((nuTrialsData) => {
+    student.nuTrials = nuTrialsData;
+    })
+    .then(() => t.manyOrNone(`SELECT * FROM student_subjects a
+                                JOIN subjects b ON a.subject_id = b.id
+                                WHERE student_id = ${student_id}`))
+    .then((subjects) => t.manyOrNone(`SELECT b.posting_date, a.record_id,
+                                a.review_id, a.student_id,
+                                a.attendance, a.activity, a.homework, b.group_id,
+                                c.name
+                                FROM student_records a
+                                JOIN group_reviews b
+                                ON a.review_id = b.review_id
+                                JOIN subjects c ON
+                                b.subject_id = c.id
+                                WHERE student_id = ${student_id}`)
       .then((records) => res.status(200)
         .render('./pages/studentPage', {
           student,
@@ -80,7 +137,28 @@ exports.getStudent = async (req, res, next) => {
       console.log(error);
       res.redirect(`${globalLink}/`);
     });
+
+  });
+
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 exports.getAll = async (req, res, next) => {
   let students;

@@ -35,6 +35,9 @@
             </select>
           </div>
         </div>
+        <% if (subject.name.slice(0,13) == 'Пробные тесты') { %>
+          <h2><%= subject.name.slice(0,13) %></h2>
+          <% } %>
 
         <div class="review_date__list my-3">
           <label for="FormControlInputDate" class="form-label">Укажите дату занятия</label>
@@ -59,7 +62,6 @@
                     </option>
                   </select>
                 </div>
-
                 <div class="row d-flex flex-column records_content">
                   <div class="block d-flex my-1" style="width: auto;">
                       <input type="radio" checked value="true" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
@@ -88,6 +90,7 @@
                     <input type="radio" value="false" class="btn-check" name="homework_<%= student.student_id %>" id="homework_no_<%= student.student_id %>" autocomplete="off">
                     <label class="btn btn-outline-danger flex-grow-1" for="homework_no_<%= student.student_id %>">ДЗ нет</label>
                   </div>
+                  
                 </div>
               </div>
 <hr>
