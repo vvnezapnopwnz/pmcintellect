@@ -20,6 +20,6 @@ router
 
 router
   .route('/:id')
-  .get(studentController.getStudent);
+  .get(authController.isLoggedIn, studentController.getStudent);
 
 module.exports = router;
