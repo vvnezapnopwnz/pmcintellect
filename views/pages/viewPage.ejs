@@ -116,6 +116,11 @@
                   </div>
                 </div>
 
+                <div class="col py-2">
+                  <div id="geography_chart">
+                  </div>
+                </div>
+
               </div>
 
 
@@ -139,13 +144,18 @@ const physics_results = Array.from(document.querySelectorAll('.trials_physics_re
       }
     });
 const geography_results = Array.from(document.querySelectorAll('.trials_geography_result'))
-  .map((el) => {
+  .map((el, index) => {
     if(el.innerText.split(' ')[0] == '') {
+
       return;
     } else {
-      return   el.innerText.split(' ')[0];
+
+      return   {
+        resultValue: el.innerText.split(' ')[0],
+        dateValue: trials_dates[index],
+      }
     }
-  });
+  }).filter((el) => el != undefined);
 
 
 if(history_kaz_results.length > 0) {
@@ -416,12 +426,12 @@ if(physics_results.length > 0) {
 
 
 
-
+console.log(geography_results); 
 if(geography_results.length > 0) {
   var options = {
     series: [{
       name: "География",
-      data: geography_results,
+      data: geography_results.map((el) => el.resultValue),
     }],
     chart: {
     height: 200,
@@ -457,7 +467,7 @@ if(geography_results.length > 0) {
       },
     },
     xaxis: {
-      categories: trials_dates,
+      categories: geography_results.map((el) => el.dateValue),
     },
     yaxis: {
       max: 45,
@@ -497,12 +507,12 @@ if(geography_results.length > 0) {
               </th>
               <th class="trials_math_result">
                 <% if(trial.math_result) { %>
-                <%= trial.math_result %> из 15
+                <%= trial.math_result %> из 30
                 <% } %>
               </th>
               <th class="trials_critical_thinking_result">
                 <% if(trial.critical_thinking_result) { %>
-                  <%= trial.critical_thinking_result %> из 20
+                  <%= trial.critical_thinking_result %> из 30
                   <% } %>
               </th>
 
@@ -531,12 +541,12 @@ if(geography_results.length > 0) {
   
   
   <script>
-  const trials_dates = Array.from(document.querySelectorAll('.trials_date')).map((el) => el.innerText);
+  const nuTrials_dates = Array.from(document.querySelectorAll('.trials_date')).map((el) => el.innerText);
   
   const math_results = Array.from(document.querySelectorAll('.trials_math_result')).map((el) => el.innerText.split(' ')[0])
   const critical_thinking_results = Array.from(document.querySelectorAll('.trials_critical_thinking_result')).map((el) => el.innerText.split(' ')[0]);
 
-  
+  console.log(math_results)
   
   if(critical_thinking_results.length > 0) {
     var options = {
@@ -574,10 +584,10 @@ if(geography_results.length > 0) {
         },
       },
       xaxis: {
-        categories: trials_dates,
+        categories: nuTrials_dates,
       },
       yaxis: {
-        max: 20,
+        max: 30,
         min: 0,
         tickAmount: 3,
       }
@@ -590,7 +600,7 @@ if(geography_results.length > 0) {
   if(math_results.length > 0) {
     var options = {
       series: [{
-        name: "Математика",
+        name: "Math",
         data: math_results,
       }],
       chart: {
@@ -613,7 +623,7 @@ if(geography_results.length > 0) {
       size: 3
       },
       title: {  
-        text: 'Математика',
+        text: 'Math',
         align: 'left'
       },
       grid: {
@@ -623,10 +633,10 @@ if(geography_results.length > 0) {
         },
       },
       xaxis: {
-        categories: trials_dates,
+        categories: nuTrials_dates,
       },
       yaxis: {
-        max: 45,
+        max: 30,
         min: 0,
         tickAmount: 3,
       }
@@ -727,116 +737,155 @@ var options = {
 
         <% } %>
 
-
         <% if(records.filter((record) => record.name == subject.name).length !== 0) { %>
-        <div class="row d-flex flex-column group__block my-1">
-        <div class="accordion" id="accordion">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="headingSubject_<%= subject.id %>">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject_<%= subject.id %>" aria-expanded="true" aria-controls="collapseSubject_<%= subject.id %>">
-                <h5 class="text-center text-primary">Ревью занятий по предмету: <%= subject.name %></h5>
-              </button>
-            </h2>
-            <div id="collapseSubject_<%= subject.id %>" class="accordion-collapse collapse" aria-labelledby="headingSubject_<%= subject.id %>" data-bs-parent="#accordion">
-              <div class="accordion-body d-flex flex-column bg-warning">
-  
-                  <div class="table-responsive-lg">
-                    <table class="table table-striped table-hover table-bordered border-primary">
-                      <tr>
-                         <th>Дата проведения</th>
-                         <th>Предмет</th>
-                         <th>Посещаемость</th>
-                         <th>Активность</th>
-                         <th>Домашнее задание</th>
-                      </tr>
-                      <% records.filter((record) => record.name == subject.name).forEach(function(record) { %>
-                      <tr>
-                          <th class=""><%= record.posting_date.toLocaleDateString('ru-RU') %></th>
-                          <th><%= record.name %></th>
-                          <th><% if(record.attendance) { %>
-                            <p class="attendance">Посетил</p>
-                            <% } else { %>
-                            <p class="attendance">Отсутствовал</p>
-          
-                          <% } %>
-                            </th>
-                            <th><% if(record.activity) { %>
-                              <p class="activity">Активен</p>
+          <div class="row d-flex flex-column group__block my-1">
+          <div class="accordion" id="accordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingSubject_<%= subject.id %>">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject_<%= subject.id %>" aria-expanded="true" aria-controls="collapseSubject_<%= subject.id %>">
+                  <h5 class="text-center text-primary">Ревью занятий по предмету: <%= subject.name %></h5>
+                </button>
+              </h2>
+              <div id="collapseSubject_<%= subject.id %>" class="accordion-collapse collapse" aria-labelledby="headingSubject_<%= subject.id %>" data-bs-parent="#accordion">
+                <div class="accordion-body d-flex flex-column bg-warning">
+    
+                    <div class="table-responsive-lg">
+                      <table class="table table-striped table-hover table-bordered border-primary">
+                        <tr>
+                           <th>Дата проведения</th>
+                           <th>Предмет</th>
+                           <th>Посещаемость</th>
+                           <th>Активность</th>
+                           <th>Домашнее задание</th>
+                        </tr>
+  <% records.filter((record) => record.name == subject.name).forEach(function(record) { %>
+                        <tr>
+                            <th class=""><%= record.posting_date.toLocaleDateString('ru-RU') %></th>
+                            <th><%= record.name %></th>
+                            <th><% if(record.attendance) { %>
+                              <p class="attendance_<%= subject.id %>">Посетил</p>
                               <% } else { %>
-                                <p class="activity">Не активен</p>
+                              <p class="attendance_<%= subject.id %>">Отсутствовал</p>
+            
                             <% } %>
                               </th>
-                              <th><% if(record.homework) { %>
-                                <p class="homework">Выполнил</p>
+                              <th><% if(record.activity) { %>
+                                <p class="activity_<%= subject.id %>">Активен</p>
                                 <% } else { %>
-                                  <p class="homework">Не выполнил</p>
+                                  <p class="activity_<%= subject.id %>">Не активен</p>
                               <% } %>
                                 </th>
-                      </tr>
-                      <% }); %>
-                   </table>
+                              <th><% if(record.homework) { %>
+                                  <p class="homework_<%= subject.id %>">Выполнил</p>
+                                  <% } else { %>
+                                    <p class="homework_<%= subject.id %>">Не выполнил</p>
+                                <% } %>
+                              </th>
+                        </tr>
+  <% }); %>
+                     </table>
+                    </div>
                   </div>
-                </div>
+              </div>
             </div>
           </div>
+          <div class="col py-2">
+            <div id="chart_records_<%= subject.id %>">
+            </div>
+          </div>
+  
+  
+  
+  
         </div>
-      </div>
+  
+  
+  
         <script>
+  
+  const attendance_<%= subject.id %> = Array.from(document.querySelectorAll('.attendance_<%= subject.id %>'))
+  .map((el) => el.innerHTML)
+  const attended_<%= subject.id %> = Array.from(document.querySelectorAll('.attendance_<%= subject.id %>'))
+  .map((el) => el.innerHTML).filter((el) => el == 'Посетил');
+  
+  const activity_<%= subject.id %> = Array.from(document.querySelectorAll('.activity_<%= subject.id %>'))
+  .map((el) => el.innerHTML)
+  const active_<%= subject.id %> = Array.from(document.querySelectorAll('.activity_<%= subject.id %>'))
+  .map((el) => el.innerHTML).filter((el) => el == 'Активен');
+  
+  const homework_<%= subject.id %> = Array.from(document.querySelectorAll('.homework_<%= subject.id %>'))
+  .map((el) => el.innerHTML)
+  const doneHomework_<%= subject.id %> = Array.from(document.querySelectorAll('.homework_<%= subject.id %>'))
+  .map((el) => el.innerHTML).filter((el) => el == 'Выполнил');
+  
+  console.log(attendance_<%= subject.id %>)
 
-          const attendance = Array.from(document.querySelectorAll('.attendance'))
-          .map((el) => el.innerHTML)
-          const attended = Array.from(document.querySelectorAll('.attendance'))
-          .map((el) => el.innerHTML).filter((el) => el == 'Посетил');
-        
-          const activity = Array.from(document.querySelectorAll('.activity'))
-          .map((el) => el.innerHTML)
-          const active = Array.from(document.querySelectorAll('.activity'))
-          .map((el) => el.innerHTML).filter((el) => el == 'Активен');
-        
-          const homework = Array.from(document.querySelectorAll('.homework'))
-          .map((el) => el.innerHTML)
-          const doneHomework = Array.from(document.querySelectorAll('.homework'))
-          .map((el) => el.innerHTML).filter((el) => el == 'Выполнил');
-        
-        
-        console.log(Math.round(((attended.length / attendance.length)
-                               + (active.length / activity.length)
-                              + (doneHomework.length / homework.length)) / 3 ))
-        
-        
-              var options = {
-                  series: [Math.round(attended.length / attendance.length * 100),
-                   Math.round(active.length / activity.length * 100), 
-                   Math.round(doneHomework.length / homework.length * 100)],
-                  chart: {
-                  height: 350,
-                  type: 'radialBar',
-                },
-                plotOptions: {
-                  radialBar: {
-                    dataLabels: {
-                      name: {
-                        fontSize: '18px',
-                        color: '#3377FF',
-                      },
-                    },
-                    
-                  }
-                },
-                fill: {
-                  opacity: 1.5,
-                  colors: ['#3377FF', '#FF3396', '#3BDD51' ],
-                  type: 'gradient',
-                },
-                labels: ['Посещаемость', 'Активность', 'Выполнение ДЗ'],
-                };
-        
-                var chart = new ApexCharts(document.querySelector("#chart_records"), options);
-                chart.render();
-        
-        
-        </script>
-<% } %>
+
+  var options = {
+    series: [{
+      name: 'Да',
+      data: [attended_<%= subject.id %>.length, active_<%= subject.id %>.length, doneHomework_<%= subject.id %>.length]
+    }, {
+      name: 'Нет',
+      data: [attendance_<%= subject.id %>.length - attended_<%= subject.id %>.length, attended_<%= subject.id %>.length - active_<%= subject.id %>.length, attended_<%= subject.id %>.length - doneHomework_<%= subject.id %>.length]
+    }],
+    chart: {
+      type: 'bar',
+      height: 300,
+      stacked: true,
+      toolbar: {
+        show: false
+      },
+      zoom: {
+        enabled: false
+      }
+    },
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        legend: {
+          position: 'bottom',
+          offsetX: -10,
+          offsetY: 0
+        }
+      }
+    }],
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        borderRadius: 10
+      },
+    },
+    xaxis: {
+      type: 'category',
+      categories: ['Посещаемость', 'Активность', 'Домашнее задание'
+      ],
+    },
+    legend: {
+      position: 'right',
+      offsetY: 40
+    },
+    fill: {
+      opacity: 1
+    }
+  };
+  
+          var chart = new ApexCharts(document.querySelector("#chart_records_<%= subject.id %>"), options);
+          chart.render();
+          
+          
+  
+  
+  
+  
+  
+  
+  
+  
+  
+          </script>
+  <% } %>
+
 
 <% }); %>
 

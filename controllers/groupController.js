@@ -26,6 +26,7 @@ exports.getGroup = async (req, res, next) => {
     let tests;
     let reviews;
     let trials;
+    let nuTrials;
 
     return t.one(`SELECT * from groups WHERE group_id = '${groupId}'`)
     .then((groupData) => group = groupData)
@@ -60,6 +61,13 @@ exports.getGroup = async (req, res, next) => {
     GROUP BY a.trial_id`))
     .then((trialsData) => trials = trialsData)
     .then(() => t.query(`SELECT * from group_tests WHERE group_id = ${groupId}`))
+    .then(() => t.manyOrNone(`select a.trial_id, a.trial_date, a.group_id, count(b.student_id) from group_nu_trials a
+    JOIN student_nu_trials_results b
+    ON a.trial_id = b.trial_id
+    WHERE a.group_id = ${groupId}
+    GROUP BY a.trial_id`))
+    .then((nuTrialsData) => nuTrials = nuTrialsData)
+    .then(() => t.query(`SELECT * from group_tests WHERE group_id = ${groupId}`))
     .then((testsData) => tests = testsData.map((test) => {
       test.subject_name = subjects.filter((subject) => {
         if (subject.id == test.subject_id) {
@@ -86,6 +94,7 @@ exports.getGroup = async (req, res, next) => {
           subjects,
           reviews,
           trials,
+          nuTrials,
           globalLink,
         }));
     })

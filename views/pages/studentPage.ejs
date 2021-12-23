@@ -43,13 +43,8 @@
         </div>
     </div>
 
-
-
-
-
-
     <% if(student.trials.length > 0) { %>
-      <div class="row d-flex flex-column group__block my-5 align-items-center">
+      <div class="row d-flex flex-column group__block mb-1 mt-3 align-items-center">
           <h3 class="my-3 text-primary text-center">Результаты по пробному тестированию ЕНТ</h3>
         <div class="table-responsive-lg">
           <table class="table table-striped table-hover table-bordered border-primary">
@@ -132,6 +127,11 @@
                     </div>
                   </div>
   
+                  <div class="col py-2">
+                    <div id="geography_chart">
+                    </div>
+                  </div>
+  
                 </div>
   
   
@@ -155,13 +155,18 @@
         }
       });
   const geography_results = Array.from(document.querySelectorAll('.trials_geography_result'))
-    .map((el) => {
+    .map((el, index) => {
       if(el.innerText.split(' ')[0] == '') {
+  
         return;
       } else {
-        return   el.innerText.split(' ')[0];
+  
+        return   {
+          resultValue: el.innerText.split(' ')[0],
+          dateValue: trials_dates[index],
+        }
       }
-    });
+    }).filter((el) => el != undefined);
   
   
   if(history_kaz_results.length > 0) {
@@ -431,13 +436,11 @@
   
   
   
-  
-  
   if(geography_results.length > 0) {
     var options = {
       series: [{
         name: "География",
-        data: geography_results,
+        data: geography_results.map((el) => el.resultValue),
       }],
       chart: {
       height: 200,
@@ -473,7 +476,7 @@
         },
       },
       xaxis: {
-        categories: trials_dates,
+        categories: geography_results.map((el) => el.dateValue),
       },
       yaxis: {
         max: 45,
@@ -513,12 +516,12 @@
                 </th>
                 <th class="trials_math_result">
                   <% if(trial.math_result) { %>
-                  <%= trial.math_result %> из 15
+                  <%= trial.math_result %> из 30
                   <% } %>
                 </th>
                 <th class="trials_critical_thinking_result">
                   <% if(trial.critical_thinking_result) { %>
-                    <%= trial.critical_thinking_result %> из 20
+                    <%= trial.critical_thinking_result %> из 30
                     <% } %>
                 </th>
   
@@ -547,12 +550,11 @@
     
     
     <script>
-    const trials_dates = Array.from(document.querySelectorAll('.trials_date')).map((el) => el.innerText);
+    const nuTrials_dates = Array.from(document.querySelectorAll('.trials_date')).map((el) => el.innerText);
     
     const math_results = Array.from(document.querySelectorAll('.trials_math_result')).map((el) => el.innerText.split(' ')[0])
     const critical_thinking_results = Array.from(document.querySelectorAll('.trials_critical_thinking_result')).map((el) => el.innerText.split(' ')[0]);
   
-    
     
     if(critical_thinking_results.length > 0) {
       var options = {
@@ -590,10 +592,10 @@
           },
         },
         xaxis: {
-          categories: trials_dates,
+          categories: nuTrials_dates,
         },
         yaxis: {
-          max: 20,
+          max: 30,
           min: 0,
           tickAmount: 3,
         }
@@ -606,7 +608,7 @@
     if(math_results.length > 0) {
       var options = {
         series: [{
-          name: "Математика",
+          name: "Math",
           data: math_results,
         }],
         chart: {
@@ -629,7 +631,7 @@
         size: 3
         },
         title: {  
-          text: 'Математика',
+          text: 'Math',
           align: 'left'
         },
         grid: {
@@ -639,10 +641,10 @@
           },
         },
         xaxis: {
-          categories: trials_dates,
+          categories: nuTrials_dates,
         },
         yaxis: {
-          max: 45,
+          max: 30,
           min: 0,
           tickAmount: 3,
         }
@@ -660,216 +662,245 @@
         <% } %>
   
   
-
-        
-
-
-
-        <% subjects.forEach(function(subject) { %>
-
-          <% if(student.results.filter((result) => result.subject_id == subject.subject_id).length !== 0) {  %>
-            <div class="row d-flex flex-column group__block mb-1 mt-3">
-              <h4 class="my-2 text-primary">Результаты тестов по предмету: <%= subject.name %></h4>
-            <div class="table-responsive-lg">
-              <table class="table table-striped table-hover table-bordered border-primary">
-                <tr>
-                   <th>Дата проведения</th>
-                   <th>Предмет</th>
-                   <th>Формат тестирования</th>
-                   <th>Максимум баллов</th>
-                   <th>Набранные баллы</th>
-                   <th>% от максимума</th>
-                </tr>
-                <% student.results.filter((result) => result.subject_id == subject.subject_id).sort(function(a, b) { return new Date(a.date) - new Date(b.date); }).forEach(function(result) { %>
-                <tr>
-                  <th class="date_<%= subject.id %>"><%= result.date.toLocaleDateString('ru-RU') %></th>
-                  <th><%= subject.name %></th>
-                  <th><%= result.format %></th>
-                  <th><%= result.max_points %></th>
-                  <th><%= result.points %></th>
-                  <th class="percent_<%= subject.id %>"><%= Math.round((result.points / result.max_points) * 100) %></th>
-                </tr>
-                <% }); %>
-              </table>
-            </div>
-            <div class="col py-2">
-              <div id="chart_<%= subject.id %>">
+  
+  
+      <% subjects.forEach(function(subject) { %>
+  
+      <% if(student.results.filter((result) => result.subject_id == subject.subject_id).length !== 0) {  %>
+        <div class="row d-flex flex-column group__block mb-1 mt-3">
+          <h4 class="my-2 text-primary">Результаты тестов по предмету: <%= subject.name %></h4>
+        <div class="table-responsive-lg">
+          <table class="table table-striped table-hover table-bordered border-primary">
+            <tr>
+               <th>Дата проведения</th>
+               <th>Предмет</th>
+               <th>Формат тестирования</th>
+               <th>Максимум баллов</th>
+               <th>Набранные баллы</th>
+               <th>% от максимума</th>
+            </tr>
+            <% student.results.filter((result) => result.subject_id == subject.subject_id).sort(function(a, b) { return new Date(a.date) - new Date(b.date); }).forEach(function(result) { %>
+            <tr>
+              <th class="date_<%= subject.id %>"><%= result.date.toLocaleDateString('ru-RU') %></th>
+              <th><%= subject.name %></th>
+              <th><%= result.format %></th>
+              <th><%= result.max_points %></th>
+              <th><%= result.points %></th>
+              <th class="percent_<%= subject.id %>"><%= Math.round((result.points / result.max_points) * 100) %></th>
+            </tr>
+            <% }); %>
+          </table>
+        </div>
+        <div class="col py-2">
+          <div id="chart_<%= subject.id %>">
+          </div>
+        </div>
+        </div>
+    <script> 
+  
+      
+  
+  var options = {
+                series: [{
+                name: '% от максимума',
+                type: 'line',
+                data: Array.from(document.querySelectorAll('.percent_<%= subject.id %>')).map((el) => el.innerHTML),
+              }],
+                chart: {
+                height: 250,
+                type: 'line',
+              },
+              zoom: {
+    enabled: false
+    },
+              stroke: {
+                width: [4, 4]
+              },
+              markers: {
+                size: 3
+              },
+              title: {
+                text: 'График по предмету <%= subject.name %>'
+              },
+              dataLabels: {
+                enabled: true,
+                enabledOnSeries: [1]
+              },
+              labels: Array.from(document.querySelectorAll('.date_<%= subject.id %>')).map((el) => el.innerHTML),
+              xaxis: {
+                type: 'date'
+              },
+              yaxis: [{
+                title: {
+                  text: '% от максимума',
+                },
+                max: 100,
+                min: 0,
+              }]
+              };
+  
+  
+              var chart_<%= subject.id %> = new ApexCharts(document.querySelector("#chart_<%= subject.id %>"), options).render();
+      </script>
+  
+          <% } %>
+  
+  <% if(records.filter((record) => record.name == subject.name).length !== 0) { %>
+          <div class="row d-flex flex-column group__block my-1">
+          <div class="accordion" id="accordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingSubject_<%= subject.id %>">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject_<%= subject.id %>" aria-expanded="true" aria-controls="collapseSubject_<%= subject.id %>">
+                  <h5 class="text-center text-primary">Ревью занятий по предмету: <%= subject.name %></h5>
+                </button>
+              </h2>
+              <div id="collapseSubject_<%= subject.id %>" class="accordion-collapse collapse" aria-labelledby="headingSubject_<%= subject.id %>" data-bs-parent="#accordion">
+                <div class="accordion-body d-flex flex-column bg-warning">
+    
+                    <div class="table-responsive-lg">
+                      <table class="table table-striped table-hover table-bordered border-primary">
+                        <tr>
+                           <th>Дата проведения</th>
+                           <th>Предмет</th>
+                           <th>Посещаемость</th>
+                           <th>Активность</th>
+                           <th>Домашнее задание</th>
+                        </tr>
+  <% records.filter((record) => record.name == subject.name).forEach(function(record) { %>
+                        <tr>
+                            <th class=""><%= record.posting_date.toLocaleDateString('ru-RU') %></th>
+                            <th><%= record.name %></th>
+                            <th><% if(record.attendance) { %>
+                              <p class="attendance_<%= subject.id %>">Посетил</p>
+                              <% } else { %>
+                              <p class="attendance_<%= subject.id %>">Отсутствовал</p>
+            
+                            <% } %>
+                              </th>
+                              <th><% if(record.activity) { %>
+                                <p class="activity_<%= subject.id %>">Активен</p>
+                                <% } else { %>
+                                  <p class="activity_<%= subject.id %>">Не активен</p>
+                              <% } %>
+                                </th>
+                              <th><% if(record.homework) { %>
+                                  <p class="homework_<%= subject.id %>">Выполнил</p>
+                                  <% } else { %>
+                                    <p class="homework_<%= subject.id %>">Не выполнил</p>
+                                <% } %>
+                              </th>
+                        </tr>
+  <% }); %>
+                     </table>
+                    </div>
+                  </div>
               </div>
             </div>
           </div>
+          <div class="col py-2">
+            <div id="chart_records_<%= subject.id %>">
+            </div>
+          </div>
+  
+  
+  
+  
+        </div>
+  
+  
+  
+        <script>
+  
+  const attendance_<%= subject.id %> = Array.from(document.querySelectorAll('.attendance_<%= subject.id %>'))
+  .map((el) => el.innerHTML)
+  const attended_<%= subject.id %> = Array.from(document.querySelectorAll('.attendance_<%= subject.id %>'))
+  .map((el) => el.innerHTML).filter((el) => el == 'Посетил');
+  
+  const activity_<%= subject.id %> = Array.from(document.querySelectorAll('.activity_<%= subject.id %>'))
+  .map((el) => el.innerHTML)
+  const active_<%= subject.id %> = Array.from(document.querySelectorAll('.activity_<%= subject.id %>'))
+  .map((el) => el.innerHTML).filter((el) => el == 'Активен');
+  
+  const homework_<%= subject.id %> = Array.from(document.querySelectorAll('.homework_<%= subject.id %>'))
+  .map((el) => el.innerHTML)
+  const doneHomework_<%= subject.id %> = Array.from(document.querySelectorAll('.homework_<%= subject.id %>'))
+  .map((el) => el.innerHTML).filter((el) => el == 'Выполнил');
+  
+  console.log(attendance_<%= subject.id %>)
 
-<script> 
-      
-          
-      
-var options = {
-  series: [{
-  name: '% от максимума',
-  type: 'line',
-  data: Array.from(document.querySelectorAll('.percent_<%= subject.id %>')).map((el) => el.innerHTML),
-  }],
-  chart: {
-    height: 350,
-    type: 'line',
-    zoom: {
-      enabled: false
+
+  var options = {
+    series: [{
+      name: 'Да',
+      data: [attended_<%= subject.id %>.length, active_<%= subject.id %>.length, doneHomework_<%= subject.id %>.length]
+    }, {
+      name: 'Нет',
+      data: [attendance_<%= subject.id %>.length - attended_<%= subject.id %>.length, attended_<%= subject.id %>.length - active_<%= subject.id %>.length, attended_<%= subject.id %>.length - doneHomework_<%= subject.id %>.length]
+    }],
+    chart: {
+      type: 'bar',
+      height: 300,
+      stacked: true,
+      toolbar: {
+        show: false
+      },
+      zoom: {
+        enabled: false
+      }
     },
-    toolbar: {
-      show: false
-    }
-  },
-  stroke: {
-    width: [4, 4]
-  },
-  markers: {
-    size: 3
-  },
-  title: {
-    text: 'График по предмету <%= subject.name %>'
-  },
-  dataLabels: {
-    enabled: true,
-    enabledOnSeries: [1]
-  },
-  labels: Array.from(document.querySelectorAll('.date_<%= subject.id %>')).map((el) => el.innerHTML),
-  xaxis: {
-    type: 'date'
-  },
-yaxis: [{
-  title: {
-    text: '% от максимума',
-  },
-  max: 100,
-  min: 0,
-}]
-};
-
-
-var chart_<%= subject.id %> = new ApexCharts(document.querySelector("#chart_<%= subject.id %>"), options).render();
-</script>
-      
-              <% } %>
-      
-      
-              <% if(records.filter((record) => record.name == subject.name).length !== 0) { %>
-              <div class="row d-flex flex-column group__block my-1">
-                <div class="accordion" id="accordion">
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingSubject_<%= subject.id %>">
-                      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject_<%= subject.id %>" aria-expanded="true" aria-controls="collapseSubject_<%= subject.id %>">
-                        <h5 class="text-center text-primary">Ревью занятий по предмету: <%= subject.name %></h5>
-                      </button>
-                    </h2>
-                    <div id="collapseSubject_<%= subject.id %>" class="accordion-collapse collapse" aria-labelledby="headingSubject_<%= subject.id %>" data-bs-parent="#accordion">
-                      <div class="accordion-body d-flex flex-column bg-warning">
-        
-                        <div class="table-responsive-lg">
-                          <table class="table table-striped table-hover table-bordered border-primary">
-                            <tr>
-                              <th>Дата проведения</th>
-                              <th>Предмет</th>
-                              <th>Посещаемость</th>
-                              <th>Активность</th>
-                              <th>Домашнее задание</th>
-                            </tr>
-                            <% records.filter((record) => record.name == subject.name).forEach(function(record) { %>
-                            <tr class="review_item">
-                              <th class=""><%= record.posting_date.toLocaleDateString('ru-RU') %></th>
-                              <th><%= record.name %></th>
-                              <th><% if(record.attendance) { %>
-                                <p class="attendance">Посетил</p>
-                                <% } else { %>
-                                <p class="attendance">Отсутствовал</p>
-                                <% } %>
-                              </th>
-                              <th><% if(record.activity) { %>
-                                <p class="activity">Активен</p>
-                                <% } else { %>
-                                <p class="activity">Не активен</p>
-                                <% } %>
-                                </th>
-                              <th><% if(record.homework) { %>
-                                <p class="homework">Выполнил</p>
-                                <% } else { %>
-                                <p class="homework">Не выполнил</p>
-                                <% } %>
-                              </th>
-                            </tr>
-                            <% }); %>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col py-2">
-                  <div id="chart_records">
-                  </div>
-                </div>
-                
-              </div>
-<script>
-      
-const attendance = Array.from(document.querySelectorAll('.attendance'))
-.map((el) => el.innerHTML)
-const attended = Array.from(document.querySelectorAll('.attendance'))
-.map((el) => el.innerHTML).filter((el) => el == 'Посетил');
-
-const activity = Array.from(document.querySelectorAll('.activity'))
-.map((el) => el.innerHTML)
-const active = Array.from(document.querySelectorAll('.activity'))
-.map((el) => el.innerHTML).filter((el) => el == 'Активен');
-
-const homework = Array.from(document.querySelectorAll('.homework'))
-.map((el) => el.innerHTML)
-const doneHomework = Array.from(document.querySelectorAll('.homework'))
-.map((el) => el.innerHTML).filter((el) => el == 'Выполнил');
-
-
-const reviewItems = document.querySelectorAll('.review_item').forEach(function (el) {
-  // console.log(el.innerHTML)
-return el.innerHTML
-})
-console.log(reviewItems)
-
-    var options = {
-        series: [Math.round(attended.length / attendance.length * 100),
-          Math.round(active.length / activity.length * 100), 
-          Math.round(doneHomework.length / homework.length * 100)],
-        chart: {
-        height: 350,
-        type: 'radialBar',
-      },
-      plotOptions: {
-        radialBar: {
-          dataLabels: {
-            name: {
-              fontSize: '18px',
-              color: '#3377FF',
-            },
-          },
-          
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        legend: {
+          position: 'bottom',
+          offsetX: -10,
+          offsetY: 0
         }
+      }
+    }],
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        borderRadius: 10
       },
-      fill: {
-        opacity: 1.5,
-        colors: ['#3377FF', '#FF3396', '#3BDD51' ],
-        type: 'gradient',
-      },
-      labels: ['Посещаемость', 'Активность', 'Выполнение ДЗ'],
-      };
-
-      var chart = new ApexCharts(document.querySelector("#chart_records"), options);
-      chart.render();
-              
-              
-</script>
-        <% } %>
-      
-    <% }); %>
-      
-      
-      </div>
-
+    },
+    xaxis: {
+      type: 'category',
+      categories: ['Посещаемость', 'Активность', 'Домашнее задание'
+      ],
+    },
+    legend: {
+      position: 'right',
+      offsetY: 40
+    },
+    fill: {
+      opacity: 1
+    }
+  };
+  
+          var chart = new ApexCharts(document.querySelector("#chart_records_<%= subject.id %>"), options);
+          chart.render();
+          
+          
+  
+  
+  
+  
+  
+  
+  
+  
+  
+          </script>
+  <% } %>
+  
+  
+  
+  <% }); %>
+  
+  
+  </div>
+  
+  
 
       <%- include ("../partials/footer.ejs") %>
