@@ -106,7 +106,7 @@ const names = Array.from(document.querySelectorAll('.names')).map((el) => el.inn
         
         grid: {
           row: {
-            colors: ['#fff']
+            colors: ['#fff', '#f2f2f2']
           }
         },
         xaxis: {
@@ -121,7 +121,19 @@ const names = Array.from(document.querySelectorAll('.names')).map((el) => el.inn
           },
           max: 100,
         },
-
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shade: 'light',
+            type: "horizontal",
+            shadeIntensity: 0.25,
+            gradientToColors: undefined,
+            inverseColors: true,
+            opacityFrom: 0.85,
+            opacityTo: 0.85,
+            stops: [50, 0, 100]
+          },
+        }
         };
 
         var chart = new ApexCharts(document.querySelector("#chart"), options);

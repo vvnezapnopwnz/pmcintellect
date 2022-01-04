@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.min.css" integrity="sha512-8vq2g5nHE062j3xor4XxPeZiPjmRDh6wlufQlfC6pdQ/9urJkU07NM0tEREeymP++NczacJ/Q59ul+/K2eYvcg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.css" integrity="sha512-J5tsMaZISEmI+Ly68nBDiQyNW6vzBoUlNHGsH8T3DzHTn2h9swZqiMeGm/4WMDxAphi5LMZMNA30LvxaEPiPkg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+  <div class="row  my-3">
+    <div class="col-md-6 student__block p-3">
+        <div class="group__info flex-column my-2">
+          <h4>
+            Группа:  <%= reviewInfo.group_name %>
+          </h4>
+        </div>
+      <hr>
+      <h4>Обновить ревью</h4>
+      <form action=<%= `${globalLink}/reviews/${review.review_id}/updateReview` %> method='POST'>
+
+        <div class="subjects__list mt-3">
+          <div class="subjects__add d-flex">
+            <select name="subject" style="pointer-events: none;" type="select" class="form-control btn btn-secondary btn-lg" id="InputSubject">
+                  <option class="available__option" value="<%= subject.subject_id %>">
+                    <%= reviewInfo.subject_name %>
+                  </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="review_date__list my-3">
+          <label for="FormControlInputDate" class="form-label">Дата ревью</label>
+          <input value="<%= reviewInfo.posting_date %>" required name="reviewing_date" type="date" class="date-input form-control w-50" id="FormControlInputDate">                
+        </div>
+
+      </div>  
+    </div>   
+
+    <div class="row  my-3">
+      <div class="col-md-6 student__block p-3">
+
+        <div class="students__list d-flex flex-column justify-content-end my-2">
+          <h4 class="font-weight-bold text-center mb-4">Характристики</h4>
+
+            <% records.forEach(function(student) { %>
+              <div class="students__add d-flex flex-column my-2">
+                <div class="name">
+                  <select name="students" style="pointer-events: none;"type="select" class="form-control btn btn-primary" id="InputStudents">
+                    <option class="available__option" value="<%= student.student_id %>">
+                      <%= student.name %>
+                    </option>
+                  </select>
+                </div>
+                <div class="row d-flex flex-column records_content">
+                  <div class="block d-flex my-1" style="width: auto;">
+                    
+                    <% if(student.attendance == true ){ %>
+                      <input checked="true" value="true" type="radio" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
+                      <label style="padding-right: 40px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="attendance_y_<%= student.student_id %>">Посетил</label>
+                    
+                      <input type="radio" class="btn-check" name="attendance_<%= student.student_id %>" id="attendance_no_<%= student.student_id %>" autocomplete="off">
+                      <label class="btn btn-outline-danger flex-grow-1" for="attendance_no_<%= student.student_id %>">Пропустил</label>
+                    
+                    <% } else if (student.attendance = false) { %>
+                      <input type="radio" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
+                      <label style="padding-right: 40px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="attendance_y_<%= student.student_id %>">Посетил</label>
+                    
+                      <input checked="true" type="radio" value="false" class="btn-check" name="attendance_<%= student.student_id %>" id="attendance_no_<%= student.student_id %>" autocomplete="off">
+                      <label class="btn btn-outline-danger flex-grow-1" for="attendance_no_<%= student.student_id %>">Пропустил</label>
+                    
+                      <% } else { %>
+                        <input type="radio" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
+                        <label style="padding-right: 40px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="attendance_y_<%= student.student_id %>">Посетил</label>
+                      
+                        <input type="radio" class="btn-check" name="attendance_<%= student.student_id %>" id="attendance_no_<%= student.student_id %>" autocomplete="off">
+                        <label class="btn btn-outline-danger flex-grow-1" for="attendance_no_<%= student.student_id %>">Пропустил</label>
+                    <% } %>  
+                    </div>
+
+
+                  <div class="block d-flex my-1">
+
+                    <% if(student.activity == true ){ %>
+                    <input checked="true" value="true" type="radio" class="btn-check " name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
+                    <label style="padding-right: 45px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="activity_y_<%= student.student_id %>">Активен</label>
+                  
+                    <input type="radio" class="btn-check" name="activity_<%= student.student_id %>" id="activity_no_<%= student.student_id %>" autocomplete="off">
+                    <label class="btn btn-outline-danger flex-grow-1" for="activity_no_<%= student.student_id %>">Не активен</label>
+                    
+                    <% } else if (student.activity = false) { %>
+                    <input type="radio" class="btn-check " name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
+                    <label style="padding-right: 45px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="activity_y_<%= student.student_id %>">Активен</label>
+                      
+                    <input checked="true" type="radio" value="false" class="btn-check" name="activity_<%= student.student_id %>" id="activity_no_<%= student.student_id %>" autocomplete="off">
+                    <label class="btn btn-outline-danger flex-grow-1" for="activity_no_<%= student.student_id %>">Не активен</label>
+                    
+                    <% } else { %>
+                    <input type="radio" class="btn-check " name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
+                    <label style="padding-right: 45px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="activity_y_<%= student.student_id %>">Активен</label>
+                          
+                    <input type="radio" class="btn-check" name="activity_<%= student.student_id %>" id="activity_no_<%= student.student_id %>" autocomplete="off">
+                    <label class="btn btn-outline-danger flex-grow-1" for="activity_no_<%= student.student_id %>">Не активен</label>
+                    <% } %>   
+                  </div>
+
+
+                  <div class="block d-flex my-1" style="width: auto;">
+
+                    <% if(student.homework == true ){ %>
+                    <input type="radio" class="btn-check " name="homework_<%= student.student_id %>" id="homework_y_<%= student.student_id %>" autocomplete="off" >
+                    <label class="btn btn-outline-primary mx-2 flex-grow-1" for="homework_y_<%= student.student_id %>">ДЗ есть</label>
+              
+                    <input type="radio" value="false" class="btn-check" name="homework_<%= student.student_id %>" id="homework_no_<%= student.student_id %>" autocomplete="off">
+                    <label class="btn btn-outline-danger flex-grow-1" for="homework_no_<%= student.student_id %>">ДЗ нет</label>
+                  
+                    <% } else if (student.homework = false) { %>
+                        <input type="radio" class="btn-check " name="homework_<%= student.student_id %>" id="homework_y_<%= student.student_id %>" autocomplete="off" >
+                        <label class="btn btn-outline-primary mx-2 flex-grow-1" for="homework_y_<%= student.student_id %>">ДЗ есть</label>
+                  
+                        <input type="radio" value="false" class="btn-check" name="homework_<%= student.student_id %>" id="homework_no_<%= student.student_id %>" autocomplete="off">
+                        <label class="btn btn-outline-danger flex-grow-1" for="homework_no_<%= student.student_id %>">ДЗ нет</label>
+                      
+                  </div>
+                  
+                </div>
+              </div>
+<hr>
+              <% }); %>
+              <button type="submit" class="btn btn-primary my-4 w-75" style="margin:auto">Добавить</button>
+              <a href="<%= `${globalLink}/groups/${group.group_id}/` %>" class="btn btn-light w-50" style="margin:auto">
+                Вернуться на страницу группы
+              </a>
+            </div>
+
+          </div>
+
+
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+
+
+    <%- include ("../partials/footer.ejs") %>
+<script>
+var today = new Date();
+var dd = today.getDate();
+var mm = today.getMonth() + 1; //January is 0!
+var yyyy = today.getFullYear();
+
+if (dd < 10) {
+   dd = '0' + dd;
+}
+
+if (mm < 10) {
+   mm = '0' + mm;
+} 
+    
+today = yyyy + '-' + mm + '-' + dd;
+document.querySelector(".date-input").setAttribute("max", today);
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    var dateInput = document.querySelector(".date-input");
+
+        dateInput.oninvalid = function(e) {
+
+          alert('Пожалуйста, укажите дату')
+            e.target.setCustomValidity("");
+            if (!e.target.validity.valid) {
+                e.target.setCustomValidity("This field cannot be left blank");
+            }
+        };
+        dateInput.oninput = function(e) {
+            e.target.setCustomValidity("");
+        };
+    
+})
+
+</script>

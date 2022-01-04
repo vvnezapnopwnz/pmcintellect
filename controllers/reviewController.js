@@ -136,3 +136,36 @@ exports.removeReview = async (req, res, next) => {
   });
 
 };
+
+exports.updateReview = async (req, res, next) => {
+
+
+  db.task(t => {
+
+    const reviewId = req.params.id;
+
+    return t.manyOrNone(`SELECT a.review_id, a.posting_date, a.group_id, d.name, e.name
+    AS group_name, b.student_id,
+    c.name AS subject_name, b.attendance, b.activity,
+    b.homework
+    FROM group_reviews a
+    JOIN student_records b
+    ON a.review_id = b.review_id
+    JOIN subjects c
+    ON a.subject_id = c.id
+    JOIN students d
+    ON b.student_id = d.student_id
+    JOIN groups e
+    ON a.group_id = e.group_id
+    WHERE a.review_id = ${reviewId}`)
+    .then((records) => res.status(200).render('./updatePages/updateReview',{
+      records,
+      reviewInfo: records[0],
+      globalLink,
+    }))
+
+  })
+
+
+
+};

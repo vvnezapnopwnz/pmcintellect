@@ -7,7 +7,10 @@ const router = express.Router();
 
 router.use(authController.isLoggedIn);
 
+
+
 router
-  .get('/:id/', reviewController.getReview);
+  .get('/:id/', reviewController.getReview)
+  .get('/:id/updateReview', reviewController.updateReview);
 
 module.exports = router;

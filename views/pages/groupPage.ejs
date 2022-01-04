@@ -153,7 +153,7 @@
                   <th class="date"><%= trial.trial_date.toLocaleDateString('ru-RU') %></th>
                   <th class="quantity"><%= trial.count %></th>
                   <th>
-                    <a href=<%= `${globalLink}/group/${group.group_id}/trials/${trial.trial_id}` %> class="btn btn-warning my-2">
+                    <a href=<%= `${globalLink}/groups/${group.group_id}/trials/${trial.trial_id}` %> class="btn btn-warning my-2">
                     <strong>Перейти</strong>
                     </a>
                   </th>
@@ -196,7 +196,7 @@
                   <th class="date"><%= nuTrial.trial_date.toLocaleDateString('ru-RU') %></th>
                   <th class="quantity"><%= nuTrial.count %></th>
                   <th>
-                    <a href=<%= `${globalLink}/group/${group.group_id}/trials/${nuTrial.trial_id}` %> class="btn btn-warning my-2">
+                    <a href=<%= `${globalLink}/groups/${group.group_id}/trials/${nuTrial.trial_id}` %> class="btn btn-warning my-2">
                     <strong>Перейти</strong>
                     </a>
                   </th>

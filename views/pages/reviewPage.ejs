@@ -36,6 +36,9 @@
                     Дата проведения занятия:
                     <%= new Date(group.posting_date).toLocaleDateString('ru-RU') %>
                 </h5>
+                <a href=<%= `${globalLink}/reviews/${group.review_id}/updateReview` %> class="mx-2 btn btn-primary">
+                    Обновить ревью
+                </a>
             </div>
         </div>
     </div>

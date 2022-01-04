@@ -207,6 +207,58 @@ exports.addEntTrial = async (req, res, next) => {
 
 
 
+exports.getTrial = async (req, res, next) => {
+
+
+  db.task(t => {
+
+    let groupId = req.params.id    
+    let group;
+    console.log(req.params.trial_id)
+
+    return t.oneOrNone(`SELECT from groups WHERE group_id = ${groupId}`)
+    .then((groupData) => {
+      group = groupData
+    
+      return t.manyOrNone(`select * from group_ent_trials a 
+      JOIN student_ent_trials_results b
+      ON a.trial_id = b.trial_id
+      JOIN students c
+      ON b.student_id = c.student_id
+      where a.trial_id = ${req.params.trial_id}`)
+    }).then((trialsData) => res.status(200).json(({
+      group,
+      trialsData,
+      globalLink,
+    })))
+
+
+
+
+
+  });
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 exports.addNUTrialPage = async (req, res, next) => {

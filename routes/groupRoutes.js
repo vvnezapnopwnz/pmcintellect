@@ -47,6 +47,10 @@ router
   // .get('/:id/removeEntTrials', testController.removeEntTrialPage)
   // .post('/:id/removeEntTrials', testController.removeEntTrialPage)
 
+router
+  .route('/:id/trials/:trial_id')
+  .get(testController.getTrial)
+
   router
   .get('/:id/addNUTrial', testController.addNUTrialPage)
   .post('/:id/addNUTrial', testController.addNUTrial)
