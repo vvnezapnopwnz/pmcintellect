@@ -48,9 +48,9 @@ exports.addReview = async (req, res, next) => {
 
     const students = studentsData.map((student_id) => {
       const student = { id: Number(student_id) };
-      student.attendance = req.body[`attendance_${student_id}`];
-      student.activity = req.body[`activity_${student_id}`];
-      student.homework = req.body[`homework_${student_id}`];
+      student.attendance = req.body[`attendance_${student_id}`] ? req.body[`attendance_${student_id}`] : null;
+      student.activity = req.body[`activity_${student_id}`] ? req.body[`activity_${student_id}`] : null;
+      student.homework = req.body[`homework_${student_id}`] ? req.body[`homework_${student_id}`] : null; 
       return student;
     });
 
@@ -158,11 +158,22 @@ exports.updateReview = async (req, res, next) => {
     JOIN groups e
     ON a.group_id = e.group_id
     WHERE a.review_id = ${reviewId}`)
-    .then((records) => res.status(200).render('./updatePages/updateReview',{
+    .then((records) => {
+      
+      
+      
+      res.status(200).render('./updatePages/updateReview',{
       records,
-      reviewInfo: records[0],
+      review: records[0],
       globalLink,
-    }))
+    })
+    
+  })
+    //     .then((records) => res.status(200).render('./updatePages/updateReview',{
+    //   records,
+    //   review: records[0],
+    //   globalLink,
+    // }))
 
   })
 

@@ -64,7 +64,7 @@
                 </div>
                 <div class="row d-flex flex-column records_content">
                   <div class="block d-flex my-1" style="width: auto;">
-                      <input type="radio" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
+                      <input type="radio" value="true" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
                       <label style="
                       padding-right: 40px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="attendance_y_<%= student.student_id %>">Посетил</label>
                     
@@ -74,7 +74,7 @@
 
 
                   <div class="block d-flex my-1">
-                    <input type="radio" class="btn-check " name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
+                    <input type="radio" value="true" class="btn-check " name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
                     <label style="
                     padding-right: 45px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="activity_y_<%= student.student_id %>">Активен</label>
                   
@@ -84,7 +84,7 @@
 
 
                   <div class="block d-flex my-1" style="width: auto;">
-                    <input type="radio" class="btn-check " name="homework_<%= student.student_id %>" id="homework_y_<%= student.student_id %>" autocomplete="off" >
+                    <input type="radio" value="true"  class="btn-check " name="homework_<%= student.student_id %>" id="homework_y_<%= student.student_id %>" autocomplete="off" >
                     <label class="btn btn-outline-primary mx-2 flex-grow-1" for="homework_y_<%= student.student_id %>">ДЗ есть</label>
               
                     <input type="radio" value="false" class="btn-check" name="homework_<%= student.student_id %>" id="homework_no_<%= student.student_id %>" autocomplete="off">

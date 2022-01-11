@@ -11,8 +11,22 @@ const pgp = require('pg-promise')(/* options */);
 //     port: 5432,
 // });
 
-const db = pgp(
-  'postgres://jsasjjko:fEMWij6GR_o-APTBeUKdBks-GYgMXl2t@abul.db.elephantsql.com/jsasjjko',
-);
+
+const databaseConfig= {
+  "host": "localhost",
+  "port": 5432,
+  "database": "postgres",
+  "user": "postgres",
+  "password": "astana2020"
+};
+
+
+// const db = pgp(
+//   databaseConfig);
+
+  const db = pgp(
+    'postgres://jsasjjko:fEMWij6GR_o-APTBeUKdBks-GYgMXl2t@abul.db.elephantsql.com/jsasjjko',
+  );
+  
 
 module.exports = db;

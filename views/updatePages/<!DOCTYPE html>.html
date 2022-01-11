@@ -15,7 +15,7 @@
     <div class="col-md-6 student__block p-3">
         <div class="group__info flex-column my-2">
           <h4>
-            Группа:  <%= review.group_name %>
+            Группа:  <%= reviewInfo.group_name %>
           </h4>
         </div>
       <hr>
@@ -25,8 +25,8 @@
         <div class="subjects__list mt-3">
           <div class="subjects__add d-flex">
             <select name="subject" style="pointer-events: none;" type="select" class="form-control btn btn-secondary btn-lg" id="InputSubject">
-                  <option class="available__option" value="<%= review.subject_id %>">
-                    <%= review.subject_name %>
+                  <option class="available__option" value="<%= subject.subject_id %>">
+                    <%= reviewInfo.subject_name %>
                   </option>
             </select>
           </div>
@@ -34,7 +34,7 @@
 
         <div class="review_date__list my-3">
           <label for="FormControlInputDate" class="form-label">Дата ревью</label>
-          <input required name="reviewing_date" type="date" class="date-input form-control w-50" id="FormControlInputDate">                
+          <input value="<%= reviewInfo.posting_date %>" required name="reviewing_date" type="date" class="date-input form-control w-50" id="FormControlInputDate">                
         </div>
 
       </div>  
@@ -62,21 +62,21 @@
                       <input checked="true" value="true" type="radio" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
                       <label style="padding-right: 40px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="attendance_y_<%= student.student_id %>">Посетил</label>
                     
-                      <input value="false" type="radio" class="btn-check" name="attendance_<%= student.student_id %>" id="attendance_no_<%= student.student_id %>" autocomplete="off">
+                      <input type="radio" class="btn-check" name="attendance_<%= student.student_id %>" id="attendance_no_<%= student.student_id %>" autocomplete="off">
                       <label class="btn btn-outline-danger flex-grow-1" for="attendance_no_<%= student.student_id %>">Пропустил</label>
                     
                     <% } else if (student.attendance = false) { %>
-                      <input value="true" type="radio" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
+                      <input type="radio" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
                       <label style="padding-right: 40px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="attendance_y_<%= student.student_id %>">Посетил</label>
                     
-                      <input checked="true" value="false" type="radio" class="btn-check" name="attendance_<%= student.student_id %>" id="attendance_no_<%= student.student_id %>" autocomplete="off">
+                      <input checked="true" type="radio" value="false" class="btn-check" name="attendance_<%= student.student_id %>" id="attendance_no_<%= student.student_id %>" autocomplete="off">
                       <label class="btn btn-outline-danger flex-grow-1" for="attendance_no_<%= student.student_id %>">Пропустил</label>
                     
                       <% } else { %>
-                        <input value="true" type="radio" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
+                        <input type="radio" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
                         <label style="padding-right: 40px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="attendance_y_<%= student.student_id %>">Посетил</label>
                       
-                        <input value="false" type="radio" class="btn-check" name="attendance_<%= student.student_id %>" id="attendance_no_<%= student.student_id %>" autocomplete="off">
+                        <input type="radio" class="btn-check" name="attendance_<%= student.student_id %>" id="attendance_no_<%= student.student_id %>" autocomplete="off">
                         <label class="btn btn-outline-danger flex-grow-1" for="attendance_no_<%= student.student_id %>">Пропустил</label>
                     <% } %>  
                     </div>
@@ -88,21 +88,21 @@
                     <input checked="true" value="true" type="radio" class="btn-check " name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
                     <label style="padding-right: 45px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="activity_y_<%= student.student_id %>">Активен</label>
                   
-                    <input value="false" type="radio" class="btn-check" name="activity_<%= student.student_id %>" id="activity_no_<%= student.student_id %>" autocomplete="off">
+                    <input type="radio" class="btn-check" name="activity_<%= student.student_id %>" id="activity_no_<%= student.student_id %>" autocomplete="off">
                     <label class="btn btn-outline-danger flex-grow-1" for="activity_no_<%= student.student_id %>">Не активен</label>
                     
                     <% } else if (student.activity = false) { %>
-                    <input value="true" type="radio" class="btn-check" name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
+                    <input type="radio" class="btn-check " name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
                     <label style="padding-right: 45px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="activity_y_<%= student.student_id %>">Активен</label>
                       
-                    <input checked="true" value="false" type="radio" class="btn-check" name="activity_<%= student.student_id %>" id="activity_no_<%= student.student_id %>" autocomplete="off">
+                    <input checked="true" type="radio" value="false" class="btn-check" name="activity_<%= student.student_id %>" id="activity_no_<%= student.student_id %>" autocomplete="off">
                     <label class="btn btn-outline-danger flex-grow-1" for="activity_no_<%= student.student_id %>">Не активен</label>
                     
                     <% } else { %>
-                    <input value="true" type="radio" class="btn-check " name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
+                    <input type="radio" class="btn-check " name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
                     <label style="padding-right: 45px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="activity_y_<%= student.student_id %>">Активен</label>
                           
-                    <input value="false" type="radio" class="btn-check" name="activity_<%= student.student_id %>" id="activity_no_<%= student.student_id %>" autocomplete="off">
+                    <input type="radio" class="btn-check" name="activity_<%= student.student_id %>" id="activity_no_<%= student.student_id %>" autocomplete="off">
                     <label class="btn btn-outline-danger flex-grow-1" for="activity_no_<%= student.student_id %>">Не активен</label>
                     <% } %>   
                   </div>
@@ -111,28 +111,19 @@
                   <div class="block d-flex my-1" style="width: auto;">
 
                     <% if(student.homework == true ){ %>
-                    <input checked="true" value="true" type="radio" class="btn-check " name="homework_<%= student.student_id %>" id="homework_y_<%= student.student_id %>" autocomplete="off" >
+                    <input type="radio" class="btn-check " name="homework_<%= student.student_id %>" id="homework_y_<%= student.student_id %>" autocomplete="off" >
                     <label class="btn btn-outline-primary mx-2 flex-grow-1" for="homework_y_<%= student.student_id %>">ДЗ есть</label>
               
-                    <input value="false" type="radio"  class="btn-check" name="homework_<%= student.student_id %>" id="homework_no_<%= student.student_id %>" autocomplete="off">
+                    <input type="radio" value="false" class="btn-check" name="homework_<%= student.student_id %>" id="homework_no_<%= student.student_id %>" autocomplete="off">
                     <label class="btn btn-outline-danger flex-grow-1" for="homework_no_<%= student.student_id %>">ДЗ нет</label>
                   
                     <% } else if (student.homework = false) { %>
-                    <input value="true" type="radio" class="btn-check" name="homework_<%= student.student_id %>" id="homework_y_<%= student.student_id %>" autocomplete="off" >
-                    <label class="btn btn-outline-primary mx-2 flex-grow-1" for="homework_y_<%= student.student_id %>">ДЗ есть</label>
-              
-                    <input checked="true" value="false" type="radio" class="btn-check" name="homework_<%= student.student_id %>" id="homework_no_<%= student.student_id %>" autocomplete="off">
-                    <label class="btn btn-outline-danger flex-grow-1" for="homework_no_<%= student.student_id %>">ДЗ нет</label>
+                        <input type="radio" class="btn-check " name="homework_<%= student.student_id %>" id="homework_y_<%= student.student_id %>" autocomplete="off" >
+                        <label class="btn btn-outline-primary mx-2 flex-grow-1" for="homework_y_<%= student.student_id %>">ДЗ есть</label>
+                  
+                        <input type="radio" value="false" class="btn-check" name="homework_<%= student.student_id %>" id="homework_no_<%= student.student_id %>" autocomplete="off">
+                        <label class="btn btn-outline-danger flex-grow-1" for="homework_no_<%= student.student_id %>">ДЗ нет</label>
                       
-                    <% } else { %>
-                    <input value="true" type="radio" class="btn-check " name="homework_<%= student.student_id %>" id="homework_y_<%= student.student_id %>" autocomplete="off" >
-                    <label style="padding-right: 45px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="homework_y_<%= student.student_id %>">Активен</label>
-                          
-                    <input value="false" type="radio" class="btn-check" name="homework_<%= student.student_id %>" id="homework_no_<%= student.student_id %>" autocomplete="off">
-                    <label class="btn btn-outline-danger flex-grow-1" for="homework_no_<%= student.student_id %>">Не активен</label>
-                      <% } %>   
-
-
                   </div>
                   
                 </div>
@@ -140,7 +131,7 @@
 <hr>
               <% }); %>
               <button type="submit" class="btn btn-primary my-4 w-75" style="margin:auto">Добавить</button>
-              <a href="<%= `${globalLink}/groups/${review.group_id}/` %>" class="btn btn-light w-50" style="margin:auto">
+              <a href="<%= `${globalLink}/groups/${group.group_id}/` %>" class="btn btn-light w-50" style="margin:auto">
                 Вернуться на страницу группы
               </a>
             </div>
@@ -175,8 +166,7 @@ if (mm < 10) {
     
 today = yyyy + '-' + mm + '-' + dd;
 document.querySelector(".date-input").setAttribute("max", today);
-document.querySelector(".date-input").setAttribute("value", `<%= review.posting_date %>`.toLocaleDateString('ru-RU'));
-//разобраться со временем
+
 
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -195,7 +185,5 @@ document.addEventListener("DOMContentLoaded", function() {
         };
     
 })
-
-
 
 </script>
