@@ -137,15 +137,13 @@ exports.removeReview = async (req, res, next) => {
 
 };
 
-exports.updateReview = async (req, res, next) => {
-
+exports.updateReviewPage = async (req, res, next) => {
 
   db.task(t => {
-
     const reviewId = req.params.id;
 
     return t.manyOrNone(`SELECT a.review_id, a.posting_date, a.group_id, d.name, e.name
-    AS group_name, b.student_id,
+    AS group_name, b.student_id, a.subject_id,
     c.name AS subject_name, b.attendance, b.activity,
     b.homework
     FROM group_reviews a
@@ -160,23 +158,46 @@ exports.updateReview = async (req, res, next) => {
     WHERE a.review_id = ${reviewId}`)
     .then((records) => {
       
-      
-      
       res.status(200).render('./updatePages/updateReview',{
       records,
       review: records[0],
       globalLink,
-    })
-    
-  })
-    //     .then((records) => res.status(200).render('./updatePages/updateReview',{
-    //   records,
-    //   review: records[0],
-    //   globalLink,
-    // }))
+      })
+    });
+  });
 
-  })
+};
 
+exports.updateReview = async (req, res, next) => {
 
+  db.task(t => {
+    const reviewId = req.params.id;
+    const subjectId = req.body.subject_id;
+    const reviewDate = req.body.posting_date;
+    const studentsData = [req.body.students].flat();
+
+    const students = studentsData.map((student_id) => {
+      const student = { id: Number(student_id) };
+      student.attendance = req.body[`attendance_${student_id}`] ? req.body[`attendance_${student_id}`] : null;
+      student.activity = req.body[`activity_${student_id}`] ? req.body[`activity_${student_id}`] : null;
+      student.homework = req.body[`homework_${student_id}`] ? req.body[`homework_${student_id}`] : null; 
+      return student;
+    });
+
+    return t.oneOrNone(`UPDATE group_reviews
+    SET subject_id = ${subjectId}, posting_date = '${reviewDate}'
+    WHERE review_id = ${reviewId}`)
+    .then(() => db.tx(tt => {
+
+      const queries = students.map((student) => {
+
+        return tt.none(`UPDATE student_records
+        SET attendance = ${student.attendance}, activity = ${student.activity},
+        homework = ${student.homework} WHERE student_id = ${student.id}`);
+      });
+
+      return tt.batch(queries);
+    })).then(() => res.redirect(`${globalLink}/reviews/${reviewId}`))
+  });
 
 };

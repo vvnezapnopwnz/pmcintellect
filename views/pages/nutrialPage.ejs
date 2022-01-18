@@ -43,27 +43,15 @@
             <table class="table table-striped table-hover table-bordered border-primary">
                 <tr>
                    <th>Имя ученика</th>
-                   <th>История Казахстана</th>
-                   <th>Грамотность чтения</th>
-                   <th>Мат. грамотность</th>
-                   <th>Математика</th>
-                   <th>Физика</th>
-                   <th>География</th>
-                   <th>Биология</th>
-                   <th>Химия</th>
+                   <th>Math</th>
+                   <th>Critical thinking</th>
                 </tr>
                 <%     results.forEach(function(result) { %>
       
                 <tr>
                    <td class="names"><%= result.student_name %></td>
-                   <td class="history_kaz_result"><%= Math.round(result.history_kaz_result) %></td>
-                   <td class="reading_literacy_chart"><%= Math.round(result.reading_literacy_result) %></td>
-                   <td class="math_literacy_result"><%= Math.round(result.math_literacy_result) %></td>
-                   <td class="mathematics_result"><%= Math.round(result.mathematics_result) %></td>
-                   <td class="physics_result"><%= Math.round(result.physics_result) %></td>
-                   <td class="geography_result"><%= Math.round(result.geography_result) %></td>
-                   <td class="biology_result"><%= Math.round(result.biology_result) %></td>
-                   <td class="chemistry_result"><%= Math.round(result.chemistry_result) %></td>
+                   <td class="math_result"><%= Math.round(result.math_result) %></td>
+                   <td class="critical_thinking"><%= Math.round(result.critical_thinking_result) %></td>
                 </tr>
                 <% }); %>
              </table>
@@ -85,42 +73,18 @@
 <script>
 
 const names = Array.from(document.querySelectorAll('.names')).map((el) => el.innerHTML);
-const reading_literacy_result = Array.from(document.querySelectorAll('.reading_literacy_result')).map((el) => el.innerHTML);
-const history_kaz_result = Array.from(document.querySelectorAll('.history_kaz_result')).map((el) => el.innerHTML);
-const math_literacy_result = Array.from(document.querySelectorAll('.math_literacy_result')).map((el) => el.innerHTML);
-const mathematics_result = Array.from(document.querySelectorAll('.mathematics_result')).map((el) => el.innerHTML);
-const physics_result = Array.from(document.querySelectorAll('.physics_result')).map((el) => el.innerHTML);
-const geography_result = Array.from(document.querySelectorAll('.reading_literacy_result')).map((el) => el.innerHTML);
-const biology_result = Array.from(document.querySelectorAll('.reading_literacy_result')).map((el) => el.innerHTML);
-const chemistry_result = Array.from(document.querySelectorAll('.reading_literacy_result')).map((el) => el.innerHTML);
+const math = Array.from(document.querySelectorAll('.math_result')).map((el) => el.innerHTML);
+const critical_thinking = Array.from(document.querySelectorAll('.critical_thinking')).map((el) => el.innerHTML);
 
     
 var options = {
           series: [{
-          name: 'Грамотность чтения',
-          data: reading_literacy_result
+          name: 'Math',
+          data: math
         }, {
-          name: 'История Казахстана',
-          data: history_kaz_result
-        }, {
-          name: 'География',
-          data: geography_result,
-        }, {
-          name: 'Математическая грамотность',
-          data: math_literacy_result
-        }, {
-          name: 'Физика',
-          data: physics_result
-        }, {
-          name: 'Математика',
-          data: mathematics_result,
-        }, {
-          name: 'Биология',
-          data: biology_result
-        }, {
-          name: 'Химия',
-          data: chemistry_result
-        }],
+          name: 'Critical thinking',
+          data: critical_thinking
+        },],
           chart: {
           type: 'bar',
           height: 350,

@@ -14,6 +14,7 @@ const userRouter = require('./routes/userRoutes');
 const groupRouter = require('./routes/groupRoutes');
 const studentRouter = require('./routes/studentRoutes');
 const testRouter = require('./routes/testRoutes');
+const complexTestRouter = require('./routes/complexTestRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
@@ -35,6 +36,7 @@ app.use('/users', userRouter);
 app.use('/groups', groupRouter);
 app.use('/students', studentRouter);
 app.use('/tests', testRouter);
+app.use('/complex-tests', complexTestRouter);
 app.use('/reviews', reviewRouter);
 
 module.exports = app;

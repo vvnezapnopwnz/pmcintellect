@@ -11,6 +11,7 @@ router.use(authController.isLoggedIn);
 
 router
   .get('/:id/', reviewController.getReview)
-  .get('/:id/updateReview', reviewController.updateReview);
+  .get('/:id/updateReview', reviewController.updateReviewPage)
+  .post('/:id/updateReview', reviewController.updateReview);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const express = require('express');
 const groupController = require('../controllers/groupController');
 const testController = require('../controllers/testController');
+const complexTestController = require('../controllers/complexTestController');
 const authController = require('../controllers/authController');
 const reviewController = require('../controllers/reviewController');
 
@@ -41,6 +42,16 @@ router
   .get('/:id/removeReview', reviewController.removeReviewPage)
   .post('/:id/removeReview', reviewController.removeReview);
 
+
+router
+  .get('/:id/addComplexTest', complexTestController.addComplexTestPage)
+  .post('/:id/addComplexTest', complexTestController.addComplexTest)
+  .get('/:id/removeComplexTest', complexTestController.removeComplexTestPage)
+  .post('/:id/removeComplexTest', complexTestController.removeComplexTest);
+
+
+
+
   router
   .get('/:id/addEntTrial', testController.addEntTrialPage)
   .post('/:id/addEntTrial', testController.addEntTrial)
@@ -50,6 +61,10 @@ router
 router
   .route('/:id/trials/:trial_id')
   .get(testController.getTrial)
+
+  router
+  .route('/:id/nutrials/:trial_id')
+  .get(testController.getNUTrial)
 
   router
   .get('/:id/addNUTrial', testController.addNUTrialPage)

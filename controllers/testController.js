@@ -211,35 +211,24 @@ exports.getTrial = async (req, res, next) => {
 
 
   db.task(t => {
-
-    let groupId = req.params.id    
-    let group;
-    console.log(req.params.trial_id)
-
-    return t.oneOrNone(`SELECT from groups WHERE group_id = ${groupId}`)
-    .then((groupData) => {
-      group = groupData
     
-      return t.manyOrNone(`select * from group_ent_trials a 
-      JOIN student_ent_trials_results b
-      ON a.trial_id = b.trial_id
-      JOIN students c
-      ON b.student_id = c.student_id
-      where a.trial_id = ${req.params.trial_id}`)
-    }).then((trialsData) => res.status(200).json(({
-      group,
-      trialsData,
+      return t.manyOrNone(`select *, d.name as group_name,
+      c.name as student_name
+      from group_ent_trials a 
+            JOIN student_ent_trials_results b
+            ON a.trial_id = b.trial_id
+            JOIN students c
+            ON b.student_id = c.student_id
+          JOIN groups d
+          ON a.group_id = d.group_id
+            where a.trial_id = ${req.params.trial_id}`)
+    .then((results) => res.status(200).render('./pages/trialPage',{
+      group:results[0],
+      results,
       globalLink,
-    })))
-
-
-
-
+    }))
 
   });
-
-
-
 
 }
 
@@ -247,7 +236,30 @@ exports.getTrial = async (req, res, next) => {
 
 
 
+exports.getNUTrial = async (req, res, next) => {
 
+
+  db.task(t => {
+    
+    return t.manyOrNone(`select *, d.name as group_name,
+      c.name as student_name
+      from group_nu_trials a
+      JOIN student_nu_trials_results b
+      ON a.trial_id = b.trial_id
+      JOIN students c
+      on c.student_id = b.student_id
+      JOIN groups d
+      ON d.group_id = a.group_id
+      where a.trial_id = ${req.params.trial_id}`)
+    .then((results) => res.status(200).render('./pages/nutrialPage',{
+      group:results[0],
+      results,
+      globalLink,
+    }))
+
+  });
+
+}
 
 
 

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+  <div class="row  my-3">
+    <div class="col-lg-7 student__block p-3">
+        <div class="group__info flex-column my-2">
+          <h4>
+            Группа:  <%= group.name %>
+          </h4>
+          <h5>
+              Класс:
+              <%= group.class_number %>
+          </h5>
+        </div>
+      <hr>
+      <h4>Добавить Комплексный тест в группу</h4>
+      <form action=<%= `${globalLink}/groups/${group.group_id}/addComplexTest` %> method='POST'>
+        <div class="test_date__list my-3">
+        <label for="FormControlInputFormat" class="form-label">Укажите формат-название теста</label>
+        <input name="complex_test_format" type="text" class="form-control w-50" id="FormControlInputFormat">                
+        </div>
+        
+        <div class="test_format__list my-3">
+          <label for="FormControlInputDate" class="form-label">Укажите дату комплексного теста</label>
+          <input name="complex_test_date" type="date" class="form-control w-50" id="FormControlInputDate">                
+        </div>
+
+        <div class="subjects__list my-3">
+
+            <label for="InputSubjects" class="form-label">Укажите предмет(ы)</label>
+              <div class="subjects__add d-flex my-1">
+
+                  <select onchange="addSubjectToStudents(this)" name="subject__name" type="select" class="input__subject form-control w-50">
+                    <option value="">Выберите предмет</option>
+                    <% subjects.forEach(function(subject) { %>
+                      <option class="available__option" value="<%= subject.id %>">
+                        <%= subject.name %>
+                      </option>
+                      <% }); %>
+                    </select>
+                    <input name="max_points__" type="number" class="form-control mx-1" style="width:70px">
+                    <div onclick="addSubject(this)" class="subject__plus btn btn-primary mx-2">
+                        +
+                    </div>
+              </div>
+        </div>
+
+        <div class="students__list d-flex flex-column">
+          <label for="InputStudents" class="form-label">Укажите набранные баллы</label>
+           
+          <% students.forEach(function(student) { %>
+
+            <div class="students__add d-flex flex-column bg-success rounded m-1 p-1" style="transition: 0.4s;">
+                <div class="student_name justify-content-between d-flex">
+                    <select style="pointer-events: none;" name="students" type="select" class="form-control w-50" id="InputStudents">
+                        <option class="available__option" value="<%= student.student_id %>">
+                          <%= student.name %>
+                        </option>
+                    </select>    
+                      <button type="button" class="remove__student__button btn btn-danger px-3 mx-1">x</button>
+                </div>
+                <div class="complex__test__subjects d-flex row">
+                    <div class="subject__results d-flex m-1 align-items-center">
+                        <label for="subject__input" class="student__results__label form-label text-warning"></label>
+                        <input name="result__student_id__<%= student.student_id %>__subject_id__" type="number" class="student__results__field form-control mx-1" style="width:70px">
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+
+        <div class="buttons d-flex flex-column justify-content-center">
+          <button type="submit" class="btn btn-primary my-2 w-50">Добавить</button>
+          <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+
+    <%- include ("../partials/footer.ejs") %>
+
+<script>
+
+const addSubjectToStudents = (subjectSelect) => {
+
+    const parent = subjectSelect.parentElement.parentElement;
+    let index = Array.prototype.indexOf.call(parent.children, subjectSelect.parentElement) - 1;
+
+    const subjectValue = subjectSelect.value;
+    const subjectName = subjectSelect.options[subjectSelect.selectedIndex].text;
+
+    const maxPointsInput = subjectSelect.nextElementSibling;
+    let maxPointsValue = maxPointsInput.name.split('__');
+    maxPointsValue[maxPointsValue.length - 1] = subjectValue;
+    maxPointsInput.name = maxPointsValue.join('__');
+    console.log(maxPointsValue)
+
+    const studentBlocks = Array.from(document.querySelectorAll('.students__add'));
+
+    studentBlocks.forEach(function(el) {
+        const resultLabel = Array.from(el.querySelectorAll('.student__results__label'))[index];
+        const resultInput = Array.from(el.querySelectorAll('.student__results__field'))[index];
+        resultLabel.innerText = subjectName;
+
+
+        let result = resultInput.name.split('__');
+        result[result.length - 1] = subjectValue;
+        resultInput.name = result.join('__');
+
+    });
+
+};
+
+//add subject block
+const addSubjectBlock = document.querySelector('.subjects__add');
+
+const addSubject = (el) => {
+
+    const clone = addSubjectBlock.cloneNode(true);
+
+    const removeSubjectButton = document.createElement('div');
+    removeSubjectButton.setAttribute('class', 'subject__remove btn btn-danger px-3');
+    removeSubjectButton.innerText = '-';
+
+    removeSubjectButton.addEventListener('click', (e) => {
+        const parentEl = e.target.parentElement;
+
+        let index = Array.prototype.indexOf.call(parentEl.parentElement.children, parentEl) - 1;
+        console.log(index)
+        const studentBlocks = Array.from(document.querySelectorAll('.students__add'));
+        const testFields = studentBlocks.map((el) => el.lastElementChild)
+        testFields.forEach((el) => {
+
+        el.children[index].remove();
+
+        });
+
+        parentEl.remove();
+    });
+
+    clone.appendChild(removeSubjectButton);
+    
+    document.querySelector('.subjects__list').appendChild(clone);
+
+    const studentBlocks = Array.from(document.querySelectorAll('.students__add'));
+
+    studentBlocks.forEach(function(el) {
+
+        const studentSelect = el.firstElementChild.firstElementChild;
+        const studentIdValue = studentSelect.value;
+
+        const thisStudentThisSubjectBlock = document.createElement('div');
+        thisStudentThisSubjectBlock.setAttribute('class', 'subject__results d-flex m-1 align-items-center');
+        thisStudentThisSubjectBlock
+        .insertAdjacentHTML('afterbegin' ,`<label for="subject__input" class="student__results__label form-label text-warning"></label>
+        <input name="result__student_id__${studentIdValue}__subject_id__" type="number" class="student__results__field form-control mx-1" style="width:70px">`);
+
+        const subjectsList = el.lastElementChild;
+        subjectsList.appendChild(thisStudentThisSubjectBlock);
+
+
+    });
+
+};
+
+//removeStudentButton
+const removeStudentButton = Array.from(document.querySelectorAll('.remove__student__button'));
+
+removeStudentButton.forEach((el) => {
+
+    el.addEventListener('click', (e) => {
+
+        const parentEl = e.target.parentElement;
+        const parent = e.target.parentElement.parentElement;
+
+        parentEl.parentElement.remove();
+    });
+});
+
+</script>

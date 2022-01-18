@@ -110,6 +110,22 @@
 
     <div class="row d-flex group__block my-4">
       <div class="col py-2">
+        <h4 class="text-center">Комплексные Тесты</h4>
+        <div class="tests__content">
+          <a href=<%= `${globalLink}/groups/${group.group_id}/addComplexTest` %> class="btn btn-primary my-2">
+          Добавить комплексный тест в эту группу
+          </a>          
+          <a href=<%= `${globalLink}/groups/${group.group_id}/removeComplexTest` %> class="btn btn-danger my-2">
+            Удалить тест из группы
+            </a>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="row d-flex group__block my-4">
+      <div class="col py-2">
         <h4 class="text-center">Ревью</h4>
         <h5 class="text-center">Добавить характеристики эту группу</h5>
         <div class="review__content">
@@ -146,12 +162,16 @@
               <tr>
                 <th>Дата проведения</th>
                 <th>Количество сдающих</th>
+                <th>Средний балл по <br>обязательным предметам</th>
                 <th>Подробнее</th>
               </tr>
               <% trials.sort(function(a, b) { return new Date(a.trial_date) - new Date(b.trial_date); }).forEach(function(trial) { %>
               <tr>
                   <th class="date"><%= trial.trial_date.toLocaleDateString('ru-RU') %></th>
                   <th class="quantity"><%= trial.count %></th>
+                  <th class="avg_result">
+                    <%= trial.avg %>
+                  </th>
                   <th>
                     <a href=<%= `${globalLink}/groups/${group.group_id}/trials/${trial.trial_id}` %> class="btn btn-warning my-2">
                     <strong>Перейти</strong>
@@ -166,7 +186,40 @@
     <% } %>
 
 
-
+    <div class="row d-flex flex-column group__block my-3">
+      <h4 class="text-center my-2">Результаты по комплексным тестам: </h4>
+      <div class="table-responsive-lg">
+        <table class="table table-striped table-hover table-bordered border-primary">
+          <tr>
+            <th>Дата проведения</th>
+            <th>Формат тестирования</th>
+            <th>Предметы</th>
+            <th>Количество сдающих</th>
+            <th>% от максимума</th>
+            <th>Подробнее</th>
+          </tr>
+          <% complexTests.forEach(function(test) { %>
+          <tr>
+              <th class="date_"><%= test.posting_date.toLocaleDateString('ru-RU') %></th>
+              <th><%= test.format %></th>
+              <th>
+                <% test.test_subjects.forEach(function(subject) { %>
+                  
+               <%= subject.name %> <br>
+                <% }); %>
+              </th>
+              <th><%= test.count %></th>
+              <th><%= test.percent %></th>
+              <th>
+                <a href=<%= `${globalLink}/complex-tests/${test.id}/` %> class="btn btn-warning my-2">
+                <strong>Перейти</strong>
+                </a>
+              </th>
+          </tr>
+          <% }); %>
+      </table>
+      </div>
+    </div>
 
 
     <% if(group.class_number == 11 && group.name.substr(0, 2) == 'NU'){ %>
@@ -196,7 +249,7 @@
                   <th class="date"><%= nuTrial.trial_date.toLocaleDateString('ru-RU') %></th>
                   <th class="quantity"><%= nuTrial.count %></th>
                   <th>
-                    <a href=<%= `${globalLink}/groups/${group.group_id}/trials/${nuTrial.trial_id}` %> class="btn btn-warning my-2">
+                    <a href=<%= `${globalLink}/groups/${group.group_id}/nutrials/${nuTrial.trial_id}` %> class="btn btn-warning my-2">
                     <strong>Перейти</strong>
                     </a>
                   </th>

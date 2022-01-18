@@ -43,6 +43,109 @@
         </div>
     </div>
 
+
+
+
+    <% if(student.complexTests.length > 0) { %>
+      <div class="row d-flex flex-column group__block mb-5 mt-3 align-items-center">
+          <h3 class="my-3 text-primary text-center">Результаты по комплексным тестам</h3>
+        <div class="table-responsive-lg">
+          <table class="table table-striped table-hover table-bordered border-primary">
+            <tr>
+              <th>Дата</th>
+              <th>Формат</th>
+              <th>Предмет</th>
+              <th>Макс. балл</th>
+              <th>Набранные. баллы</th>
+              <th>% от максимума</th>
+            </tr>
+            <% student.complexTests.sort(function(a, b) { return new Date(a.posting_date) - new Date(b.posting_date); }).forEach(function(complex_test) { %>
+            <tr>
+              <th class="complex_tests_dates"><%= complex_test.posting_date.toLocaleDateString('ru-RU') %></th>
+              <th>
+                <%= complex_test.format %> 
+              </th>
+              <th>
+                <%= complex_test.subject_name %> 
+              </th>
+              <th>
+                <%= complex_test.max_points %> 
+              </th>
+              <th>
+                <%= complex_test.points %> 
+              </th>
+              <th class="complex_tests_percents">
+                <%= complex_test.percent %> 
+              </th>
+            </tr>
+            <% }); %>
+          </table>
+        </div>
+  
+                <!-- <h5 class="text-center text-primary mt-2">Графики динамики успеваемости по предметам</h5>
+                <div class="row d-flex flex-column border rounded">
+                  <div class="col py-2">
+                    <div id="complex_tests_chart">
+                    </div>
+                  </div>
+                </div> -->
+  
+  
+  
+        </div>
+  
+  
+<script> 
+
+
+
+// var options = {
+//     series: [{
+//     name: '% от максимума',
+//     type: 'line',
+//     data: Array.from(document.querySelectorAll('.complex_tests_percents')).map((el) => el.innerHTML),
+//   }],
+//     chart: {
+//     height: 250,
+//     type: 'line',
+//   },
+//   zoom: {
+// enabled: false
+// },
+//   stroke: {
+//     width: [4, 4]
+//   },
+//   markers: {
+//     size: 3
+//   },
+//   title: {
+//     text: 'Графики'
+//   },
+//   dataLabels: {
+//     enabled: true,
+//     enabledOnSeries: [1]
+//   },
+//   labels: Array.from(document.querySelectorAll('.complex_tests_dates')).map((el) => el.innerHTML),
+//   xaxis: {
+//     type: 'date'
+//   },
+//   yaxis: [{
+//     title: {
+//       text: '% от максимума',
+//     },
+//     max: 100,
+//     min: 0,
+//   }]
+//   };
+
+
+//   var chart_сomplex_tests = new ApexCharts(document.querySelector("#complex_tests_chart"), options).render();
+// </script>
+<% } %>
+
+
+
+
     <% if(student.trials.length > 0) { %>
       <div class="row d-flex flex-column group__block mb-1 mt-3 align-items-center">
           <h3 class="my-3 text-primary text-center">Результаты по пробному тестированию ЕНТ</h3>

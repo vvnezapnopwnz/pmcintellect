@@ -24,6 +24,7 @@ exports.getGroup = async (req, res, next) => {
     let students;
     let subjects;
     let tests;
+    let complexTests;
     let reviews;
     let trials;
     let nuTrials;
@@ -54,13 +55,58 @@ exports.getGroup = async (req, res, next) => {
     WHERE a.group_id = ${groupId}
     GROUP BY a.review_id, c.name`))
     .then((reviewsData) => reviews = reviewsData)
-    .then(() => t.manyOrNone(`select a.trial_id, a.trial_date, a.group_id, count(b.student_id) from group_ent_trials a
-    JOIN student_ent_trials_results b
-    ON a.trial_id = b.trial_id
-    WHERE a.group_id = ${groupId}
-    GROUP BY a.trial_id`))
-    .then((trialsData) => trials = trialsData)
-    .then(() => t.query(`SELECT * from group_tests WHERE group_id = ${groupId}`))
+    .then(() => t.query(`select distinct a.id, a.format,
+    a.group_id, a.posting_date,
+	  avg(b.max_points) as avg_max_points,
+	  avg(b.points) as avg_points,
+	  count(distinct b.student_id)
+    from group_custom_tests a
+    join custom_tests_results b
+    on a.id = b.custom_test_id
+    where a.group_id = ${groupId}
+	  GROUP BY a.id
+    ORDER BY a.posting_date`))
+    .then((complexTestsData) => {
+
+      complexTests = complexTestsData.map((complexTest) => {
+        complexTest.percent = Math.round(complexTest.avg_points / complexTest.avg_max_points * 100);
+        return complexTest;
+      });
+    
+    })
+    .then(() => {
+      t.tx((tt) => {
+        const queries = complexTests.map((test) => tt.manyOrNone(`select distinct b.name
+        from custom_tests_results a
+        join subjects b on a.subject_id = b.id
+        where a.custom_test_id = ${test.id}`).then((testSubjectsData) => {
+          test.test_subjects = testSubjectsData;
+        }));
+        return tt.batch(queries);
+      })
+    })
+    .then(() => t.manyOrNone(`select a.trial_id, a.trial_date, a.group_id, count(b.student_id),
+    avg(b.history_kaz_result) as history_kaz_result,
+    avg(b.reading_literacy_result) as reading_literacy_result,
+    avg(b.math_literacy_result) as math_literacy_result,
+    avg(b.mathematics_result) as mathematics_result,
+      avg(b.physics_result) as physics_result,
+      avg(b.geography_result) as geography_result,
+      avg(b.biology_result) as biology_result,
+      avg(b.chemistry_result) as chemistry_result
+    from student_ent_trials_results b
+        INNER JOIN  group_ent_trials a
+        ON a.trial_id = b.trial_id
+        WHERE a.group_id = ${groupId}
+        GROUP BY a.trial_id`))
+    .then((trialsData) => {
+      trials = trialsData.map((test) => {
+        console.log(test)
+        test.avg = Math.round(Number(test.history_kaz_result) + Number(test.reading_literacy_result) + Number(test.math_literacy_result));
+
+        return test;
+      })
+    })
     .then(() => t.manyOrNone(`select a.trial_id, a.trial_date, a.group_id, count(b.student_id) from group_nu_trials a
     JOIN student_nu_trials_results b
     ON a.trial_id = b.trial_id
@@ -79,16 +125,17 @@ exports.getGroup = async (req, res, next) => {
     }))
     .then(() => {
       t.tx((tt) => {
-        console.log(trials)
         const queries = tests.map((test) => tt.manyOrNone(`SELECT count(student_id), avg(points) from student_results WHERE test_id = 
           ${test.test_id} GROUP BY test_id`).then((results) => {
           test.result = results[0];
           test.percent = (test.result.avg / test.max_points) * 100;
         }));
+        console.log(trials)
         return tt.batch(queries);
       })
-        .then(() => res.status(200).render('./pages/groupPage', {
+      .then(() => res.status(200).render('./pages/groupPage', {
           tests,
+          complexTests,
           group,
           students,
           subjects,

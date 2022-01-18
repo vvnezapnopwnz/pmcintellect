@@ -32,6 +32,30 @@ exports.getStudentView = async (req, res, next) => {
     .then((nuTrialsData) => {
     student.nuTrials = nuTrialsData;
     })
+    .then(() => t.manyOrNone(`select a.id, a.format, a.posting_date,
+    e.name as group_name,
+    c.name as student_name,
+    b.student_id,
+    d.name as subject_name,
+    b.max_points, b.points
+    from group_custom_tests a
+    join custom_tests_results b
+    on a.id = b.custom_test_id
+    join students c
+    on b.student_id = c.student_id
+    join subjects d
+    on d.id = b.subject_id
+    join groups e
+    on e.group_id = a.group_id
+    where c.student_id = ${student_id}`))
+    .then((complexTestsData) => {
+
+      student.complexTests = complexTestsData.map((test) => {
+        test.percent = Math.round(test.points / test.max_points * 100);
+        
+        return test;
+      });
+    })
     .then(() => t.manyOrNone(`SELECT * FROM student_subjects a
                                 JOIN subjects b ON a.subject_id = b.id
                                 WHERE student_id = ${student_id}`))
