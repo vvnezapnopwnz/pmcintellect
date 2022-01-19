@@ -59,21 +59,17 @@ exports.addComplexTestPage = async (req, res, next) => {
         let subjects;
     
         return t.oneOrNone(`SELECT * from groups WHERE group_id = ${groupId}`)
-          .then((groupData) => group = groupData)
-          .then(() => db.manyOrNone(`SELECT * from group_students WHERE group_id = ${groupId}`))
-          .then((thisGroupStudentsIds) => thisGroupStudentsIds.reduce((acc, { student_id }) => {
-            const newAcc = acc.then((contents) => db.oneOrNone(`SELECT * from students WHERE(student_id = ${student_id} AND active)`)
-              .then((students) => contents.concat(students)));
-            return newAcc;
-          }, Promise.resolve([]))
-            .then((studentsData) => students = studentsData))
-          .then(() => db.manyOrNone(`SELECT * from group_subjects WHERE group_id = ${groupId}`))
-          .then((thisGroupSubjects) => thisGroupSubjects.reduce((acc, { subject_id }) => {
-            const newAcc = acc.then((contents) => db.one(`SELECT * from subjects WHERE id = ${subject_id}`)
-              .then((subjects) => contents.concat(subjects)));
-            return newAcc;
-          }, Promise.resolve([]))
-            .then((subjectsData) => subjects = subjectsData))
+        .then((groupData) => group = groupData)
+        .then(() => db.manyOrNone(`select * from group_students a
+        join students b
+        on a.student_id = b.student_id
+        where a.group_id = ${groupId} and b.active = true`))
+        .then((studentsData) => students = studentsData)
+        .then(() => db.manyOrNone(`select * from group_subjects a
+          join subjects b
+          on a.subject_id = b.id
+          where a.group_id = ${groupId}`))
+          .then((subjectsData) => subjects = subjectsData)
           .then(() => res.status(200).render('updatePages/addComplexTest', {
             group,
             students,
