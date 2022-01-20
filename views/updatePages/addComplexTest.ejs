@@ -10,7 +10,7 @@
 
 <div class="container">
   <div class="row  my-3">
-    <div class="col-lg-7 student__block p-3">
+    <div class="col-lg-8 student__block p-3">
         <div class="group__info flex-column my-2">
           <h4>
             Группа:  <%= group.name %>
@@ -28,17 +28,17 @@
         <input name="complex_test_format" type="text" class="form-control w-50" id="FormControlInputFormat">                
         </div>
         
-        <div class="test_format__list my-3">
+        <!-- <div class="test_format__list my-3">
           <label for="FormControlInputDate" class="form-label">Укажите дату комплексного теста</label>
           <input name="complex_test_date" type="date" class="form-control w-50" id="FormControlInputDate">                
-        </div>
+        </div> -->
 
         <div class="subjects__list my-3">
 
-            <label for="InputSubjects" class="form-label">Укажите предмет(ы)</label>
+            <label for="InputSubjects" class="form-label">Укажите предмет(ы), максимум баллов и дату проведения теста</label>
               <div class="subjects__add d-flex my-1">
 
-                  <select onchange="addSubjectToStudents(this)" name="subject__name" type="select" class="input__subject form-control w-50">
+                  <select onchange="addSubjectToStudents(this)" name="subject__name" type="select" class="input__subject form-control w-50" style="max-width: 190px;">
                     <option value="">Выберите предмет</option>
                     <% subjects.forEach(function(subject) { %>
                       <option class="available__option" value="<%= subject.id %>">
@@ -46,7 +46,8 @@
                       </option>
                       <% }); %>
                     </select>
-                    <input name="max_points__" type="number" class="form-control mx-1" style="width:70px">
+                    <input placeholder="Макс. баллов" name="max_points__" type="number" class="form-control mx-1" style="width:170px">
+                    <input name="complex_test_date" type="date" class="form-control w-25" id="FormControlInputDate">    
                     <div onclick="addSubject(this)" class="subject__plus btn btn-primary mx-2">
                         +
                     </div>

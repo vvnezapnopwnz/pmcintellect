@@ -150,5 +150,19 @@ document.addEventListener("DOMContentLoaded", function() {
         };
     
 })
+let clicked = {};
+
+Array.from(document.querySelectorAll('.btn-check')).map((el) => el.addEventListener('click',(e) => {
+
+  if(clicked[e.target.id] == true) {
+    e.target.checked = false;
+    clicked[e.target.id] = false;
+  } else {
+    clicked[e.target.id] = true;
+  }
+
+
+}))
+
 
 </script>

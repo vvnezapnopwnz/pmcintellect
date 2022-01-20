@@ -15,7 +15,7 @@
               <input placeholder="Поиск по имени" type="text" id="input" class=" mb-4 form-control w-75 align-self-center" />
                         <div class="col studens_all">
                           <% students.forEach(function(student) { %>
-                            <a class="btn btn-secondary btn-sm m-1" href=<%= `${globalLink}/views/${student.student_id}` %>>
+                            <a class="btn btn-secondary hide btn-sm m-1" href=<%= `${globalLink}/views/${student.student_id}` %>>
                               <strong><%= student.name %></strong>
                             </a>
                       <% }); %>
@@ -33,7 +33,8 @@ window.onload = () => {
 let input = document.querySelector('#input');
 
 input.oninput = function() {
-  let value = this.value.trim();
+  if(this.value.length > 2) {
+    let value = this.value.trim();
   let list = document.querySelectorAll('.btn-secondary');
 
   value
@@ -45,6 +46,24 @@ input.oninput = function() {
     : list.forEach(elem => {
         elem.classList.remove('hide');
       });
+
+
+  } else {
+    let value = this.value.trim();
+  let list = document.querySelectorAll('.btn-secondary');
+
+  value
+    ? list.forEach(elem => {
+        elem.innerText.search(value) == -1
+          ? elem.classList.add('hide')
+          : elem.classList.add('hide');
+      })
+    : list.forEach(elem => {
+        elem.classList.add('hide');
+      });
+
+  }
+
 };
 }
 

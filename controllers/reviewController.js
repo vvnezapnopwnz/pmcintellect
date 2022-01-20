@@ -197,7 +197,7 @@ exports.updateReview = async (req, res, next) => {
       });
 
       return tt.batch(queries);
-    })).then(() => res.redirect(`${globalLink}/reviews/${reviewId}`))
+    })).then(() => res.redirect(`${globalLink}/reviews/${reviewId}`));
   });
 
 };

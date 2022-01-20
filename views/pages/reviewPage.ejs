@@ -61,26 +61,30 @@
                         <%= record.name %>
                        </a>
                     </td>
-                   <th><% if(record.attendance) { %>
+                   <th><% if(record.attendance == true) { %>
                     <p class="attendance">Посетил</p>
-                    <% } else { %>
+                    <% } else if(record.attendance == false) { %>
                     <p class="attendance">Отсутствовал</p>
-  
-                  <% } %>
-                   </th>
-                   <th><% if(record.activity) { %>
-                    <p class="activity">Активен</p>
-                    <% } else { %>
-                      <p class="activity">Не активен</p>
-                  <% } %>
-                    </th>
-                    <th><% if(record.homework) { %>
-                      <p class="homework">Выполнил</p>
-                      <% } else { %>
-                        <p class="homework">Не выполнил</p>
+                  <% }  else { %>
+                    <p class="attendance">-</p>
                     <% } %>
+                   </th>
+                   <th><% if(record.activity == true) { %>
+                    <p class="activity">Активен</p>
+                    <% } else if(record.activity == false) { %>
+                      <p class="activity">Не активен</p>
+                    <% } else { %>
+                        <p class="activity">-</p>
+                        <% } %>
                     </th>
-                   
+                    <th><% if(record.homework == true) { %>
+                      <p class="homework">Выполнил</p>
+                      <% } else if(record.homework == false) { %>
+                        <p class="homework">Не выполнил</p>
+                    <% } else { %>
+                        <p class="homework">-</p>
+                    </th>
+                   <% } %>
                 </tr>
                 <% }); %>
              </table>
