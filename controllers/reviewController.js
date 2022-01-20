@@ -193,7 +193,7 @@ exports.updateReview = async (req, res, next) => {
 
         return tt.none(`UPDATE student_records
         SET attendance = ${student.attendance}, activity = ${student.activity},
-        homework = ${student.homework} WHERE student_id = ${student.id}`);
+        homework = ${student.homework} WHERE student_id = ${student.id} and review_id = ${reviewId}`);
       });
 
       return tt.batch(queries);
