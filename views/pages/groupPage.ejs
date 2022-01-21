@@ -94,7 +94,7 @@
 
     </div>
 
-    <div class="row d-flex group__block my-4">
+    <!-- <div class="row d-flex group__block my-4">
       <div class="col py-2">
         <h4 class="text-center">Тесты</h4>
         <div class="tests__content">
@@ -106,14 +106,14 @@
             </a>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div class="row d-flex group__block my-4">
       <div class="col py-2">
-        <h4 class="text-center">Комплексные Тесты</h4>
+        <h4 class="text-center">Тесты</h4>
         <div class="tests__content">
           <a href=<%= `${globalLink}/groups/${group.group_id}/addComplexTest` %> class="btn btn-primary my-2">
-          Добавить комплексный тест в эту группу
+          Добавить тест в эту группу
           </a>          
           <a href=<%= `${globalLink}/groups/${group.group_id}/removeComplexTest` %> class="btn btn-danger my-2">
             Удалить тест из группы
@@ -133,16 +133,15 @@
           <a href=<%= `${globalLink}/groups/${group.group_id}/${subject.subject_id}/addReview` %> class="btn btn-secondary my-2">
             <%= subject.name %>
           </a>    
-          
           <% }); %>
           <a href=<%= `${globalLink}/groups/${group.group_id}/removeReview` %> class="btn btn-danger my-2">
             Удалить ревью из группы
             </a>
         </div>
-    </div>
+      </div>
     </div>
 
-    <% if(group.class_number == 11 && group.name.substr(0, 3) == 'ЕНТ' || group.name == '11-2/S21-22/ONLINE'){ %>
+    <!-- <% if(group.class_number == 11 && group.name.substr(0, 3) == 'ЕНТ' || group.name == '11-2/S21-22/ONLINE'){ %>
         <div class="row d-flex group__block mt-4 mb-1">
           <div class="col py-2">
             <h4 class="text-center">Пробное ЕНТ</h4>
@@ -183,8 +182,7 @@
           </div>
         </div>
 
-    <% } %>
-
+    <% } %> -->
 
     <div class="row d-flex flex-column group__block my-3">
       <h4 class="text-center my-2">Результаты по комплексным тестам: </h4>

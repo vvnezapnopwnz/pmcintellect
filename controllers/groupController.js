@@ -18,6 +18,43 @@ exports.createGroup = async (req, res, next) => {
 
 exports.getGroup = async (req, res, next) => {
 
+  // return db.task(t => {
+  //   const groupId = req.params.id;
+  //   let group;
+
+  //   return t.manyOrNone(`select a.group_id, a.name as group_name,
+  //   a.class_number, e.id as subject_id, e.name as subject_name
+  //   from groups a
+  //   join group_subjects d on a.group_id = d.group_id
+  //   join subjects e on d.subject_id = e.id
+  //   where a.group_id = ${groupId}`)
+  //   .then((responseData) => {
+  //     group.subjects = responseData;
+
+  //     return t.manyOrNone(`select * from group_students a
+  //     join students b on a.student_id = b.student_id
+  //     where a.group_id = ${groupId}`)
+  //   }).then((responseData) => {
+
+  //     group.students = responseData;
+    
+  //     return t.manyOrNone(`select * from `)
+  //   })
+
+
+
+  // })
+
+
+
+
+
+
+
+
+
+
+
   db.task(t => {
     const groupId = req.params.id;
     let group;
