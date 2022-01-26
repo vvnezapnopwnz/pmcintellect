@@ -39,7 +39,7 @@
               <div class="subjects__add d-flex my-1">
 
                   <select onchange="addSubjectToStudents(this)" name="subject__name" type="select" class="input__subject form-control w-50" style="max-width: 190px;">
-                    <option value="">Выберите предмет</option>
+                    <option selected="selected">Выберите предмет</option>
                     <% subjects.forEach(function(subject) { %>
                       <option class="available__option" value="<%= subject.id %>">
                         <%= subject.name %>
@@ -47,7 +47,7 @@
                       <% }); %>
                     </select>
                     <input placeholder="Макс. баллов" name="max_points__" type="number" class="form-control mx-1" style="width:170px">
-                    <input name="complex_test_date" type="date" class="form-control w-25" id="FormControlInputDate">    
+                    <input name="complex_test_date__" type="date" class="form-control w-25" id="FormControlInputDate">    
                     <div onclick="addSubject(this)" class="subject__plus btn btn-primary mx-2">
                         +
                     </div>
@@ -94,6 +94,13 @@
 
 <script>
 
+  window.onload = function() {
+    let myOption = document.querySelector('.input__subject')
+    myOption.value="Выберите предмет"
+    console.log(myOption)
+
+  }
+
 const addSubjectToStudents = (subjectSelect) => {
 
     const parent = subjectSelect.parentElement.parentElement;
@@ -107,6 +114,12 @@ const addSubjectToStudents = (subjectSelect) => {
     maxPointsValue[maxPointsValue.length - 1] = subjectValue;
     maxPointsInput.name = maxPointsValue.join('__');
     console.log(maxPointsValue)
+
+    const testDateInput = maxPointsInput.nextElementSibling;
+    let testDateValue = testDateInput.name.split('__');
+    testDateValue[testDateValue.length - 1] = subjectValue;
+    testDateInput.name = testDateValue.join('__')
+    console.log(testDateValue)
 
     const studentBlocks = Array.from(document.querySelectorAll('.students__add'));
 

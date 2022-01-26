@@ -61,7 +61,7 @@
             </tr>
             <% student.complexTests.sort(function(a, b) { return new Date(a.posting_date) - new Date(b.posting_date); }).forEach(function(complex_test) { %>
             <tr>
-              <th class="complex_tests_dates"><%= complex_test.posting_date.toLocaleDateString('ru-RU') %></th>
+              <th class="complex_tests_dates"></th>
               <th>
                 <%= complex_test.format %> 
               </th>

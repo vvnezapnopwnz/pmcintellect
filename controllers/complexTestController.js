@@ -5,24 +5,28 @@ const db = require('../db');
 exports.getComplexTest = async (req, res, next) => {
 
   db.task(t => {
-    const testId = req.params.id;
+    const testID = req.params.id;
     let subjects;
     let results;
 
-    return t.manyOrNone(`select distinct a.id, a.format, a.posting_date,
+    return t.manyOrNone(`select distinct a.id, a.format,
     d.name as subject_name,
-	  d.id as subject_id
+	  d.id as subject_id,
+	  e.name as group_name, a.group_id
     from group_custom_tests a
     join custom_tests_results b
     on a.id = b.custom_test_id
     join subjects d
     on d.id = b.subject_id
-    where a.id = ${testId}`)
+	join groups e
+	on a.group_id = e.group_id
+    where a.id = ${testID}`)
     .then((subjectsData) => subjects = subjectsData)
-    .then(() => t.manyOrNone(`select a.id, a.format, a.posting_date,
+    .then(() => t.manyOrNone(`select a.id, a.format,
     c.name as student_name,
     d.name as subject_name,
-    b.max_points, b.points
+    b.max_points, b.points,
+	b.test_date
     from group_custom_tests a
     join custom_tests_results b
     on a.id = b.custom_test_id
@@ -30,7 +34,7 @@ exports.getComplexTest = async (req, res, next) => {
     on b.student_id = c.student_id
     join subjects d
     on d.id = b.subject_id
-    where a.id = ${testId}`))
+    where a.id = ${testID}`))
       .then((resultsData) => {
 
         results = resultsData.map((result) => {
@@ -40,7 +44,7 @@ exports.getComplexTest = async (req, res, next) => {
         res.status(200).render('./pages/complexTestPage', {
           results,
           subjects,
-          group: results[0],
+          group: subjects[0],
           globalLink,
         })
       })
@@ -86,13 +90,15 @@ exports.addComplexTest = async (req, res, next) => {
 
     const data = Object.keys(req.body);
 
-    const postingDate = req.body.complex_test_date;
     const format = req.body.complex_test_format;
     const groupId = req.params.id;
     const students = [req.body.students].flat();
+    let testID;
 
     const results = data.filter((el) => {
+      
       const resultInfo = el.split('__');
+
       if(students.includes(resultInfo[2])) {
         return el;
       } 
@@ -101,29 +107,33 @@ exports.addComplexTest = async (req, res, next) => {
       }).map((el) => {
         const resultInfo = el.split('__');
         const resultValue = req.body[el];
-        const maxPoints = `max_points__${resultInfo[4]}`
+        const maxPoints = `max_points__${resultInfo[4]}`;
+        const testsDate = `complex_test_date__${resultInfo[4]}`;
 
         const resultData = {
           studentId: resultInfo[2],
           subjectId: resultInfo[4],
           maxPoint: req.body[maxPoints],
+          testDate: req.body[testsDate],
           points: resultValue,
         };
         return resultData;
       });
 
-    return t.one(`INSERT INTO group_custom_tests(format, group_id, posting_date)
-    VALUES('${format}', ${groupId}, '${postingDate}') RETURNING id`)
+    return t.one(`INSERT INTO group_custom_tests(format, group_id)
+    VALUES('${format}', ${groupId}) RETURNING id`)
     .then(({ id }) => db.tx(tt => {
+
+      testID = id;
 
       const queries = results.map((result) => {
         return tt.none(`INSERT INTO custom_tests_results(custom_test_id, student_id, subject_id,
-          max_points, points) VALUES(${id}, ${result.studentId}, ${result.subjectId},
-          ${result.maxPoint}, ${result.points})`);
+          test_date, max_points, points) VALUES(${id}, ${result.studentId}, ${result.subjectId},
+          '${result.testDate}', ${result.maxPoint}, ${result.points})`);
       });
       return tt.batch(queries);
     }))
-    .then(() => res.status(200).redirect(`${globalLink}/groups/${groupId}`));
+    .then(() => res.status(200).redirect(`${globalLink}/tests/${testID}`))
   });      
 
 };

@@ -113,7 +113,7 @@ exports.getStudent = async (req, res, next) => {
     .then((nuTrialsData) => {
     student.nuTrials = nuTrialsData;
     })
-    .then(() => t.manyOrNone(`select a.id, a.format, a.posting_date,
+    .then(() => t.manyOrNone(`select a.id, a.format,
     e.name as group_name,
     c.name as student_name,
     b.student_id,

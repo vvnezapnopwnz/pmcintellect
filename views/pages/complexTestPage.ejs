@@ -21,11 +21,6 @@
                   <%= group.group_name %>
               </h5>
                 <h5>
-                    Дата проведения:
-                    <%= new Date(group.posting_date).toLocaleDateString('ru-RU') %> 
-                </h5>
-
-                <h5>
                     Формат тестирования:
                     <%= group.format %>
                 </h5>
@@ -49,15 +44,16 @@
           <div class="table-responsive-lg">
             <table class="table table-striped table-hover table-bordered border-primary">
                 <tr>
+                  <th>Дата проведения</th>
                    <th>Имя ученика</th>
                    <th>Предмет</th>
                    <th>Набранные баллы</th>
                    <th>Максимальный балл</th>
                    <th>% от максимума</th>
                 </tr>
-                <%     results.filter((result) => result.subject_name == subject.subject_name).forEach(function(result) { %>
-      
+                <%     results.filter((result) => result.subject_name == subject.subject_name).forEach(function(result) { %>     
                 <tr>
+                  <th class="dates"><%= result.test_date.toLocaleDateString('ru-RU') %></th>
                    <td class="names__<%= subject.subject_id %>"><%= result.student_name %></td>
                    <td class=><%= subject.subject_name %></td>
                    <td><%= result.points %></td>
