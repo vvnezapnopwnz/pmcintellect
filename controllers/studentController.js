@@ -39,48 +39,29 @@ exports.deleteStudent = async (req, res, next) => {
     .then(() => res.redirect(`${globalLink}/students/`))
 
   })
-
-  // db.task((t) => t.query(`DELETE FROM student_results WHERE student_id = ${studentForDeletion}`)
-  //   .then(() => db.query(`DELETE FROM group_students WHERE student_id = ${studentForDeletion}`))
-  //   .then(() => db.query(`DELETE FROM students WHERE student_id = ${studentForDeletion}`))
-  //   .then(() => res.status(200).redirect(`${globalLink}/students/`))).catch((err) => res.status(500).redirect(`${globalLink}`));
 };
 
-// exports.getStudent = async (req, res, next) => {
-//   const studentId = req.params.id;
-//   let student;
-//   db.one(`SELECT * from students WHERE student_id = ${studentId}`)
-//     .then((data) => student = data)
-//     .then(() => db.manyOrNone(`SELECT * FROM student_results a 
-//   JOIN group_tests b ON 
-//   a.test_id = b.test_id
-//   JOIN subjects c ON
-//   b.subject_id = c.id
-//    WHERE student_id = ${student.student_id}`)
-//       .then((results) => student.results = results))
-//     .then(() => db.manyOrNone(`SELECT * FROM student_subjects a
-//   JOIN subjects b ON a.subject_id = b.id WHERE student_id = ${studentId}`))
-//     .then((subjects) => db.manyOrNone(`SELECT b.posting_date, a.record_id, a.review_id, a.student_id,
-//     a.attendance, a.activity, a.homework, b.group_id,
-//     c.name
-//     FROM student_records a
-//     JOIN group_reviews b
-//     ON a.review_id = b.review_id
-//     JOIN subjects c ON
-//     b.subject_id = c.id
-//     WHERE student_id = ${student.student_id}`)
-//       .then((records) => res.status(200)
-//         .render('./pages/studentPage', {
-//           student,
-//           subjects,
-//           records,
-//           globalLink,
-//         })))
-//     .catch((error) => {
-//       console.log(error);
-//       res.redirect(`${globalLink}/`);
-//     });
-// };
+exports.reincarnateStudentPage = async (req, res, next) => {
+  db.manyOrNone('SELECT * FROM students')
+    .then((students) => {
+      res.status(200).render('./updatePages/reincarnateStudentPage', {
+        students,
+        globalLink,
+      });
+    }).catch((err) => res.status(500).redirect(`${globalLink}/`));
+
+};
+
+
+exports.reincarnateStudent = async (req, res, next) => {
+
+  db.task(t => {
+    return t.query(`UPDATE students SET active = true WHERE student_id = ${studentForDeletion}`)
+    .then(() => res.redirect(`${globalLink}/students/`))
+  })
+}
+
+
 
 exports.getStudent = async (req, res, next) => {
 
@@ -165,24 +146,6 @@ exports.getStudent = async (req, res, next) => {
   });
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 exports.getAll = async (req, res, next) => {
   let students;
@@ -276,5 +239,23 @@ exports.removeSubjectFromStudent = async (req, res, next) => {
     .then(()=> res.status(200).redirect(`${globalLink}/students/${studentId}`))
   })
 
+};
 
-}
+
+exports.getAllStudentsAsync = async (req, res, next) => {
+  const groupId = req.params.group_id;
+
+  db.task(t => {
+
+    return t.manyOrNone(`SELECT * from group_students a
+    join students b
+    on a.student_id = b.student_id
+    where a.group_id = ${groupId}`)
+    .then((students) => {
+      // console.log(students);
+      res.status(200).json({
+      students,
+      });
+    });
+  });
+};

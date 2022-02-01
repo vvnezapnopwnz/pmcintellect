@@ -47,7 +47,8 @@
                       <% }); %>
                     </select>
                     <input placeholder="Макс. баллов" name="max_points__" type="number" class="form-control mx-1" style="width:170px">
-                    <input name="complex_test_date__" type="date" class="form-control w-25" id="FormControlInputDate">    
+                    <input name="complex_test_date__" type="date" class="form-control w-25" id="FormControlInputDate">
+                    <input placeholder="Тема теста" name="complex_test_theme__" type="text" class="form-control" style="width:150px" id="FormControlInputTheme">        
                     <div onclick="addSubject(this)" class="subject__plus btn btn-primary mx-2">
                         +
                     </div>
@@ -118,8 +119,14 @@ const addSubjectToStudents = (subjectSelect) => {
     const testDateInput = maxPointsInput.nextElementSibling;
     let testDateValue = testDateInput.name.split('__');
     testDateValue[testDateValue.length - 1] = subjectValue;
-    testDateInput.name = testDateValue.join('__')
+    testDateInput.name = testDateValue.join('__');
     console.log(testDateValue)
+
+    const testThemeInput = testDateInput.nextElementSibling;
+    let testThemeValue = testThemeInput.name.split('__');
+    testThemeValue[testThemeValue.length - 1] = subjectValue;
+    testThemeInput.name = testThemeValue.join('__');
+    console.log(testThemeInput)
 
     const studentBlocks = Array.from(document.querySelectorAll('.students__add'));
 

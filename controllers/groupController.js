@@ -16,130 +16,207 @@ exports.createGroup = async (req, res, next) => {
 };
 
 
+
 exports.getGroup = async (req, res, next) => {
 
-  // return db.task(t => {
-  //   const groupId = req.params.id;
-  //   let group;
-
-  //   return t.manyOrNone(`select a.group_id, a.name as group_name,
-  //   a.class_number, e.id as subject_id, e.name as subject_name
-  //   from groups a
-  //   join group_subjects d on a.group_id = d.group_id
-  //   join subjects e on d.subject_id = e.id
-  //   where a.group_id = ${groupId}`)
-  //   .then((responseData) => {
-  //     group.subjects = responseData;
-
-  //     return t.manyOrNone(`select * from group_students a
-  //     join students b on a.student_id = b.student_id
-  //     where a.group_id = ${groupId}`)
-  //   }).then((responseData) => {
-
-  //     group.students = responseData;
-    
-  //     return t.manyOrNone(`select * from `)
-  //   })
-
-
-
-  // })
-
-
-
-
-
-
-
-
-
-
-
-  db.task(t => {
+  return db.task(t => {
     const groupId = req.params.id;
-    let group;
-    let students;
-    let subjects;
-    let complexTests;
-    let reviews;
+    let group = {};
 
-    return t.one(`SELECT * from groups WHERE group_id = '${groupId}'`)
-    .then((groupData) => group = groupData)
-    .then(() => t.manyOrNone(`SELECT * from group_students a
-    JOIN students b ON 
-    a.student_id = b.student_id
-    WHERE a.group_id = ${groupId} AND b.active = true`))
-    .then((groupStudentsData) => students = groupStudentsData)
-    .then(() => t.manyOrNone(`SELECT * from group_subjects a
-        JOIN subjects b
-        ON a.subject_id = b.id 
-        where a.group_id = ${groupId}`)
-    .then((groupSubjectsData) => subjects = groupSubjectsData))
-    .then(() => t.query(`SELECT a.review_id,  a.posting_date, c.name,
-    count(b.attendance) AS marked_attendance,
-    count(*) filter (where b.attendance) as attendance,
-    count(b.activity) AS marked_activity,
-    count(*) filter (where b.activity) as activity,
-    count(b.homework) AS marked_homework,
-    count(*) filter (where b.homework) as homework
-    from group_reviews a
-    JOIN student_records b
-    ON a.review_id = b.review_id
-    JOIN subjects c ON a.subject_id = c.id
-    WHERE a.group_id = ${groupId}
-    GROUP BY a.review_id, c.name`))
-    .then((reviewsData) => reviews = reviewsData)
-    .then(() => t.query(`select distinct a.id, a.format,
-    a.group_id,
-	  avg(b.max_points) as avg_max_points,
-	  avg(b.points) as avg_points,
-	  count(distinct b.student_id)
-    from group_custom_tests a
-    join custom_tests_results b
-    on a.id = b.custom_test_id
-    where a.group_id = ${groupId}
-	  GROUP BY a.id`))
-    .then((complexTestsData) => {
+    return t.oneOrNone(`SELECT * from groups where group_id = ${groupId}`)
+    .then((groupData) => {
+      group.group_info = groupData;
 
-      complexTests = complexTestsData.map((complexTest) => {
-        complexTest.percent = Math.round(complexTest.avg_points / complexTest.avg_max_points * 100);
-        return complexTest;
-      });
-    
+      return t.manyOrNone(`select * from group_subjects a
+      join subjects b
+      on a.subject_id = b.id
+      where a.group_id = ${groupId}`)
     })
-    .then(() => {
-      t.tx((tt) => {
-        const queries = complexTests.map((test) => tt.manyOrNone(`select distinct b.name
-        from custom_tests_results a
-        join subjects b on a.subject_id = b.id
-        where a.custom_test_id = ${test.id}`).then((testSubjectsData) => {
-          test.test_subjects = testSubjectsData;
-        }));
+    .then((group_subjects) => {
+      group.subjects = group_subjects;
+
+      return t.manyOrNone(`select a.group_id, d.name as subject_name,
+      a.student_id, b.name as student_name
+      from group_students a
+      join students b
+      on a.student_id = b.student_id
+      join student_subjects c
+      on b.student_id = c.student_id
+      join subjects d
+      on c.subject_id = d.id
+      where a.group_id = ${groupId} and active = true`)
+    }).then((group_students) => {
+      group.students = group_students;
+
+      group.group_students_by_subjects = group.subjects.map((subject) => {
+
+       subject.subject_students = group.students.filter((student) => student.subject_name == subject.name);
+       return subject;
+      });
+      console.log(group.group_students_by_subjects)
+      return t.manyOrNone(`SELECT a.review_id,  a.posting_date, c.name,
+      count(b.attendance) AS marked_attendance,
+      count(*) filter (where b.attendance) as attendance,
+      count(b.activity) AS marked_activity,
+      count(*) filter (where b.activity) as activity,
+      count(b.homework) AS marked_homework,
+      count(*) filter (where b.homework) as homework
+      from group_reviews a
+      JOIN student_records b
+      ON a.review_id = b.review_id
+      JOIN subjects c ON a.subject_id = c.id
+      WHERE a.group_id = ${groupId}
+      GROUP BY a.review_id, c.name`)
+    })
+    .then((group_reviews) => {
+      group.reviews = group_reviews;
+
+      return t.manyOrNone(`select distinct format, group_id from group_custom_tests
+      where group_id = ${groupId}`);
+    })
+    .then((testFormatsData) => {
+
+      return t.tx((tt) => {
+
+        const queries = testFormatsData.map((format) => {
+          return tt.manyOrNone(`select * from group_subjects a
+          join subjects b on a.subject_id = b.id 
+          where group_id = ${groupId}`)
+          .then((subjects) => {
+            format.subjects = subjects;
+            return format;
+          })
+        })
         return tt.batch(queries);
       })
     })
-      .then(() => res.status(200).render('./pages/groupPage', {
-          tests: complexTests,
-          complexTests,
-          group,
-          students,
-          subjects,
-          reviews,
-          globalLink,
-        }));
-    })
-    .catch((error) => {
-      console.log('ERROR:', error);
+    .then((formatsData) => {
 
-      res.status(500).json({
-        error,
+      group.formats = formatsData;
+      
+      return t.tx((tt) => {
+
+        const queries = group.formats.map((format) => {
+
+          return format.subjects.map((subject) => {
+            tt.manyOrNone(`select distinct a.format, a.id,
+            b.test_date, b.theme
+            from group_custom_tests a
+                        join custom_tests_results b
+                        on a.id = b.custom_test_id
+                        where a.format = '${format.format}' 
+                        and b.subject_id = ${subject.id}`)
+            .then((testData) => {
+              subject.tests = testData;
+              return subject;
+            });
+          });
+        });
+
+        return tt.batch(queries);
       });
+    })
+    .then(() => {
+      group.formats.map((format) => {
+        return format.subjects.map((subject) => {
+          return subject.tests.map((test) => {
+            test.students = group.students.map((student) => student.student_name)
+              .filter((v, i, a) => a.indexOf(v) === i)
+              .map((student_name) => {
+                return { name: student_name }});
+          });
+        });
+      });
+    })
+    .then(() => {
+
+        return t.tx((tt) => {
+
+            const queries = group.formats.map((format) => {
+              return format.subjects.map((subject) => {
+                return subject.tests.map((test) => {
+                  return test.students.map((student) => tt.manyOrNone(
+                    `select * from custom_tests_results a
+                    join group_custom_tests b
+                    on a.custom_test_id = b.id
+                    join students c
+                    on a.student_id = c.student_id
+                    join subjects d
+                    on a.subject_id = d.id
+                    where a.custom_test_id = ${test.id}
+                    and c.name = '${student.name}'
+                    and a.subject_id = ${subject.subject_id}`)
+                    .then((resultsData) => {
+                      student.results = resultsData;
+                      return student;
+                    }))
+                })
+              })
+            })
+
+            return tt.batch(queries)
+        })
+    })
+    // .then(() => {
+    //   res.status(200).json({
+    //     data: group.formats
+    //   })
+    // })
+    .then(() => {
+      unqiue_students = group.students
+        .map((student) => student.student_name)
+        .filter((v, i, a) => a.indexOf(v) === i);
+
+      res.status(200).render('./pages/groupPage', {
+      unqiue_students,
+      formats: group.formats,
+      group_students_by_subjects: group.group_students_by_subjects,
+      group: group.group_info,
+      students: group.students,
+      subjects: group.subjects,
+      reviews: group.reviews,
+      globalLink,
+    })
+  });
+  })
+  .catch((error) => {
+    console.log('ERROR:', error);
+
+    res.status(500).json({
+      error,
     });
-
-
+  });
 
 
 };
+
+
+
+
+exports.moveStudentPage = async (req, res, next) => {
+
+  db.task((t) => {
+    
+    return t.manyOrNone(`SELECT * from groups where active = true`)
+    .then((groups) => {
+      return res.status(200).render('./pages/moveStudent', {
+        groups,
+        globalLink,
+      })
+    })
+  })
+
+
+};
+
+
+exports.moveStudent = async (req, res, next) => {
+
+
+};
+
+
+
 
 exports.addStudentToGroupPage = async (req, res, next) => {
 

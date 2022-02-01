@@ -94,7 +94,6 @@ exports.addComplexTest = async (req, res, next) => {
     const groupId = req.params.id;
     const students = [req.body.students].flat();
     let testID;
-
     const results = data.filter((el) => {
       
       const resultInfo = el.split('__');
@@ -109,14 +108,17 @@ exports.addComplexTest = async (req, res, next) => {
         const resultValue = req.body[el];
         const maxPoints = `max_points__${resultInfo[4]}`;
         const testsDate = `complex_test_date__${resultInfo[4]}`;
+        const testsTheme = `complex_test_theme__${resultInfo[4]}`;
 
         const resultData = {
           studentId: resultInfo[2],
           subjectId: resultInfo[4],
           maxPoint: req.body[maxPoints],
           testDate: req.body[testsDate],
+          testTheme: req.body[testsTheme],
           points: resultValue,
         };
+        console.log(resultData)
         return resultData;
       });
 
@@ -128,13 +130,15 @@ exports.addComplexTest = async (req, res, next) => {
 
       const queries = results.map((result) => {
         return tt.none(`INSERT INTO custom_tests_results(custom_test_id, student_id, subject_id,
-          test_date, max_points, points) VALUES(${id}, ${result.studentId}, ${result.subjectId},
-          '${result.testDate}', ${result.maxPoint}, ${result.points})`);
+          test_date, theme, max_points, points) VALUES(${id}, ${result.studentId}, ${result.subjectId},
+          '${result.testDate}', '${result.testTheme}', ${result.maxPoint}, ${result.points})`);
       });
       return tt.batch(queries);
     }))
     .then(() => res.status(200).redirect(`${globalLink}/tests/${testID}`))
-  });      
+  }).catch((err) => {
+    console.error(err);
+  })    
 
 };
 

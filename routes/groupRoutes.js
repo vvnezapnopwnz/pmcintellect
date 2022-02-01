@@ -13,6 +13,8 @@ router.post('/new', groupController.createGroup);
 router.get('/new', groupController.createGroupPage);
 router.post('/remove', groupController.removeGroup);
 router.get('/remove', groupController.removeGroupPage);
+router.post('/move', groupController.moveStudent);
+router.get('/move', groupController.moveStudentPage);
 
 router
   .route('/:id')

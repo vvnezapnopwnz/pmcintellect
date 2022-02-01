@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+    <div class="row d-flex">
+        <div class="col-sm-6 col-12">
+            <p>Choose</p>
+            <select class="choose_group form-select">
+                <option>Choose group</option>
+                <% groups.forEach((group) => { %>
+                    <option value="<%= group.group_id %>"><%= group.name %></option>
+                <% }); %>
+            </select>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const groupSelect = document.querySelector('.choose_group');
+groupSelect.addEventListener('change',  async (e) => {
+
+    let groupData = await fetch(`<%= globalLink %>/students/getAll/${e.target.value}`)
+    
+    let groupStudents = await groupData.json();
+    const studentsBlock = document.createElement('div', { class: 'students_block'});
+    e.target.parentElement.appendChild(studentsBlock);
+    const studentsSelect = document.createElement('select', { class: 'form-select'});
+    studentsBlock.appendChild(studentsSelect);
+    groupStudents.students.forEach(({ student_id, name }) => {
+        const option = document.createElement('option');
+        option.value = student_id;
+        option.innerHTML = name;
+        studentsSelect.appendChild(option);
+    })
+});
+
+
+</script>
+<%- include ("../partials/footer.ejs") %>

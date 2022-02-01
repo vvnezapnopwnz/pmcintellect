@@ -5,7 +5,7 @@
 </head>
 
 <body>
-  
+
   <%- include ("../partials/nav.ejs") %>
 
 <div class="container">
@@ -23,76 +23,67 @@
       </div>
     </div>
     <div class="row d-flex group__block my-3">
+        <div class="group__info">
+          <h4 class="students_content_title text-center">
+            Состав группы по предметам
+          </h4>
+            <div class="d-flex flex-row my-3 justify-content-around">
+              <% group_students_by_subjects.forEach(function(subject) { %>
 
-
-        <div class="col-md-6 col-12">
-          <div class="students__content">
-            <div class="accordion" id="accordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingStudent">
-                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStudent" aria-expanded="true" aria-controls="collapseStudent">
-                    Ученики группы
-                  </button>
-                </h2>
-                <div id="collapseStudent" class="accordion-collapse collapse" aria-labelledby="headingStudent" data-bs-parent="#accordion">
-                  <div class="accordion-body d-flex flex-column">
-                    <% students.forEach(function(student) { %>
-                    <div class="student__profile">
-                      <a href=<%= `${globalLink}/students/${student.student_id}/` %> class="btn btn-warning my-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                          <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-                        </svg>
-                        <strong><%= student.name %></strong>
-                      </a>
-                    </div>
-
-                      <% }); %>
-                    </div>
+                <div class="d-flex flex-column students__content mx-1">
+                  <b><%= subject.name %> :</b>
+                <% subject.subject_students.forEach(function(student) { %>
+                  <a href=<%= `${globalLink}/students/${student.student_id}/` %> class="btn btn-warning my-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                      <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                    </svg>
+                    <strong><%= student.student_name %></strong>
+                  </a>
+                <% }); %>
                 </div>
-              </div>
+              <% }); %>
             </div>
-            <a href=<%= `${globalLink}/groups/${group.group_id}/addStudent` %> class="btn btn-primary my-2">
-            Добавить ученика в эту группу
-            </a>
-            <a href=<%= `${globalLink}/groups/${group.group_id}/removeStudent` %> class="btn btn-danger my-2">
-              Удалить ученика из группы
-              </a>
-          </div>
+
+
         </div>
+      </div>
 
-        <div class="col-md-6 col-12">
-          <div class="subjects__content">
-            <div class="accordion" id="accordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="headingSubject">
-                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject" aria-expanded="true" aria-controls="collapseSubject">
-                    Предметы группы
-                  </button>
-                </h2>
-                <div id="collapseSubject" class="accordion-collapse collapse" aria-labelledby="headingSubject" data-bs-parent="#accordion">
-                  <div class="accordion-body d-flex flex-column">
-                    <% subjects.forEach(function(subject) { %>
-                    <div class="student__profile">
-                      <button class="btn btn-secondary my-2">
-                        <strong><%= subject.name %></strong>
-                      </button>
-                    </div>
 
-                      <% }); %>
-                    </div>
-                </div>
-              </div>
-            </div>
-            <a href=<%= `${globalLink}/groups/${group.group_id}/addSubject` %> class="btn btn-primary my-2">
-            Добавить предмет в эту группу
-            </a>
-            <a href=<%= `${globalLink}/groups/${group.group_id}/removeSubject` %> class="btn btn-danger my-2">
-              Удалить предмет из группы
-              </a>
-          </div>
-        </div>
 
+
+
+
+
+
+
+
+<div class="row d-flex group__block my-2">
+  <div class="col-md-6 col-12">
+    <div class="students__content">
+      <a href=<%= `${globalLink}/groups/${group.group_id}/addStudent` %> class="btn btn-primary my-2">
+      Добавить ученика в эту группу
+      </a>
+      <a href=<%= `${globalLink}/groups/${group.group_id}/removeStudent` %> class="btn btn-danger my-2">
+        Удалить ученика из группы
+        </a>
     </div>
+  </div>
+  
+  <div class="col-md-6 col-12">
+    <div class="subjects__content">
+      <a href=<%= `${globalLink}/groups/${group.group_id}/addSubject` %> class="btn btn-primary my-2">
+      Добавить предмет в эту группу
+      </a>
+      <a href=<%= `${globalLink}/groups/${group.group_id}/removeSubject` %> class="btn btn-danger my-2">
+        Удалить предмет из группы
+        </a>
+    </div>
+  </div>
+</div>
+
+
+
+
 
     <div class="row d-flex group__block my-4">
       <div class="col py-2">
@@ -100,7 +91,7 @@
         <div class="tests__content">
           <a href=<%= `${globalLink}/groups/${group.group_id}/addComplexTest` %> class="btn btn-primary my-2">
           Добавить тест в эту группу
-          </a>          
+          </a>
           <a href=<%= `${globalLink}/groups/${group.group_id}/removeComplexTest` %> class="btn btn-danger my-2">
             Удалить тест из группы
             </a>
@@ -118,7 +109,7 @@
           <% subjects.forEach(function(subject) { %>
           <a href=<%= `${globalLink}/groups/${group.group_id}/${subject.subject_id}/addReview` %> class="btn btn-secondary my-2">
             <%= subject.name %>
-          </a>    
+          </a>
           <% }); %>
           <a href=<%= `${globalLink}/groups/${group.group_id}/removeReview` %> class="btn btn-danger my-2">
             Удалить ревью из группы
@@ -127,9 +118,139 @@
       </div>
     </div>
 
-    <% subjects.forEach(function(subject) { %>
+
+    <% formats.forEach(function(format) { %>
+
       
-      <div class="row d-flex flex-column group__block my-3"> 
+      <div class="row d-flex group__block my-3">
+        <div class="group__info">
+          <h4 class="students_content_title text-center">
+            Тесты по формату: <%= format.format ? format.format : 'Не указан' %>
+          </h4>
+
+          <% format.subjects.forEach((subject) => { %>
+          <%  if(subject.tests.length > 0) { %>
+          <div class="row d-flex flex-column">
+            <p class="text-end">
+              <%= subject.name %>
+            </p>
+
+            <div class="table-responsive-lg">
+              <table class="table table-striped table-hover table-bordered border-primary">
+                <tr>
+                  <th></th>
+                   <th class="students">Ученики</th>
+                  <% unqiue_students.forEach(function(student) { %>
+                   <th class="student_name">
+                    <%= student %>
+                   </th>
+                   <% }); %>
+                </tr>
+                <% subject.tests.forEach(function(test) { %>
+                <tr>
+                  <td>
+                    <%= test.test_date.toLocaleDateString() %>
+                  </td>
+                  <th>
+                    Баллы
+                  </th>
+                  <% test.students.forEach(function(student) { %>
+                    <th>
+                      <% if(student.results.length > 0) { %>
+                      <%= student.results[0].points %> / <%= student.results[0].max_points %> 
+                        <% } else { %>
+                          -
+                        <% } %>
+                    </th>
+                    <% }); %>
+                </tr>
+                <tr>
+                  <td>
+                    <%= test.theme %>
+                  </td>
+                  <td class="fw-bold">
+                    Процент от макс.
+                  </td>
+                  <% test.students.forEach(function(student) { %>
+                    <th>
+                      <% if(student.results.length > 0) { %>
+                      <%= Math.round((student.results[0].points / student.results[0].max_points) * 100) %> %
+                      <% } else { %>
+                        -
+                      <% } %>
+                    </th>
+                    <% }); %>
+                </tr>
+                <% }); %>
+              
+              </table>
+            </div>
+          </div>
+          <% } %>
+          <% }); %>
+
+      </div>
+    </div>
+    <% }); %>
+
+
+<script>
+  window.addEventListener('load', function () {
+    const transposeTable = (tbody, newContainerType = "tbody") => {
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+    const newTbody = document.createElement(newContainerType);
+    
+    for (let rowIdx = 0; rowIdx < rows.length; rowIdx++) {
+      const row = rows[rowIdx];
+      const cells = Array.from(row.querySelectorAll("td, th"));
+
+      for (let cellIdx = 0; cellIdx < cells.length; cellIdx++ ) {
+        const cell = cells[cellIdx];
+        const newRow = newTbody.children[cellIdx] || document.createElement("tr")
+        if (!newTbody.children[cellIdx]) {
+          newTbody.appendChild(newRow);
+        }
+        newRow.appendChild(cell.cloneNode(true));
+      }
+    }
+      
+    tbody.parentElement.appendChild(newTbody);
+    tbody.parentElement.removeChild(tbody);
+    }
+    Array.from(document.querySelectorAll('tbody'))
+      .forEach((table) => transposeTable(table));
+    });
+    
+      Array.from(document.querySelectorAll('.student_name')).forEach((student) => {
+    
+        const students_col = student.parentElement;
+        const index_in_col = Array.from(students_col.children).indexOf(student);
+        const table_tbody = students_col.parentElement;
+        const table_tbody_length = table_tbody.children.length;
+        let counter = 0;
+    
+        Array.from(table_tbody.children).forEach((col) => {
+          if(col.children[index_in_col].innerHTML.trim() == '-') {
+            counter = counter + 1;
+          }
+        });
+        
+        if((table_tbody_length - 1) == counter) {
+          Array.from(table_tbody.children).forEach((col) => {
+            col.children[index_in_col].remove();
+          });
+        }
+    
+      });
+    
+    </script>
+
+
+
+
+    <% subjects.forEach(function(subject) { %>
+
+      <div class="row d-flex flex-column group__block my-3">
       <div class="accordion" id="accordion">
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingSubject_<%= subject.id %>">
@@ -170,10 +291,10 @@
           </div>
         </div>
       </div>
-    </div> 
+    </div>
 
 
-    <script> 
+    <script>
       var options = {
                 series: [{
                 name: 'Количество сдающих',
@@ -206,7 +327,7 @@
                 title: {
                   text: 'Количество сдающих'
                 },
-              
+
               }, {
                 opposite: true,
                 title: {
@@ -214,7 +335,7 @@
                 }
               }]
               };
-      
+
               var chart_<%= subject.id %> = new ApexCharts(document.querySelector("#chart_<%= subject.id %>"), options).render();
       </script>
 
@@ -222,8 +343,6 @@
     <% }); %>
 
 </div>
-
-
 
 
 <%- include ("../partials/footer.ejs") %>
