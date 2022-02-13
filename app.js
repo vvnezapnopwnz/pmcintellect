@@ -35,7 +35,7 @@ app.use('/views', viewRouter);
 app.use('/users', userRouter);
 app.use('/groups', groupRouter);
 app.use('/students', studentRouter);
-// app.use('/tests', testRouter);
+app.use('/tests', testRouter);
 app.use('/tests', complexTestRouter);
 app.use('/reviews', reviewRouter);
 

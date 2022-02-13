@@ -37,3 +37,49 @@ exports.createUser = async (req, res, next) => {
   });
   
 };
+
+exports.createNewSubjectPage = async (req, res, next) => {
+
+  db.task(t => {
+
+    return t.manyOrNone(`select * from subjects order by id desc`)
+      .then((subjects) => res.status(200).render('./createPages/createNewSubject', {
+        subjects,
+        globalLink,
+      }))
+  });
+
+};
+
+
+exports.createNewSubject = async (req, res, next) => {
+
+  db.task(t => {
+
+      return t.query(`insert into subjects(name) values('${req.body.subject__name}')`)
+        .then(() => res.status(200).redirect(`${globalLink}/users/addnewsubject`))
+  });
+};
+
+
+exports.deleteUserPage = async (req, res, next) => {
+
+  db.task(t => {
+
+    return t.manyOrNone(`select * from users`)
+      .then((users) => res.status(200).render(`./deletePages/deleteUser`, {
+        globalLink,
+        users,
+      }));
+  });
+
+};
+
+
+exports.deleteUser = async (req, res, next) => {
+  db.task(t => {
+    return t.manyOrNone(`update users set active = false 
+      where user_id = ${req.body.student__delete}`)
+      .then(() => res.status(200).redirect(`${globalLink}/users/dashboard`))
+  });
+};

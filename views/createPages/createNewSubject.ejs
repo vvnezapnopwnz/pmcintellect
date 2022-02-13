@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+    <div class="row  my-3 justify-content-around">
+        <div class="col-lg-5 student__block">
+            <h4>Создать предмет</h4>
+            <form action=<%= `${globalLink}/users/addnewsubject` %> method='POST'>
+              <div class="mb-1">
+                <label for="inputName" class="form-label">Название нового предмета</label>
+                <p>На этой странице вы можете зарегестрировать на платформе новый предмет
+                  , что позволит вам после добавлять его в группы и отдельно к ученикам</p>
+                <input name="subject__name" type="text" class="form-control " id="inputName" aria-describedby="NameHelp">
+                <div id="" class="form-text">Введите название</div>
+              </div>
+              <div class="buttons d-flex flex-column justify-content-center mt-4">
+                <button type="submit" class="btn btn-primary my-2 ">Создать предмет и занести в базу</button>
+                <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light  mh-50">Вернуться в свой профиль</a>
+              </div>
+            </form>
+          </div>
+          <div class="col-lg-4 mx-3 student__block">
+            <h4>Список всех предметов существующих на платформе</h4>
+            <div class="profile__content d-flex flex-column">
+              <% subjects.forEach(function(subject) { %>
+              <button class="btn btn-success p-1 m-1">
+                <%= subject.name %>
+              </button>
+                <% }); %>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <%- include ("../partials/footer.ejs") %>

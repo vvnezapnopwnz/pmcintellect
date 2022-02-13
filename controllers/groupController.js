@@ -20,6 +20,7 @@ exports.createGroup = async (req, res, next) => {
 exports.getGroup = async (req, res, next) => {
 
   return db.task(t => {
+
     const groupId = req.params.id;
     let group = {};
 
@@ -53,7 +54,6 @@ exports.getGroup = async (req, res, next) => {
        subject.subject_students = group.students.filter((student) => student.subject_name == subject.name);
        return subject;
       });
-      console.log(group.group_students_by_subjects)
       return t.manyOrNone(`SELECT a.review_id,  a.posting_date, c.name,
       count(b.attendance) AS marked_attendance,
       count(*) filter (where b.attendance) as attendance,
@@ -71,7 +71,7 @@ exports.getGroup = async (req, res, next) => {
     .then((group_reviews) => {
       group.reviews = group_reviews;
 
-      return t.manyOrNone(`select distinct format, group_id from group_custom_tests
+      return t.manyOrNone(`select distinct on(format) id, format, group_id from group_custom_tests
       where group_id = ${groupId}`);
     })
     .then((testFormatsData) => {
@@ -100,7 +100,8 @@ exports.getGroup = async (req, res, next) => {
 
           return format.subjects.map((subject) => {
             tt.manyOrNone(`select distinct a.format, a.id,
-            b.test_date, b.theme
+            b.test_date, b.theme, b.score_five, b.score_four,
+            b.score_three
             from group_custom_tests a
                         join custom_tests_results b
                         on a.id = b.custom_test_id
@@ -121,9 +122,11 @@ exports.getGroup = async (req, res, next) => {
         return format.subjects.map((subject) => {
           return subject.tests.map((test) => {
             test.students = group.students.map((student) => student.student_name)
+              .sort()
               .filter((v, i, a) => a.indexOf(v) === i)
               .map((student_name) => {
-                return { name: student_name }});
+                return { name: student_name }
+              });
           });
         });
       });
@@ -131,12 +134,15 @@ exports.getGroup = async (req, res, next) => {
     .then(() => {
 
         return t.tx((tt) => {
-
             const queries = group.formats.map((format) => {
+              
               return format.subjects.map((subject) => {
+
                 return subject.tests.map((test) => {
+                  
                   return test.students.map((student) => tt.manyOrNone(
-                    `select * from custom_tests_results a
+                    `select a.student_id, a.subject_id,
+                    a.max_points, a.points from custom_tests_results a
                     join group_custom_tests b
                     on a.custom_test_id = b.id
                     join students c
@@ -157,18 +163,17 @@ exports.getGroup = async (req, res, next) => {
             return tt.batch(queries)
         })
     })
-    // .then(() => {
-    //   res.status(200).json({
-    //     data: group.formats
-    //   })
-    // })
     .then(() => {
-      unqiue_students = group.students
+      unique_students = group.students
         .map((student) => student.student_name)
         .filter((v, i, a) => a.indexOf(v) === i);
 
+      // res.status(200).json({
+      //   formats: group.formats,
+      // })
+
       res.status(200).render('./pages/groupPage', {
-      unqiue_students,
+      unique_students,
       formats: group.formats,
       group_students_by_subjects: group.group_students_by_subjects,
       group: group.group_info,
@@ -176,8 +181,8 @@ exports.getGroup = async (req, res, next) => {
       subjects: group.subjects,
       reviews: group.reviews,
       globalLink,
-    })
-  });
+      })
+    });
   })
   .catch((error) => {
     console.log('ERROR:', error);
@@ -211,6 +216,22 @@ exports.moveStudentPage = async (req, res, next) => {
 
 
 exports.moveStudent = async (req, res, next) => {
+
+  db.task((t) => {
+    const groupFrom = req.body.group_from;
+    const studentId = req.body.student_to_move;
+    const groupTo = req.body.group_to;
+
+    return t.query(`UPDATE group_students
+    SET group_id = ${groupTo}
+    WHERE student_id = ${studentId}
+    AND group_id = ${groupFrom}`)
+    .then(() =>  res.redirect(`${globalLink}/groups/${groupTo}/`))
+  })
+  .catch((err) => res.status(500).json({
+    error: err.message,
+    text: 'Возникла ошибка, обратитесь в технический отдел',
+  }));
 
 
 };

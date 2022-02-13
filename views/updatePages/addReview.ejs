@@ -13,156 +13,152 @@
 <div class="container">
   <div class="row  my-3">
     <div class="col-md-6 student__block p-3">
-        <div class="group__info flex-column my-2">
-          <h4>
-            Группа:  <%= group.name %>
-          </h4>
-          <h5>
-              Класс:
-              <%= group.class_number %>
-          </h5>
-        </div>
+      <div class="group__info flex-column my-2">
+        <h4>
+          Группа:  <%= group.name %>
+        </h4>
+        <h5>
+            Класс:
+            <%= group.class_number %>
+        </h5>
+      </div>
       <hr>
-      <h4>Добавить ревью в группу</h4>
-      <form action=<%= `${globalLink}/groups/${group.group_id}/addReview` %> method='POST'>
-
+      <h4>
+        Добавить характеристики в группу
+      </h4>
+      <form class="d-flex flex-column" action=<%= `${globalLink}/groups/${group.group_id}/addReview` %> method='POST'>
         <div class="subjects__list mt-3">
           <div class="subjects__add d-flex">
             <select name="subject" style="pointer-events: none;" type="select" class="form-control btn btn-secondary btn-lg" id="InputSubject">
-                  <option class="available__option" value="<%= subject.subject_id %>">
-                    <%= subject.name %>
-                  </option>
+              <option class="available__option" value="<%= subject.subject_id %>">
+                  <%= subject.name %>
+              </option>
             </select>
           </div>
         </div>
         <% if (subject.name.slice(0,13) == 'Пробные тесты') { %>
           <h2><%= subject.name.slice(0,13) %></h2>
-          <% } %>
+        <% } %>
 
         <div class="review_date__list my-3">
           <label for="FormControlInputDate" class="form-label">Укажите дату занятия</label>
           <input required name="reviewing_date" type="date" class="date-input form-control w-50" id="FormControlInputDate">                
-        </div>
-
-      </div>  
-    </div>   
-
-    <div class="row  my-3">
-      <div class="col-md-6 student__block p-3">
+        </div> 
 
         <div class="students__list d-flex flex-column justify-content-end my-2">
-          <h4 class="font-weight-bold text-center mb-4">Характристики</h4>
+          <hr>
+          <h4 class="font-weight-bold text-center mb-4">
+            Характристики
+          </h4>
 
-            <% students.forEach(function(student) { %>
-              <div class="students__add d-flex flex-column my-2">
-                <div class="name">
-                  <select name="students" style="pointer-events: none;"type="select" class="form-control btn btn-primary" id="InputStudents">
-                    <option class="available__option" value="<%= student.student_id %>">
-                      <%= student.name %>
-                    </option>
-                  </select>
-                </div>
-                <div class="row d-flex flex-column records_content">
-                  <div class="block d-flex my-1" style="width: auto;">
-                      <input type="radio" value="true" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
-                      <label style="
-                      padding-right: 40px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="attendance_y_<%= student.student_id %>">Посетил</label>
-                    
-                      <input type="radio" value="false" class="btn-check" name="attendance_<%= student.student_id %>" id="attendance_no_<%= student.student_id %>" autocomplete="off">
-                      <label class="btn btn-outline-danger flex-grow-1" for="attendance_no_<%= student.student_id %>">Пропустил</label>
-                  </div>
+          <% students.forEach(function(student) { %>
+          <div class="students__add d-flex flex-column my-2">
+            <div class="name">
+              <select name="students" style="pointer-events: none;"type="select" class="form-control btn btn-primary" id="InputStudents">
+                <option class="available__option" value="<%= student.student_id %>">
+                  <%= student.name %>
+                </option>
+              </select>
+            </div>
 
+            <div class="row d-flex flex-column records_content">
 
-                  <div class="block d-flex my-1">
-                    <input type="radio" value="true" class="btn-check " name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
-                    <label style="
-                    padding-right: 45px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="activity_y_<%= student.student_id %>">Активен</label>
-                  
-                    <input type="radio" value="false" class="btn-check" name="activity_<%= student.student_id %>" id="activity_no_<%= student.student_id %>" autocomplete="off">
-                    <label class="btn btn-outline-danger flex-grow-1" for="activity_no_<%= student.student_id %>">Не активен</label>
-                  </div>
-
-
-                  <div class="block d-flex my-1" style="width: auto;">
-                    <input type="radio" value="true"  class="btn-check " name="homework_<%= student.student_id %>" id="homework_y_<%= student.student_id %>" autocomplete="off" >
-                    <label class="btn btn-outline-primary mx-2 flex-grow-1" for="homework_y_<%= student.student_id %>">ДЗ есть</label>
-              
-                    <input type="radio" value="false" class="btn-check" name="homework_<%= student.student_id %>" id="homework_no_<%= student.student_id %>" autocomplete="off">
-                    <label class="btn btn-outline-danger flex-grow-1" for="homework_no_<%= student.student_id %>">ДЗ нет</label>
-                  </div>
-                  
-                </div>
+              <div class="block d-flex my-1" style="width: auto;">
+                <input type="radio" value="true" class="btn-check " name="attendance_<%= student.student_id %>" id="attendance_y_<%= student.student_id %>" autocomplete="off" >
+                <label style="padding-right: 40px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="attendance_y_<%= student.student_id %>">
+                  Посетил
+                </label>
+                <input type="radio" value="false" class="btn-check" name="attendance_<%= student.student_id %>" id="attendance_no_<%= student.student_id %>" autocomplete="off">
+                <label class="btn btn-outline-danger flex-grow-1" for="attendance_no_<%= student.student_id %>">
+                  Пропустил
+                </label>
               </div>
-<hr>
-              <% }); %>
-              <button type="submit" class="btn btn-primary my-4 w-75" style="margin:auto">Добавить</button>
-              <a href="<%= `${globalLink}/groups/${group.group_id}/` %>" class="btn btn-light w-50" style="margin:auto">
-                Вернуться на страницу группы
-              </a>
+
+              <div class="block d-flex my-1">
+                <input type="radio" value="true" class="btn-check " name="activity_<%= student.student_id %>" id="activity_y_<%= student.student_id %>" autocomplete="off" >
+                <label style="
+                  padding-right: 45px;" class="btn btn-outline-primary mx-2 flex-grow-1" for="activity_y_<%= student.student_id %>">
+                  Активен
+                </label>
+                <input type="radio" value="false" class="btn-check" name="activity_<%= student.student_id %>" id="activity_no_<%= student.student_id %>" autocomplete="off">
+                <label class="btn btn-outline-danger flex-grow-1" for="activity_no_<%= student.student_id %>">
+                  Не активен
+                </label>
+              </div>
+
+              <div class="block d-flex my-1" style="width: auto;">
+                <input type="radio" value="true"  class="btn-check " name="homework_<%= student.student_id %>" id="homework_y_<%= student.student_id %>" autocomplete="off" >
+                <label class="btn btn-outline-primary mx-2 flex-grow-1" for="homework_y_<%= student.student_id %>">
+                  ДЗ есть
+                </label>             
+                <input type="radio" value="false" class="btn-check" name="homework_<%= student.student_id %>" id="homework_no_<%= student.student_id %>" autocomplete="off">
+                <label class="btn btn-outline-danger flex-grow-1" for="homework_no_<%= student.student_id %>">
+                  ДЗ нет
+                </label>
+              </div>
+                  
             </div>
 
           </div>
+          <hr>
+          <% }); %>
+        </div>
 
-
+        <button type="submit" class="btn btn-primary my-4 w-75 justify-self-center" style="margin:auto">Добавить группе характеристики</button>
+        <a href="<%= `${globalLink}/groups/${group.group_id}/` %>" class="btn btn-light w-50" style="margin:auto">
+          Вернуться на страницу группы
+        </a>
 
       </form>
-
     </div>
-
   </div>
-
-
-
-
-    <%- include ("../partials/footer.ejs") %>
+</div>
+<%- include ("../partials/footer.ejs") %>
+</body>
 <script>
-var today = new Date();
-var dd = today.getDate();
-var mm = today.getMonth() + 1; //January is 0!
-var yyyy = today.getFullYear();
 
-if (dd < 10) {
-   dd = '0' + dd;
-}
-
-if (mm < 10) {
-   mm = '0' + mm;
-} 
+(function () {
+  let today = new Date();
+  let dd = today.getDate();
+  let mm = today.getMonth() + 1;
+  let yyyy = today.getFullYear();
+  if (dd < 10) {
+    dd = '0' + dd;
+  }
+  if (mm < 10) {
+    mm = '0' + mm;
+  } 
     
-today = yyyy + '-' + mm + '-' + dd;
-document.querySelector(".date-input").setAttribute("max", today);
-
-
+  today = yyyy + '-' + mm + '-' + dd;
+  document.querySelector(".date-input").setAttribute("max", today);
+}) ();
 
 document.addEventListener("DOMContentLoaded", function() {
-    var dateInput = document.querySelector(".date-input");
+  let dateInput = document.querySelector(".date-input");
 
-        dateInput.oninvalid = function(e) {
+  dateInput.oninvalid = function(e) {
+    alert('Пожалуйста, укажите дату')
+    e.target.setCustomValidity("");
+    if (!e.target.validity.valid) {
+        e.target.setCustomValidity("This field cannot be left blank");
+    }
+  };
 
-          alert('Пожалуйста, укажите дату')
-            e.target.setCustomValidity("");
-            if (!e.target.validity.valid) {
-                e.target.setCustomValidity("This field cannot be left blank");
-            }
-        };
-        dateInput.oninput = function(e) {
-            e.target.setCustomValidity("");
-        };
-    
-})
+  dateInput.oninput = function(e) {
+    e.target.setCustomValidity("");
+  };   
+});
+
 let clicked = {};
-
-Array.from(document.querySelectorAll('.btn-check')).map((el) => el.addEventListener('click',(e) => {
-
-  if(clicked[e.target.id] == true) {
-    e.target.checked = false;
-    clicked[e.target.id] = false;
-  } else {
-    clicked[e.target.id] = true;
-  }
-
-
-}))
-
+Array.from(document.querySelectorAll('.btn-check'))
+  .map((el) => el.addEventListener('click',(e) => {
+    if(clicked[e.target.id] == true) {
+      e.target.checked = false;
+      clicked[e.target.id] = false;
+    } else {
+      clicked[e.target.id] = true;
+    }
+  })
+);
 
 </script>

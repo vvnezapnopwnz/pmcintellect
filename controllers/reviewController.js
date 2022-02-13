@@ -51,15 +51,17 @@ exports.addReview = async (req, res, next) => {
       student.attendance = req.body[`attendance_${student_id}`] ? req.body[`attendance_${student_id}`] : null;
       student.activity = req.body[`activity_${student_id}`] ? req.body[`activity_${student_id}`] : null;
       student.homework = req.body[`homework_${student_id}`] ? req.body[`homework_${student_id}`] : null; 
-      return student;
-    });
+      if(student.attendance == null && student.activity == null && student.homework == null) {
+        return null;
+      } else {
+        return student;
+      }
+    }).filter((student) => student !== null)
 
     resolve(students);
   }).then((students) => db.task((t) => t.one(`INSERT INTO group_reviews(group_id, subject_id, posting_date)
             VALUES(${req.params.id}, ${req.body.subject}, '${req.body.reviewing_date}') RETURNING review_id`)).then(({ review_id }) => db.tx((tt) => {
     const queries = students.map((student) => {
-      console.log(review_id);
-      console.log(student);
       return tt.none(`INSERT INTO student_records(review_id, student_id, attendance, activity, homework)
             VALUES(${review_id}, ${student.id}, ${student.attendance}, ${student.activity}, ${student.homework})`);
     });

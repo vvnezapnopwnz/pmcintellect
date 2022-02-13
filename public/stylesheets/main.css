@@ -22,6 +22,7 @@ body {
   box-shadow: 0 1px 10px rgb(0 0 0 / 25%);
   margin: 30px 20px;
   padding: 20px 20px;
+  height: fit-content;
 }
 
 .profile__info, .group__block, .student__block {
@@ -100,3 +101,4 @@ body {
 .hide {
   display: none;
 }
+

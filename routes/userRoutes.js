@@ -17,4 +17,11 @@ router.get('/managers', authController.isLoggedIn, viewController.getManagersOve
 router.get('/new', authController.isLoggedIn, userController.createUserPage);
 router.post('/new', authController.isLoggedIn, userController.createUser);
 
+router.get('/delete', authController.isLoggedIn, userController.deleteUserPage);
+router.post('/delete', authController.isLoggedIn, userController.deleteUser);
+
+router.get('/addnewsubject', authController.isLoggedIn, userController.createNewSubjectPage);
+router.post('/addnewsubject', authController.isLoggedIn, userController.createNewSubject);
+
+
 module.exports = router;

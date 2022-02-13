@@ -109,6 +109,9 @@ exports.addComplexTest = async (req, res, next) => {
         const maxPoints = `max_points__${resultInfo[4]}`;
         const testsDate = `complex_test_date__${resultInfo[4]}`;
         const testsTheme = `complex_test_theme__${resultInfo[4]}`;
+        const scoreFive = `score_five__${resultInfo[4]}`;
+        const scoreFour = `score_four__${resultInfo[4]}`;
+        const scoreThree = `score_three__${resultInfo[4]}`;
 
         const resultData = {
           studentId: resultInfo[2],
@@ -117,6 +120,9 @@ exports.addComplexTest = async (req, res, next) => {
           testDate: req.body[testsDate],
           testTheme: req.body[testsTheme],
           points: resultValue,
+          scoreFive: req.body[scoreFive],
+          scoreFour: req.body[scoreFour],
+          scoreThree: req.body[scoreThree],
         };
         console.log(resultData)
         return resultData;
@@ -130,8 +136,9 @@ exports.addComplexTest = async (req, res, next) => {
 
       const queries = results.map((result) => {
         return tt.none(`INSERT INTO custom_tests_results(custom_test_id, student_id, subject_id,
-          test_date, theme, max_points, points) VALUES(${id}, ${result.studentId}, ${result.subjectId},
-          '${result.testDate}', '${result.testTheme}', ${result.maxPoint}, ${result.points})`);
+          test_date, theme, max_points, points, score_five, score_four, score_three) VALUES(${id}, ${result.studentId}, ${result.subjectId},
+          '${result.testDate}', '${result.testTheme}', ${result.maxPoint}, ${result.points},
+          ${result.scoreFive}, ${result.scoreFour}, ${result.scoreThree})`);
       });
       return tt.batch(queries);
     }))

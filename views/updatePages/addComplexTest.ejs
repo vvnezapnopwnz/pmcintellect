@@ -27,17 +27,12 @@
         <label for="FormControlInputFormat" class="form-label">Укажите формат-название теста</label>
         <input name="complex_test_format" type="text" class="form-control w-50" id="FormControlInputFormat">                
         </div>
-        
-        <!-- <div class="test_format__list my-3">
-          <label for="FormControlInputDate" class="form-label">Укажите дату комплексного теста</label>
-          <input name="complex_test_date" type="date" class="form-control w-50" id="FormControlInputDate">                
-        </div> -->
 
         <div class="subjects__list my-3">
 
             <label for="InputSubjects" class="form-label">Укажите предмет(ы), максимум баллов и дату проведения теста</label>
-              <div class="subjects__add d-flex my-1">
-
+              <div class="subjects__add d-flex flex-column m-2 p-2 bg-info rounded">
+                <div class="subject__configs d-flex">
                   <select onchange="addSubjectToStudents(this)" name="subject__name" type="select" class="input__subject form-control w-50" style="max-width: 190px;">
                     <option selected="selected">Выберите предмет</option>
                     <% subjects.forEach(function(subject) { %>
@@ -47,11 +42,21 @@
                       <% }); %>
                     </select>
                     <input placeholder="Макс. баллов" name="max_points__" type="number" class="form-control mx-1" style="width:170px">
-                    <input name="complex_test_date__" type="date" class="form-control w-25" id="FormControlInputDate">
-                    <input placeholder="Тема теста" name="complex_test_theme__" type="text" class="form-control" style="width:150px" id="FormControlInputTheme">        
-                    <div onclick="addSubject(this)" class="subject__plus btn btn-primary mx-2">
-                        +
-                    </div>
+                    <input name="complex_test_date__" type="date" class="form-control mx-1 w-25" id="FormControlInputDate">
+                    <input placeholder="Тема теста" name="complex_test_theme__" type="text" class="form-control" style="width:150px" id="FormControlInputTheme"> 
+                </div>
+                <p style="margin-bottom: 0px;margin-top: 5px;">Укажите проценты соотвествия по выбранному предмету</p>
+                <div class="subject__criteria d-flex align-items-center m-1">
+                  <label for="score_five" class="form-label">Отлично:</label>
+                  <input placeholder=">89" name="score_five__" type="number" style="width:70px" class="form-control mx-1 mb-1" id="score_five">
+                  <label for="score_four" class="form-label">Хорошо:</label>
+                  <input placeholder=">69" name="score_four__" type="number" style="width:70px" class="form-control m-1" id="score_four">
+                  <label for="score_three" class="form-label">Удовлетворительно:</label>
+                  <input placeholder=">49" name="score_three__" type="number" style="width:70px" class="form-control m-1" id="score_three">
+                </div>
+                  <div onclick="addSubject(this)" class="subject__plus btn btn-primary mx-2 w-25">
+                    Добавить предмет
+                  </div>
               </div>
         </div>
 
@@ -90,23 +95,20 @@
   </div>
 </div>
 
-
     <%- include ("../partials/footer.ejs") %>
 
 <script>
-
   window.onload = function() {
     let myOption = document.querySelector('.input__subject')
     myOption.value="Выберите предмет"
-    console.log(myOption)
-
   }
 
 const addSubjectToStudents = (subjectSelect) => {
 
-    const parent = subjectSelect.parentElement.parentElement;
-    let index = Array.prototype.indexOf.call(parent.children, subjectSelect.parentElement) - 1;
+    const thisSubjectConfigs = subjectSelect.parentElement;
+    const thisSubjectBlock = thisSubjectConfigs.parentElement;
 
+    let index = Array.prototype.indexOf.call(thisSubjectBlock.parentElement.children, thisSubjectBlock) - 1;
     const subjectValue = subjectSelect.value;
     const subjectName = subjectSelect.options[subjectSelect.selectedIndex].text;
 
@@ -114,19 +116,33 @@ const addSubjectToStudents = (subjectSelect) => {
     let maxPointsValue = maxPointsInput.name.split('__');
     maxPointsValue[maxPointsValue.length - 1] = subjectValue;
     maxPointsInput.name = maxPointsValue.join('__');
-    console.log(maxPointsValue)
+    // console.log(maxPointsValue)
 
     const testDateInput = maxPointsInput.nextElementSibling;
     let testDateValue = testDateInput.name.split('__');
     testDateValue[testDateValue.length - 1] = subjectValue;
     testDateInput.name = testDateValue.join('__');
-    console.log(testDateValue)
+    // console.log(testDateValue)
 
     const testThemeInput = testDateInput.nextElementSibling;
     let testThemeValue = testThemeInput.name.split('__');
     testThemeValue[testThemeValue.length - 1] = subjectValue;
     testThemeInput.name = testThemeValue.join('__');
-    console.log(testThemeInput)
+    // console.log(testThemeInput)
+
+    const scoreFiveInput = thisSubjectBlock.querySelector('#score_five');
+    let scoreFiveValue = scoreFiveInput.name.split('__');
+    scoreFiveValue[scoreFiveValue.length - 1] = subjectValue;
+    scoreFiveInput.name = scoreFiveValue.join('__');
+    const scoreFourInput = thisSubjectBlock.querySelector('#score_four');
+    let scoreFourValue = scoreFourInput.name.split('__');
+    scoreFourValue[scoreFourValue.length - 1] = subjectValue;
+    scoreFourInput.name = scoreFourValue.join('__');
+    const scoreThreeInput = thisSubjectBlock.querySelector('#score_three');
+    let scoreThreeValue = scoreThreeInput.name.split('__');
+    scoreThreeValue[scoreThreeValue.length - 1] = subjectValue;
+    scoreThreeInput.name = scoreThreeValue.join('__');
+
 
     const studentBlocks = Array.from(document.querySelectorAll('.students__add'));
 
@@ -152,14 +168,13 @@ const addSubject = (el) => {
     const clone = addSubjectBlock.cloneNode(true);
 
     const removeSubjectButton = document.createElement('div');
-    removeSubjectButton.setAttribute('class', 'subject__remove btn btn-danger px-3');
-    removeSubjectButton.innerText = '-';
+    removeSubjectButton.setAttribute('class', 'subject__remove btn btn-danger px-3 w-25 mx-2 my-1');
+    removeSubjectButton.innerText = 'Убрать предмет';
 
     removeSubjectButton.addEventListener('click', (e) => {
         const parentEl = e.target.parentElement;
 
         let index = Array.prototype.indexOf.call(parentEl.parentElement.children, parentEl) - 1;
-        console.log(index)
         const studentBlocks = Array.from(document.querySelectorAll('.students__add'));
         const testFields = studentBlocks.map((el) => el.lastElementChild)
         testFields.forEach((el) => {

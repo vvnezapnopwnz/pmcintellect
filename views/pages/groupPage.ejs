@@ -2,6 +2,8 @@
 <html>
 <head>
   <%- include ("../partials/header.ejs") %>
+  <script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script>
+
 </head>
 
 <body>
@@ -47,14 +49,6 @@
 
         </div>
       </div>
-
-
-
-
-
-
-
-
 
 
 <div class="row d-flex group__block my-2">
@@ -103,8 +97,8 @@
 
     <div class="row d-flex group__block my-4">
       <div class="col py-2">
-        <h4 class="text-center">Ревью</h4>
-        <h5 class="text-center">Добавить характеристики эту группу</h5>
+        <h4 class="text-center">Характеристики</h4>
+        <h5 class="text-center">Добавить характеристики в группу</h5>
         <div class="review__content">
           <% subjects.forEach(function(subject) { %>
           <a href=<%= `${globalLink}/groups/${group.group_id}/${subject.subject_id}/addReview` %> class="btn btn-secondary my-2">
@@ -112,7 +106,7 @@
           </a>
           <% }); %>
           <a href=<%= `${globalLink}/groups/${group.group_id}/removeReview` %> class="btn btn-danger my-2">
-            Удалить ревью из группы
+            Удалить характеристики из группы
             </a>
         </div>
       </div>
@@ -140,7 +134,7 @@
                 <tr>
                   <th></th>
                    <th class="students">Ученики</th>
-                  <% unqiue_students.forEach(function(student) { %>
+                  <% unique_students.sort().forEach(function(student) { %>
                    <th class="student_name">
                     <%= student %>
                    </th>
@@ -149,7 +143,7 @@
                 <% subject.tests.forEach(function(test) { %>
                 <tr>
                   <td>
-                    <%= test.test_date.toLocaleDateString() %>
+                    <%= test.test_date.toLocaleDateString('ru-RU') %>
                   </td>
                   <th>
                     Баллы
@@ -182,10 +176,173 @@
                     <% }); %>
                 </tr>
                 <% }); %>
-              
               </table>
             </div>
+            <button class="btn btn-success w-25 m-1" id="btnExport" onclick="exportReportToExcel(this)">Скачать таблицу</button>
           </div>
+
+          
+          <div id="chart__<%= subject.subject_id %>__<%= format.id %>">
+          </div>
+
+ <script>
+    let averageGradeNoTwo_<%= subject.subject_id %>__<%= format.id %> = <%- JSON.stringify(subject.tests.map((test) => { 
+
+       return test.students.map((student) => {
+
+         if(student.results[0]) {
+          let percents = Math.round((student.results[0].points / student.results[0].max_points) * 100);
+          let grade;
+
+          if(percents > test.score_five) {
+            grade = 5;
+          } else if(percents > test.score_four) {
+            grade = 4;
+          } else if(percents > test.score_three) {
+            grade = 3;
+          } else {
+            return;
+          }
+           return grade;
+
+         } else {
+           return;
+         }
+
+       })
+      })
+      .map((el) => {
+        let grades =  el.filter((grade) => grade != null)
+        let gradesSum = grades.reduce((a, b) => a + b, 0)
+        
+          return gradesSum / grades.length;
+      })
+      ) %>
+
+
+      let gradeTwoSum_<%= subject.subject_id %>__<%= format.id %> = <%- JSON.stringify(subject.tests.map((test) => {
+
+        return test.students.map((student) => {
+
+          if(student.results[0]) {
+          let percents = Math.round((student.results[0].points / student.results[0].max_points) * 100);
+          let grade = 0;
+            if(percents < test.score_three) {
+              grade += 1;
+            }
+            return grade;
+          }
+          return;
+
+        })
+
+      })
+      .map((el) => {
+          let grades = el.filter((grade) => grade != null)
+          let sumTwo = grades.reduce((a, b) => a + b, 0)
+          return sumTwo;
+      })
+      ) %>
+
+      let dates_<%= subject.subject_id %>__<%= format.id %> = <%- JSON.stringify(subject.tests.map((test) => {
+
+        return test.test_date.toLocaleDateString('ru-RU');
+
+      })) %>
+
+
+      let studentsSum_<%= subject.subject_id %>__<%= format.id %> = <%- JSON.stringify(subject.tests.reduce((acc, test, i) => {
+
+        acc.push(test.students.reduce((acc2, student) => {
+          if(student.results[0]) {
+          acc2 += 1;
+          }
+          return acc2; 
+        }, 0))
+        return acc
+
+      }, [])) %>
+
+      let fourGrades_<%= subject.subject_id %>__<%= format.id %> = <%- JSON.stringify(subject.tests.map((test) => {
+
+        return 4;
+
+      })) %>
+
+    var options = {
+  series: [
+  {
+    name: "Кривая успеваемости",
+    data: averageGradeNoTwo_<%= subject.subject_id %>__<%= format.id %>,
+    type: 'line'
+  },
+  {
+    name: "Количество двоечников",
+    data: gradeTwoSum_<%= subject.subject_id %>__<%= format.id %>,
+    type: 'column',
+    fill: {
+      colors: ['#D8583D']
+}
+  },
+  {
+    name: "Прямая качества",
+    data: fourGrades_<%= subject.subject_id %>__<%= format.id %>,
+    type: 'line'
+  },
+],
+  chart: {
+  type: 'line',
+  height: 350,
+  toolbar: {
+    show: false
+  }
+},
+colors: ['#5674ED', '	#D8583D', '#006200'],
+fill: {
+      colors: ['#D8583D']
+},
+dataLabels: {
+  enabled: true,
+},
+stroke: {
+  curve: 'smooth',
+},
+title: {
+  text: 'График успеваемости',
+  align: 'left'
+},
+markers: {
+  size: 3
+},
+xaxis: {
+  categories: dates_<%= subject.subject_id %>__<%= format.id %>,
+  title: {
+    text: 'Время'
+  },
+},
+yaxis: {
+  title: {
+    text: 'Средний балл'
+  },
+  min: 0,
+  max: 5,
+},
+legend: {
+  position: 'top',
+  horizontalAlign: 'right',
+  floating: true,
+  offsetY: -25,
+  offsetX: -5
+}
+};
+
+var chart = new ApexCharts(document.querySelector("#chart__<%= subject.subject_id %>__<%= format.id %>"), options);
+chart.render();
+
+
+ </script>
+
+
           <% } %>
           <% }); %>
 
@@ -195,7 +352,6 @@
 
 
 <script>
-  window.addEventListener('load', function () {
     const transposeTable = (tbody, newContainerType = "tbody") => {
     const rows = Array.from(tbody.querySelectorAll("tr"));
     const newTbody = document.createElement(newContainerType);
@@ -219,17 +375,22 @@
     }
     Array.from(document.querySelectorAll('tbody'))
       .forEach((table) => transposeTable(table));
-    });
     
       Array.from(document.querySelectorAll('.student_name')).forEach((student) => {
     
         const students_col = student.parentElement;
         const index_in_col = Array.from(students_col.children).indexOf(student);
         const table_tbody = students_col.parentElement;
+
         const table_tbody_length = table_tbody.children.length;
+
         let counter = 0;
     
-        Array.from(table_tbody.children).forEach((col) => {
+        Array.from(table_tbody.children).forEach((col, index) => {
+          if(index == table_tbody.children.length) {
+            return;
+          }
+
           if(col.children[index_in_col].innerHTML.trim() == '-') {
             counter = counter + 1;
           }
@@ -242,7 +403,22 @@
         }
     
       });
-    
+
+
+
+
+
+function exportReportToExcel(e) {
+  let table = e.previousElementSibling.firstElementChild;
+  let subjectName = `Таблица с herokuapp`; // you can use document.getElementById('tableId') as well by providing id to the table tag
+  TableToExcel.convert(table, { // html code may contain multiple tables so here we are refering to 1st table tag
+    name: `${subjectName}.xlsx`, // fileName you could use any name
+    sheet: {
+      name: 'Sheet 1' // sheetName
+    }
+  });
+}
+
     </script>
 
 
@@ -275,9 +451,9 @@
                     <tr>
                         <th class="date"><%= review.posting_date.toLocaleDateString('ru-RU') %></th>
                         <th><%= review.name %></th>
-                        <th class="attendance"><%= review.attendance %>/<%= review.marked_attendance %></th>
-                        <th class="activity"><%= review.activity %>/<%= review.marked_activity %></th>
-                        <th class="homework"><%= review.homework %>/<%= review.marked_homework %></th>
+                        <th class="attendance"><%= review.attendance %></th>
+                        <th class="activity"><%= review.activity %></th>
+                        <th class="homework"><%= review.homework %></th>
                         <th>
                           <a href=<%= `${globalLink}/reviews/${review.review_id}/` %> class="btn btn-warning my-2">
                           <strong>Перейти</strong>
@@ -292,52 +468,6 @@
         </div>
       </div>
     </div>
-
-
-    <script>
-      var options = {
-                series: [{
-                name: 'Количество сдающих',
-                type: 'column',
-                data: Array.from(document.querySelectorAll('.quantity_<%= subject.id %>')).map((el) => el.innerHTML),
-              }, {
-                name: '% от максимума',
-                type: 'line',
-                data: Array.from(document.querySelectorAll('.percent_<%= subject.id %>')).map((el) => el.innerHTML),
-              }],
-                chart: {
-                height: 350,
-                type: 'line',
-              },
-              stroke: {
-                width: [0, 4]
-              },
-              title: {
-                text: 'График успеваемости группы'
-              },
-              dataLabels: {
-                enabled: true,
-                enabledOnSeries: [1]
-              },
-              labels: Array.from(document.querySelectorAll('.date_<%= subject.id %>')).map((el) => el.innerHTML),
-              xaxis: {
-                type: 'date'
-              },
-              yaxis: [{
-                title: {
-                  text: 'Количество сдающих'
-                },
-
-              }, {
-                opposite: true,
-                title: {
-                  text: '% от максимума',
-                }
-              }]
-              };
-
-              var chart_<%= subject.id %> = new ApexCharts(document.querySelector("#chart_<%= subject.id %>"), options).render();
-      </script>
 
 
     <% }); %>

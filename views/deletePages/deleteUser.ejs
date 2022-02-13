@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+    <div class="row my-3 profile__content">
+        <div class="col-lg-6">
+            <h4>Удалить пользователя из системы</h4>
+            <form action=<%= `${globalLink}/users/delete` %> method='POST'>
+                <hr>
+                <select name="student__delete" class="choose_group form-select my-2 w-75">
+                    <option>Выберите пользователя</option>
+                    <% users.forEach((user) => { %>
+                        <option value="<%= user.user_id %>"><%= user.username %></option>
+                    <% }); %>
+                </select>
+                <hr>
+                <div class="buttons d-flex flex-column justify-content-center">
+                    <button type="submit" class="btn btn-primary my-1 w-50">Удалить из платформы</button>
+                    <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<%- include ("../partials/footer.ejs") %>

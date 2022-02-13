@@ -9,38 +9,73 @@
 <%- include ("../partials/nav.ejs") %>
 
 <div class="container">
-    <div class="row d-flex">
-        <div class="col-sm-6 col-12">
-            <p>Choose</p>
-            <select class="choose_group form-select">
-                <option>Choose group</option>
+    <div class="col-sm-6 col-6 row d-flex student__block my-2">
+        <div class="col">
+            <form action=<%= `${globalLink}/groups/move` %> method='POST'>
+                <h5 class="text-center">Эта страница предназначена для мгновенного перевода ученика из одной группы в другую</h5>
+                <hr>
+                <select name="group_from" class="choose_group form-select my-2 w-75">
+                    <option>Выберите группу</option>
+                    <% groups.forEach((group) => { %>
+                        <option value="<%= group.group_id %>"><%= group.name %></option>
+                    <% }); %>
+                </select>
+                <div class="students_content">
+                    <select name="student_to_move" class="students_list form-select w-50">
+                        <option>Выберите ученика</option>
+                    </select>
+                </div>
+                <select name="group_to" class="form-select my-2 w-75">
+                    <option>Куда переводим?</option>
                 <% groups.forEach((group) => { %>
                     <option value="<%= group.group_id %>"><%= group.name %></option>
                 <% }); %>
-            </select>
+                </select>
+                <hr>
+                <div class="buttons d-flex flex-column justify-content-center">
+                    <button type="submit" class="btn btn-primary my-1 w-50">Перевести ученика</button>
+                    <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
+                </div>
+            </form>
         </div>
-
-    </div>
 </div>
 
 <script>
 const groupSelect = document.querySelector('.choose_group');
 groupSelect.addEventListener('change',  async (e) => {
 
-    let groupData = await fetch(`<%= globalLink %>/students/getAll/${e.target.value}`)
-    
+    let groupData = await fetch(`<%= globalLink %>/students/getAll/${e.target.value}`);
     let groupStudents = await groupData.json();
-    const studentsBlock = document.createElement('div', { class: 'students_block'});
-    e.target.parentElement.appendChild(studentsBlock);
-    const studentsSelect = document.createElement('select', { class: 'form-select'});
-    studentsBlock.appendChild(studentsSelect);
-    groupStudents.students.forEach(({ student_id, name }) => {
-        const option = document.createElement('option');
-        option.value = student_id;
-        option.innerHTML = name;
-        studentsSelect.appendChild(option);
-    })
+    const studentsSelect = document.querySelector('.students_list');
+
+    if(studentsSelect == null) {
+
+        groupStudents.students.forEach(({ student_id, name }) => {
+            const option = document.createElement('option');
+            option.value = student_id;
+            option.innerHTML = name;
+            studentsSelect.appendChild(option);
+        });
+    } else {
+
+        studentsSelect.innerHTML = '<option>Выберите ученика</option>';
+        groupStudents.students.forEach(({ student_id, name }) => {
+            const option = document.createElement('option');
+            option.value = student_id;
+            option.innerHTML = name;
+            studentsSelect.appendChild(option);
+        }); 
+    }
 });
+
+const studentsList = document.querySelector('.students__list');
+console.log(studentsList)
+if(studentsList !== null) {
+    studentsList.addEventListener('change',  (e) => {
+    console.log(e.target);
+    });
+}
+
 
 
 </script>

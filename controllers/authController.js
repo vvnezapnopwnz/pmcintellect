@@ -31,7 +31,7 @@ exports.login = async (req, res, next) => {
   let user;
   const { email, password } = req.body;
 
-  db.one(`SELECT * from users WHERE email = '${email}'`)
+  db.one(`SELECT * from users WHERE email = '${email}' AND active = true`)
     .then((data) => {
       user = data;
 
