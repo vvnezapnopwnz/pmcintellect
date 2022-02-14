@@ -457,7 +457,7 @@ chart.render();
     tbody.parentElement.appendChild(newTbody);
     tbody.parentElement.removeChild(tbody);
     }
-    Array.from(document.querySelectorAll('tbody__reverse'))
+    Array.from(document.querySelectorAll('.tbody__reverse'))
       .forEach((table) => transposeTable(table));
     
       Array.from(document.querySelectorAll('.student_name')).forEach((student) => {

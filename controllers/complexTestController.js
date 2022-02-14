@@ -142,7 +142,7 @@ exports.addComplexTest = async (req, res, next) => {
       });
       return tt.batch(queries);
     }))
-    .then(() => res.status(200).redirect(`${globalLink}/tests/${testID}`))
+    .then(() => res.status(200).redirect(`${globalLink}/complextests/${testID}`))
   }).catch((err) => {
     console.error(err);
   })    
