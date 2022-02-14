@@ -6,7 +6,7 @@
 
 <body>
 
-  <%- include ("../partials/nav.ejs") %>
+<%- include ("../partials/nav.ejs") %>
   
 <div class="container">
 
@@ -27,6 +27,14 @@
                 <% subjects.forEach(function(subject) { %>
                   <button class="btn btn-secondary m-1"><%= subject.name %></button>
                   <% }); %>
+              </div>
+              <div class="d-flex my-1">
+                <a href="<%= globalLink %>/students/<%= student.student_id %>/addSubject" class="btn btn-primary m-1" >
+                  Добавить ученику предмет
+                </a>
+                <a href="<%= globalLink %>/students/<%= student.student_id %>/removeSubject" class="btn btn-danger m-1" >
+                  Удалить у ученика предмет
+                </a>
               </div>
           </div>
       </div>

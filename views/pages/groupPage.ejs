@@ -51,26 +51,48 @@
       </div>
 
 
-<div class="row d-flex group__block my-2">
-  <div class="col-md-6 col-12">
-    <div class="students__content">
-      <a href=<%= `${globalLink}/groups/${group.group_id}/addStudent` %> class="btn btn-primary my-2">
-      Добавить ученика в эту группу
-      </a>
-      <a href=<%= `${globalLink}/groups/${group.group_id}/removeStudent` %> class="btn btn-danger my-2">
-        Удалить ученика из группы
+<div class="row d-flex group__block my-2 flex-column">
+  <div class="row d-flex">
+    <div class="col-md-6 col-12">
+      <div class="students__content">
+        <a href=<%= `${globalLink}/groups/${group.group_id}/addStudent` %> class="btn btn-primary my-2">
+        Добавить ученика в эту группу
         </a>
+        <a href=<%= `${globalLink}/groups/${group.group_id}/removeStudent` %> class="btn btn-danger my-2">
+          Удалить ученика из группы
+          </a>
+      </div>
+    </div>
+    
+    <div class="col-md-6 col-12">
+      <div class="subjects__content">
+        <a href=<%= `${globalLink}/groups/${group.group_id}/addSubject` %> class="btn btn-primary my-2">
+        Добавить предмет в эту группу
+        </a>
+        <a href=<%= `${globalLink}/groups/${group.group_id}/removeSubject` %> class="btn btn-danger my-2">
+          Удалить предмет из группы
+          </a>
+      </div>
     </div>
   </div>
-  
-  <div class="col-md-6 col-12">
-    <div class="subjects__content">
-      <a href=<%= `${globalLink}/groups/${group.group_id}/addSubject` %> class="btn btn-primary my-2">
-      Добавить предмет в эту группу
-      </a>
-      <a href=<%= `${globalLink}/groups/${group.group_id}/removeSubject` %> class="btn btn-danger my-2">
-        Удалить предмет из группы
-        </a>
+  <div class="accordion" id="accordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingSubject">
+        <button class="accordion-button d-block text-center bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject">
+          <h5 class="text-light">Список добавленных учеников к группе</h5>
+        </button>
+      </h2>
+      <div id="collapseSubject" class="accordion-collapse collapse" aria-labelledby="headingSubject" data-bs-parent="#accordion">
+        <div class="accordion-body d-flex flex-column bg-warning">
+          <div class="d flex justify-content-between">
+            <% [...new Map(students.map(student => [student['student_name'], student])).values()].forEach(student => { %>
+              <a href="<%= globalLink %>/students/<%= student.student_id %>" class="btn btn-secondary btn-sm m-1">
+                  <%= student.student_name %>
+                </a>
+            <% }); %>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

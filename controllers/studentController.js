@@ -130,7 +130,7 @@ exports.getStudent = async (req, res, next) => {
                                 WHERE student_id = ${student_id}
                                 ORDER BY b.posting_date DESC`)
       .then((records) => res.status(200)
-        .render('./pages/viewPage', {
+        .render('./pages/studentPage', {
           student,
           subjects: student.subjects,
           records,
@@ -141,13 +141,10 @@ exports.getStudent = async (req, res, next) => {
       console.log(error);
       res.redirect(`${globalLink}/`);
     });
-
-
   });
-
-
-
 };
+
+
 
 exports.getAll = async (req, res, next) => {
   let students;
