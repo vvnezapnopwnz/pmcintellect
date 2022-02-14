@@ -203,3 +203,39 @@ exports.updateReview = async (req, res, next) => {
   });
 
 };
+
+exports.getAsyncReviews = async (req, res, next) => {
+
+  db.task(t => {
+
+    const month = req.params.month;
+    const groupId = req.params.group_id;
+
+    const date = `${month}-01`;
+    console.log(date);
+    return t.manyOrNone(`select 
+    a.review_id, a.group_id,
+    a.subject_id, c.name as subject_name,
+    a.posting_date, 
+    count(b.attendance) filter (where b.attendance) as attendance_count,
+    count(b.activity) filter (where b.activity) as activity_count,
+	  count(b.homework) filter (where b.homework) as homework_count
+    from group_reviews a
+    join student_records b
+    on a.review_id = b.review_id
+    join subjects c
+    on a.subject_id = c.id
+    where a.group_id = ${groupId} and
+    posting_date > '${date}' and
+    posting_date < '${date}':: date +  INTERVAL '1 month'
+    GROUP BY a.review_id, c.name
+    ORDER BY a.posting_date DESC
+    `)
+    .then((reviews) => {
+      res.status(200).json(reviews);
+    })
+
+  })
+
+
+};

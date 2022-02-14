@@ -8,6 +8,7 @@ exports.getStudentView = async (req, res, next) => {
     const student_id = req.params.id;
 
     let student;
+    let testResults;
 
     return t.oneOrNone(`SELECT * from students WHERE student_id = ${student_id}`)
     .then((data) => student = data)
@@ -41,7 +42,21 @@ exports.getStudentView = async (req, res, next) => {
     .then(() => t.manyOrNone(`SELECT * FROM student_subjects a
                                 JOIN subjects b ON a.subject_id = b.id
                                 WHERE student_id = ${student_id}`))
-    .then((subjects) => t.manyOrNone(`SELECT b.posting_date, a.record_id,
+     .then((subjectsData) => {
+        student.subjects = subjectsData;
+      })
+      .then(() => t.manyOrNone(`select *, c.name as subject_name
+      from custom_tests_results a
+      join group_custom_tests b
+      on a.custom_test_id = b.id
+      join subjects c
+      on a.subject_id = c.id
+      where a.student_id = ${student_id}`))
+      .then((testResultsData) => {
+        testResults = testResultsData
+        console.log(testResults)
+      })
+    .then(() => t.manyOrNone(`SELECT b.posting_date, a.record_id,
                                 a.review_id, a.student_id,
                                 a.attendance, a.activity, a.homework, b.group_id,
                                 c.name
@@ -55,9 +70,10 @@ exports.getStudentView = async (req, res, next) => {
       .then((records) => res.status(200)
         .render('./pages/viewPage', {
           student,
-          subjects,
+          subjects: student.subjects,
           records,
           globalLink,
+          testResults,
         })))
     .catch((error) => {
       console.log(error);

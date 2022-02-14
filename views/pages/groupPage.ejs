@@ -95,22 +95,104 @@
 
 
 
-    <div class="row d-flex group__block my-4">
-      <div class="col py-2">
-        <h4 class="text-center">Характеристики</h4>
-        <h5 class="text-center">Добавить характеристики в группу</h5>
-        <div class="review__content">
-          <% subjects.forEach(function(subject) { %>
-          <a href=<%= `${globalLink}/groups/${group.group_id}/${subject.subject_id}/addReview` %> class="btn btn-secondary my-2">
-            <%= subject.name %>
-          </a>
-          <% }); %>
-          <a href=<%= `${globalLink}/groups/${group.group_id}/removeReview` %> class="btn btn-danger my-2">
-            Удалить характеристики из группы
+    <div class="row d-flex flex-column group__block my-4 justify-content-center align-items-center">
+      <div class="row d-flex flex-column">
+        <div class="col py-2">
+          <h4 class="text-center">Характеристики</h4>
+          <h5 class="text-center">Добавить характеристики в группу</h5>
+          <div class="review__content">
+            <% subjects.forEach(function(subject) { %>
+            <a href=<%= `${globalLink}/groups/${group.group_id}/${subject.subject_id}/addReview` %> class="btn btn-secondary my-2">
+              <%= subject.name %>
             </a>
+            <% }); %>
+            <a href=<%= `${globalLink}/groups/${group.group_id}/removeReview` %> class="btn btn-danger my-2">
+              Удалить характеристики из группы
+              </a>
+          </div>
+        </div>
+      </div>
+      <div class="row d-flex">
+        <div class="accordion" id="accordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingSubject">
+              <button class="accordion-button d-block text-center bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject">
+                <h5 class="text-light">Найти характеристики</h5>
+              </button>
+            </h2>
+            <div id="collapseSubject" class="accordion-collapse collapse" aria-labelledby="headingSubject" data-bs-parent="#accordion">
+              <div class="accordion-body d-flex flex-column bg-warning">
+                <div class="input_field">
+                  <input type="month" class="month_form form-control input-sm" placeholder=""w50" >
+                </div>
+                <div class="table-responsive-lg">
+                  <table class="table table-striped table-hover table-bordered border-primary">
+                    <tbody class="async__find">
+                      <tr>
+                        <th>Дата проведения</th>
+                        <th>Предмет</th>
+                        <th>Посещаемость</th>
+                        <th>Активность</th>
+                        <th>Выполнение ДЗ</th>
+                        <th>Подробнее</th>
+                     </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+    <script>
+  const inputCharsValue = document.querySelector('.month_form');
+  const tableBlock = document.querySelector('.async__find');
+
+inputCharsValue.addEventListener('change', async (event) => {
+
+
+  tableBlock.innerHTML = `<tr><th>Дата проведения</th><th>Предмет</th><th>Посещаемость</th><th>Активность</th><th>Выполнение ДЗ</th><th>Подробнее</th></tr>`
+
+  const queryToDB = await fetch(`<%= globalLink %>/reviews/async/${event.target.value}/<%= group.group_id %>`)
+
+  const response = await queryToDB.json()
+
+
+  response.forEach((item) => {
+
+    const trEl = document.createElement('tr')
+    tableBlock.appendChild(trEl);
+    const dateCol = document.createElement('td')
+    dateCol.innerText = new Date(item.posting_date).toLocaleDateString('ru-RU');
+    const subjectCol = document.createElement('td')
+    subjectCol.innerText = item.subject_name;
+    const attendanceCountCol = document.createElement('td')
+    attendanceCountCol.innerText = item.attendance_count;
+    const activityCountCol = document.createElement('td')
+    activityCountCol.innerText = item.activity_count;
+    const homeworkCountCol = document.createElement('td');
+    homeworkCountCol.innerText = item.homework_count;
+    const linkCol = document.createElement('td');
+    linkCol.innerHTML = `<a href="<%= globalLink %>/reviews/${item.review_id}"><button class="btn btn-primary">Подробнее</button></a>`;
+
+    trEl.appendChild(dateCol);
+    trEl.appendChild(subjectCol);
+    trEl.appendChild(attendanceCountCol);
+    trEl.appendChild(activityCountCol);
+    trEl.appendChild(homeworkCountCol);
+    trEl.appendChild(linkCol);
+
+  })
+
+});
+
+    </script>
+
+
+
 
 
     <% formats.forEach(function(format) { %>
@@ -131,6 +213,7 @@
 
             <div class="table-responsive-lg">
               <table class="table table-striped table-hover table-bordered border-primary">
+                <tbody class="tbody__reverse">
                 <tr>
                   <th></th>
                    <th class="students">Ученики</th>
@@ -176,6 +259,7 @@
                     <% }); %>
                 </tr>
                 <% }); %>
+                </tbody>
               </table>
             </div>
             <button class="btn btn-success w-25 m-1" id="btnExport" onclick="exportReportToExcel(this)">Скачать таблицу</button>
@@ -373,7 +457,7 @@ chart.render();
     tbody.parentElement.appendChild(newTbody);
     tbody.parentElement.removeChild(tbody);
     }
-    Array.from(document.querySelectorAll('tbody'))
+    Array.from(document.querySelectorAll('tbody__reverse'))
       .forEach((table) => transposeTable(table));
     
       Array.from(document.querySelectorAll('.student_name')).forEach((student) => {

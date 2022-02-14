@@ -70,6 +70,7 @@ exports.getStudent = async (req, res, next) => {
     const student_id = req.params.id;
 
     let student;
+    let testResults;
 
     return t.oneOrNone(`SELECT * from students WHERE student_id = ${student_id}`)
     .then((data) => student = data)
@@ -94,34 +95,30 @@ exports.getStudent = async (req, res, next) => {
     .then((nuTrialsData) => {
     student.nuTrials = nuTrialsData;
     })
-    .then(() => t.manyOrNone(`select a.id, a.format,
-    e.name as group_name,
-    c.name as student_name,
-    b.student_id,
-    d.name as subject_name,
-    b.max_points, b.points
-    from group_custom_tests a
-    join custom_tests_results b
-    on a.id = b.custom_test_id
-    join students c
-    on b.student_id = c.student_id
-    join subjects d
-    on d.id = b.subject_id
-    join groups e
-    on e.group_id = a.group_id
-    where c.student_id = ${student_id}`))
-    .then((complexTestsData) => {
-
-      student.complexTests = complexTestsData.map((test) => {
-        test.percent = Math.round(test.points / test.max_points * 100);
-        
-        return test;
-      });
-    })
+    .then(() => t.manyOrNone(`select distinct a.format
+                              from group_custom_tests a
+                              join custom_tests_results b
+                              on a.id = b.custom_test_id
+                              where b.student_id = 585`)
+    )
     .then(() => t.manyOrNone(`SELECT * FROM student_subjects a
                                 JOIN subjects b ON a.subject_id = b.id
                                 WHERE student_id = ${student_id}`))
-    .then((subjects) => t.manyOrNone(`SELECT b.posting_date, a.record_id,
+     .then((subjectsData) => {
+        student.subjects = subjectsData;
+      })
+      .then(() => t.manyOrNone(`select *, c.name as subject_name
+      from custom_tests_results a
+      join group_custom_tests b
+      on a.custom_test_id = b.id
+      join subjects c
+      on a.subject_id = c.id
+      where a.student_id = ${student_id}`))
+      .then((testResultsData) => {
+        testResults = testResultsData
+        console.log(testResults)
+      })
+    .then(() => t.manyOrNone(`SELECT b.posting_date, a.record_id,
                                 a.review_id, a.student_id,
                                 a.attendance, a.activity, a.homework, b.group_id,
                                 c.name
@@ -130,20 +127,25 @@ exports.getStudent = async (req, res, next) => {
                                 ON a.review_id = b.review_id
                                 JOIN subjects c ON
                                 b.subject_id = c.id
-                                WHERE student_id = ${student_id}`)
+                                WHERE student_id = ${student_id}
+                                ORDER BY b.posting_date DESC`)
       .then((records) => res.status(200)
-        .render('./pages/studentPage', {
+        .render('./pages/viewPage', {
           student,
-          subjects,
+          subjects: student.subjects,
           records,
           globalLink,
+          testResults,
         })))
     .catch((error) => {
       console.log(error);
       res.redirect(`${globalLink}/`);
     });
 
+
   });
+
+
 
 };
 
