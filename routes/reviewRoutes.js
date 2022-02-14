@@ -7,7 +7,8 @@ const router = express.Router();
 
 router.use(authController.isLoggedIn);
 
-router.get('/async/:month/:group_id', reviewController.getAsyncReviews)
+router.get('/async/groups/:month/:group_id', reviewController.getAsyncReviews)
+router.get('/async/students/:month/:student_id', reviewController.getStudentAsyncReviews)
 
 router
   .get('/:id/', reviewController.getReview)

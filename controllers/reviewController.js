@@ -207,12 +207,10 @@ exports.updateReview = async (req, res, next) => {
 exports.getAsyncReviews = async (req, res, next) => {
 
   db.task(t => {
-
     const month = req.params.month;
     const groupId = req.params.group_id;
 
     const date = `${month}-01`;
-    console.log(date);
     return t.manyOrNone(`select 
     a.review_id, a.group_id,
     a.subject_id, c.name as subject_name,
@@ -233,9 +231,44 @@ exports.getAsyncReviews = async (req, res, next) => {
     `)
     .then((reviews) => {
       res.status(200).json(reviews);
-    })
+    });
 
-  })
+  });
 
+};
+
+exports.getStudentAsyncReviews = async (req, res, next) => {
+
+  db.task(t => {
+
+    const month = req.params.month;
+    const studentId = req.params.student_id;
+    console.log(studentId)
+
+    const date = `${month}-01`;
+    console.log(date);
+    return t.manyOrNone(`select 
+    a.review_id, a.subject_id, 
+	  c.name as subject_name,
+    a.posting_date, b.student_id,
+    b.attendance,
+    b.activity,
+	  b.homework
+    from group_reviews a
+    join student_records b
+    on a.review_id = b.review_id
+    join subjects c
+    on a.subject_id = c.id
+    where b.student_id = ${studentId}
+	  and posting_date > '${date}' and
+    posting_date < '${date}':: date +  INTERVAL '1 month'
+    GROUP BY a.review_id, c.name, b.student_id,
+	  b.attendance, b.activity, b.homework
+    ORDER BY a.posting_date DESC`)
+    .then((reviews) => {
+      res.status(200).json(reviews);
+    });
+
+  });
 
 };

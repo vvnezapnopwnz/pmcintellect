@@ -53,8 +53,7 @@ exports.getStudentView = async (req, res, next) => {
       on a.subject_id = c.id
       where a.student_id = ${student_id}`))
       .then((testResultsData) => {
-        testResults = testResultsData
-        console.log(testResults)
+        testResults = testResultsData;
       })
     .then(() => t.manyOrNone(`SELECT b.posting_date, a.record_id,
                                 a.review_id, a.student_id,

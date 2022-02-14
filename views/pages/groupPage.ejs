@@ -145,7 +145,7 @@
             <div id="collapseSubject" class="accordion-collapse collapse" aria-labelledby="headingSubject" data-bs-parent="#accordion">
               <div class="accordion-body d-flex flex-column bg-warning">
                 <div class="input_field">
-                  <input type="month" class="month_form form-control input-sm" placeholder=""w50" >
+                  <input type="month" class="month_form form-control input-lg w-25 my-1">
                 </div>
                 <div class="table-responsive-lg">
                   <table class="table table-striped table-hover table-bordered border-primary">
@@ -169,22 +169,15 @@
       </div>
     </div>
 
-    <script>
-  const inputCharsValue = document.querySelector('.month_form');
-  const tableBlock = document.querySelector('.async__find');
+<script>
+const inputCharsValue = document.querySelector('.month_form');
+const tableBlock = document.querySelector('.async__find');
 
 inputCharsValue.addEventListener('change', async (event) => {
-
-
   tableBlock.innerHTML = `<tr><th>Дата проведения</th><th>Предмет</th><th>Посещаемость</th><th>Активность</th><th>Выполнение ДЗ</th><th>Подробнее</th></tr>`
-
-  const queryToDB = await fetch(`<%= globalLink %>/reviews/async/${event.target.value}/<%= group.group_id %>`)
-
+  const queryToDB = await fetch(`<%= globalLink %>/reviews/async/groups/${event.target.value}/<%= group.group_id %>`)
   const response = await queryToDB.json()
-
-
   response.forEach((item) => {
-
     const trEl = document.createElement('tr')
     tableBlock.appendChild(trEl);
     const dateCol = document.createElement('td')
@@ -199,19 +192,15 @@ inputCharsValue.addEventListener('change', async (event) => {
     homeworkCountCol.innerText = item.homework_count;
     const linkCol = document.createElement('td');
     linkCol.innerHTML = `<a href="<%= globalLink %>/reviews/${item.review_id}"><button class="btn btn-primary">Подробнее</button></a>`;
-
     trEl.appendChild(dateCol);
     trEl.appendChild(subjectCol);
     trEl.appendChild(attendanceCountCol);
     trEl.appendChild(activityCountCol);
     trEl.appendChild(homeworkCountCol);
     trEl.appendChild(linkCol);
-
   })
-
 });
-
-    </script>
+</script>
 
 
 

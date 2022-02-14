@@ -11,33 +11,33 @@
 <div class="container">
 
   <div class="row d-flex student__block my-4">
-      <div class="col">
-          <div class="student__info flex-column">
-              <h4>
-                  <%= student.name %>
-              </h4>
-              <h5>
-                  Класс ученика:
-                  <%= student.class_number %>
-              </h5>
-              <h5>
-                  Предметы ученика:
-              </h5>
-              <div class="subjects_content my-2">
-                <% subjects.forEach(function(subject) { %>
-                  <button class="btn btn-secondary m-1"><%= subject.name %></button>
-                  <% }); %>
-              </div>
-              <div class="d-flex my-1">
-                <a href="<%= globalLink %>/students/<%= student.student_id %>/addSubject" class="btn btn-primary m-1" >
-                  Добавить ученику предмет
-                </a>
-                <a href="<%= globalLink %>/students/<%= student.student_id %>/removeSubject" class="btn btn-danger m-1" >
-                  Удалить у ученика предмет
-                </a>
-              </div>
-          </div>
+    <div class="col">
+      <div class="student__info flex-column">
+        <h4>
+            <%= student.name %>
+        </h4>
+        <h5>
+            Класс ученика:
+            <%= student.class_number %>
+        </h5>
+        <h5>
+            Предметы ученика:
+        </h5>
+        <div class="subjects_content my-2">
+          <% subjects.forEach(function(subject) { %>
+            <button class="btn btn-secondary m-1"><%= subject.name %></button>
+            <% }); %>
+        </div>
+        <div class="d-flex my-1">
+          <a href="<%= globalLink %>/students/<%= student.student_id %>/addSubject" class="btn btn-primary m-1" >
+            Добавить ученику предмет
+          </a>
+          <a href="<%= globalLink %>/students/<%= student.student_id %>/removeSubject" class="btn btn-danger m-1" >
+            Удалить у ученика предмет
+          </a>
+        </div>
       </div>
+    </div>
   </div>
 
 
@@ -255,7 +255,7 @@ if(reading_literacy_results.length > 0) {
     },
     grid: {
       row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+        colors: ['#f3f3f3', 'transparent'], 
         opacity: 0.5
       },
     },
@@ -308,7 +308,7 @@ if(math_literacy_results.length > 0) {
     },
     grid: {
       row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+        colors: ['#f3f3f3', 'transparent'],
         opacity: 0.5
       },
     },
@@ -362,7 +362,7 @@ if(mathematics_results.length > 0) {
     },
     grid: {
       row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+        colors: ['#f3f3f3', 'transparent'],
         opacity: 0.5
       },
     },
@@ -415,7 +415,7 @@ if(physics_results.length > 0) {
     },
     grid: {
       row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+        colors: ['#f3f3f3', 'transparent'],
         opacity: 0.5
       },
     },
@@ -467,7 +467,7 @@ if(geography_results.length > 0) {
     },
     grid: {
       row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+        colors: ['#f3f3f3', 'transparent'],
         opacity: 0.5
       },
     },
@@ -649,11 +649,6 @@ if(geography_results.length > 0) {
     var chart = new ApexCharts(document.querySelector("#math_chart"), options);
     chart.render();
   };
-  
-  
-  
-  
-  
   
   </script>
       <% } %>
