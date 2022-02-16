@@ -42,7 +42,7 @@ exports.deleteStudent = async (req, res, next) => {
 };
 
 exports.reincarnateStudentPage = async (req, res, next) => {
-  db.manyOrNone('SELECT * FROM students')
+  db.manyOrNone('SELECT * FROM students where active = false')
     .then((students) => {
       res.status(200).render('./updatePages/reincarnateStudentPage', {
         students,

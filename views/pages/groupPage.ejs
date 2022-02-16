@@ -21,6 +21,10 @@
               Класс:
               <%= group.class_number %>
           </h4>
+          <h4 class="btn btn-success">
+            Количество учеников:
+            <%= unique_students.length%>
+        </h4>
       </div>
       </div>
     </div>
@@ -207,7 +211,6 @@ inputCharsValue.addEventListener('change', async (event) => {
 
 
     <% formats.forEach(function(format) { %>
-
       
       <div class="row d-flex group__block my-3">
         <div class="group__info">
@@ -310,7 +313,7 @@ inputCharsValue.addEventListener('change', async (event) => {
         let grades =  el.filter((grade) => grade != null)
         let gradesSum = grades.reduce((a, b) => a + b, 0)
         
-          return gradesSum / grades.length;
+          return (gradesSum / grades.length).toFixed(2);
       })
       ) %>
 
