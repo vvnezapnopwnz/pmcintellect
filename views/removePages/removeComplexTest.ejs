@@ -32,9 +32,9 @@
               <div class="tests__add d-flex mb-4">
                   <select name="test" type="select" class="form-select form-select-lg w-75" id="InputTests" aria-label="Удаление теста">
                     <option value="">Выберите тест</option>
-                    <% tests.sort(function(a, b) { return new Date(a.posting_date) - new Date(b.posting_date); }).forEach(function(test) { %>
+                    <% tests.sort(function(a, b) { return new Date(a.test_date) - new Date(b.test_date); }).forEach(function(test) { %>
                       <option class="available__option" value="<%= test.id %>">
-                        Дата: <%= test.posting_date.toLocaleDateString('ru-RU') %>,
+                        Дата: <%= test.test_date.toLocaleDateString('ru-RU') %>,
                          Формат: <%= test.format %>
                       </option>
                       <% }); %>

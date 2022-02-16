@@ -132,17 +132,15 @@ exports.addComplexTest = async (req, res, next) => {
     VALUES('${format}', ${groupId}) RETURNING id`)
     .then(({ id }) => db.tx(tt => {
 
-      testID = id;
-
       const queries = results.map((result) => {
         return tt.none(`INSERT INTO custom_tests_results(custom_test_id, student_id, subject_id,
           test_date, theme, max_points, points, score_five, score_four, score_three) VALUES(${id}, ${result.studentId}, ${result.subjectId},
           '${result.testDate}', '${result.testTheme}', ${result.maxPoint}, ${result.points},
-          ${result.scoreFive}, ${result.scoreFour}, ${result.scoreThree})`);
+          ${result.scoreFive == '' ? 89 : result.scoreFive}, ${result.scoreFour == '' ? 69 : result.scoreFour}, ${result.scoreThree == '' ? 49 : result.scoreThree})`);
       });
       return tt.batch(queries);
     }))
-    .then(() => res.status(200).redirect(`${globalLink}/complextests/${testID}`))
+    .then(() => res.status(200).redirect(`${globalLink}/groups/${groupId}`))
   }).catch((err) => {
     console.error(err);
   })    
@@ -158,7 +156,7 @@ exports.removeComplexTestPage = async (req, res, next) => {
 
     const groupId = req.params.id;
 
-    return t.manyOrNone(`select distinct a.id, a.format, a.posting_date,
+    return t.manyOrNone(`select distinct a.id, a.format, b.test_date,
     a.group_id, c.name
     from group_custom_tests a
     join custom_tests_results b

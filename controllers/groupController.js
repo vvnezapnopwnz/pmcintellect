@@ -106,7 +106,7 @@ exports.getGroup = async (req, res, next) => {
                         join custom_tests_results b
                         on a.id = b.custom_test_id
                         where a.format = '${format.format}' 
-                        and b.subject_id = ${subject.id}`)
+                        and b.subject_id = ${subject.id} and a.group_id = ${groupId}`)
             .then((testData) => {
               subject.tests = testData;
               return subject;
@@ -151,7 +151,7 @@ exports.getGroup = async (req, res, next) => {
                     on a.subject_id = d.id
                     where a.custom_test_id = ${test.id}
                     and c.name = '${student.name}'
-                    and a.subject_id = ${subject.subject_id}`)
+                    and a.subject_id = ${subject.subject_id} and b.group_id = ${groupId}`)
                     .then((resultsData) => {
                       student.results = resultsData;
                       return student;
