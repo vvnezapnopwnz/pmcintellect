@@ -70,7 +70,7 @@ exports.getGroup = async (req, res, next) => {
     })
     .then((group_reviews) => {
       group.reviews = group_reviews;
-
+      
       return t.manyOrNone(`select distinct on(format) id, format, group_id from group_custom_tests
       where group_id = ${groupId}`);
     })
