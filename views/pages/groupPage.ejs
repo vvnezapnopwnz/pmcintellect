@@ -21,10 +21,6 @@
               Класс:
               <%= group.class_number %>
           </h4>
-          <h4 class="btn btn-success">
-            Количество учеников:
-            <%= unique_students.length%>
-        </h4>
       </div>
       </div>
     </div>
@@ -34,11 +30,11 @@
             Состав группы по предметам
           </h4>
             <div class="d-flex flex-row flex-sm-wrap flex-md-nowrap my-3 justify-content-around">
-              <% group_students_by_subjects.forEach(function(subject) { %>
+              <% subjects.forEach(function(subject) { %>
 
                 <div class="d-flex flex-column students__content mx-1">
                   <b><%= subject.name %> :</b>
-                <% subject.subject_students.forEach(function(student) { %>
+                <% subject.students.forEach(function(student) { %>
                   <a href=<%= `${globalLink}/students/${student.student_id}/` %> class="btn btn-warning my-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
                       <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
@@ -53,7 +49,6 @@
 
         </div>
       </div>
-
 
 <div class="row d-flex group__block my-2 flex-column">
   <div class="row d-flex">
@@ -79,26 +74,7 @@
       </div>
     </div>
   </div>
-  <div class="accordion" id="accordion">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingSubject">
-        <button class="accordion-button d-block text-center bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject">
-          <h5 class="text-light">Список добавленных учеников к группе</h5>
-        </button>
-      </h2>
-      <div id="collapseSubject" class="accordion-collapse collapse" aria-labelledby="headingSubject" data-bs-parent="#accordion">
-        <div class="accordion-body d-flex flex-column bg-warning">
-          <div class="d flex justify-content-between">
-            <% [...new Map(students.map(student => [student['student_name'], student])).values()].forEach(student => { %>
-              <a href="<%= globalLink %>/students/<%= student.student_id %>" class="btn btn-secondary btn-sm m-1">
-                  <%= student.student_name %>
-                </a>
-            <% }); %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
 </div>
 
 
@@ -210,173 +186,86 @@ inputCharsValue.addEventListener('change', async (event) => {
 
 
 
-    <% formats.forEach(function(format) { %>
-      
-      <div class="row d-flex group__block my-3">
-        <div class="group__info">
-          <h4 class="students_content_title text-center">
-            Тесты по формату: <%= format.format ? format.format : 'Не указан' %>
-          </h4>
+<% formats.forEach(function(format) { %>
+  <div class="row d-flex group__block my-3">
+    <div class="group__info">
+      <h4 class="students_content_title text-center">
+        Тесты по формату: <%= format.format ? format.format : 'Не указан' %>
+      </h4>
 
-          <% format.subjects.forEach((subject) => { %>
-          <%  if(subject.tests.length > 0) { %>
-          <div class="row d-flex flex-column">
-            <p class="text-end">
-              <%= subject.name %>
-            </p>
-
-            <div class="table-responsive-lg">
-              <table class="table table-striped table-hover table-bordered border-primary">
-                <tbody class="tbody__reverse">
+      <% format.subjects.forEach((subject) => { %>
+      <div class="row d-flex flex-column">
+        <h5 class="text-end"><%= subject.subject.subject_name %></h5>
+        <div class="table-responsive-lg">
+          <table class="table table-striped table-hover table-bordered border-primary">
+            <tbody class="tbody__reverse">
+              <tr>
+                <th>Дата проведения </th>
+                <th>Тема</th>
+                <th>Максимум баллов</th>
+                <th>Средний балл</th>
+                <th>Проценты</th>
+                <th>Средняя оценка</th>
+              </tr>
+              <% subject.tests.forEach((test) => { %>
                 <tr>
-                  <th></th>
-                   <th class="students">Ученики</th>
-                  <% unique_students.sort().forEach(function(student) { %>
-                   <th class="student_name">
-                    <%= student %>
-                   </th>
-                   <% }); %>
-                </tr>
-                <% subject.tests.forEach(function(test) { %>
-                <tr>
-                  <td>
-                    <%= test.test_date.toLocaleDateString('ru-RU') %>
-                  </td>
-                  <th>
-                    Баллы
-                  </th>
-                  <% test.students.forEach(function(student) { %>
-                    <th>
-                      <% if(student.results.length > 0) { %>
-                      <%= student.results[0].points %> / <%= student.results[0].max_points %> 
-                        <% } else { %>
-                          -
-                        <% } %>
-                    </th>
-                    <% }); %>
-                </tr>
-                <tr>
-                  <td>
-                    <%= test.theme %>
-                  </td>
-                  <td class="fw-bold">
-                    Процент от макс.
-                  </td>
-                  <% test.students.forEach(function(student) { %>
-                    <th>
-                      <% if(student.results.length > 0) { %>
-                      <%= Math.round((student.results[0].points / student.results[0].max_points) * 100) %> %
+                  <td><p><%= test.test_date.toLocaleDateString('ru-RU') %></p></td>
+                  <td> <p> <% if(test.theme) { %>
+                      <%= test.theme %>
                       <% } else { %>
-                        -
-                      <% } %>
-                    </th>
-                    <% }); %>
+                        Не указана
+                      <% } %></p></td>
+                  <td><p><%= test.max_points %></p></td>
+                  <td><p><%= Math.round(test.average_points) %></p></td>
+                  <td><p><%= Math.round(test.percents) %></p></td>
+                  <td><p>
+                    <% if(Math.round(test.average_grade) < 3) { %>
+                      2
+                      <% } else { %>
+                        <%= Math.round(test.average_grade) %>
+                        <% } %>
+                  </p></td>
                 </tr>
                 <% }); %>
-                </tbody>
-              </table>
-            </div>
-            <button class="btn btn-success w-25 m-1" id="btnExport" onclick="exportReportToExcel(this)">Скачать таблицу</button>
-          </div>
-
-          
-          <div id="chart__<%= subject.subject_id %>__<%= format.id %>">
-          </div>
-
- <script>
-    let averageGradeNoTwo_<%= subject.subject_id %>__<%= format.id %> = <%- JSON.stringify(subject.tests.map((test) => { 
-
-       return test.students.map((student) => {
-
-         if(student.results[0]) {
-          let percents = Math.round((student.results[0].points / student.results[0].max_points) * 100);
-          let grade;
-
-          if(percents > test.score_five) {
-            grade = 5;
-          } else if(percents > test.score_four) {
-            grade = 4;
-          } else if(percents > test.score_three) {
-            grade = 3;
-          } else {
-            return;
-          }
-           return grade;
-
-         } else {
-           return;
-         }
-
-       })
-      })
-      .map((el) => {
-        let grades =  el.filter((grade) => grade != null)
-        let gradesSum = grades.reduce((a, b) => a + b, 0)
-        
-          return (gradesSum / grades.length).toFixed(2);
-      })
-      ) %>
+            </tbody>
+          </table>
+        </div>
+        <div id="chart__<%= subject.subject.subject_id %>__<%= format.format_id %>">
+        </div>
+      </div>
 
 
-      let gradeTwoSum_<%= subject.subject_id %>__<%= format.id %> = <%- JSON.stringify(subject.tests.map((test) => {
+<script>
+  let gradeTwoSum_<%= subject.subject.subject_id %>__<%= format.format_id %> = <%- JSON.stringify(subject.tests.map((test) => {
+    console.log(test.bad_grade)
+    return test.bad_grade
+   })) %>
 
-        return test.students.map((student) => {
+   let averageGradeNoTwo_<%= subject.subject.subject_id %>__<%= format.format_id %> = <%- JSON.stringify(subject.tests.map((test) => {
+    console.log(test.average_grade)
+    return test.average_grade
+   })) %>
 
-          if(student.results[0]) {
-          let percents = Math.round((student.results[0].points / student.results[0].max_points) * 100);
-          let grade = 0;
-            if(percents < test.score_three) {
-              grade += 1;
-            }
-            return grade;
-          }
-          return;
+   let fourGrades_<%= subject.subject.subject_id %>__<%= format.format_id %> = <%- JSON.stringify(subject.tests.map((test) => {
+    return 4
+   })) %>
 
-        })
-
-      })
-      .map((el) => {
-          let grades = el.filter((grade) => grade != null)
-          let sumTwo = grades.reduce((a, b) => a + b, 0)
-          return sumTwo;
-      })
-      ) %>
-
-      let dates_<%= subject.subject_id %>__<%= format.id %> = <%- JSON.stringify(subject.tests.map((test) => {
-
-        return test.test_date.toLocaleDateString('ru-RU');
-
-      })) %>
+   let dates_<%= subject.subject.subject_id %>__<%= format.format_id %> = <%- JSON.stringify(subject.tests.map((test) => {
+    return test.test_date.toLocaleDateString('ru-RU')
+   })) %>
 
 
-      let studentsSum_<%= subject.subject_id %>__<%= format.id %> = <%- JSON.stringify(subject.tests.reduce((acc, test, i) => {
 
-        acc.push(test.students.reduce((acc2, student) => {
-          if(student.results[0]) {
-          acc2 += 1;
-          }
-          return acc2; 
-        }, 0))
-        return acc
-
-      }, [])) %>
-
-      let fourGrades_<%= subject.subject_id %>__<%= format.id %> = <%- JSON.stringify(subject.tests.map((test) => {
-
-        return 4;
-
-      })) %>
-
-    var options = {
+var options = {
   series: [
   {
     name: "Кривая успеваемости",
-    data: averageGradeNoTwo_<%= subject.subject_id %>__<%= format.id %>,
+    data: averageGradeNoTwo_<%= subject.subject.subject_id %>__<%= format.format_id %>,
     type: 'line'
   },
   {
     name: "Количество двоечников",
-    data: gradeTwoSum_<%= subject.subject_id %>__<%= format.id %>,
+    data: gradeTwoSum_<%= subject.subject.subject_id %>__<%= format.format_id %>,
     type: 'column',
     fill: {
       colors: ['#D8583D']
@@ -384,7 +273,7 @@ inputCharsValue.addEventListener('change', async (event) => {
   },
   {
     name: "Прямая качества",
-    data: fourGrades_<%= subject.subject_id %>__<%= format.id %>,
+    data: fourGrades_<%= subject.subject.subject_id %>__<%= format.format_id %>,
     type: 'line'
   },
 ],
@@ -413,7 +302,7 @@ markers: {
   size: 3
 },
 xaxis: {
-  categories: dates_<%= subject.subject_id %>__<%= format.id %>,
+  categories: dates_<%= subject.subject.subject_id %>__<%= format.format_id %>,
   title: {
     text: 'Время'
   },
@@ -433,142 +322,85 @@ legend: {
   offsetX: -5
 }
 };
-
-var chart = new ApexCharts(document.querySelector("#chart__<%= subject.subject_id %>__<%= format.id %>"), options);
+var chart = new ApexCharts(document.querySelector("#chart__<%= subject.subject.subject_id %>__<%= format.format_id %>"), options);
 chart.render();
 
 
- </script>
+</script>
 
 
-          <% } %>
-          <% }); %>
+<!-- для каждого предмета свой график со скриптом здесь -->
 
-      </div>
+        <% }); %>
+
     </div>
-    <% }); %>
-
-
-<script>
-    const transposeTable = (tbody, newContainerType = "tbody") => {
-    const rows = Array.from(tbody.querySelectorAll("tr"));
-    const newTbody = document.createElement(newContainerType);
-    
-    for (let rowIdx = 0; rowIdx < rows.length; rowIdx++) {
-      const row = rows[rowIdx];
-      const cells = Array.from(row.querySelectorAll("td, th"));
-
-      for (let cellIdx = 0; cellIdx < cells.length; cellIdx++ ) {
-        const cell = cells[cellIdx];
-        const newRow = newTbody.children[cellIdx] || document.createElement("tr")
-        if (!newTbody.children[cellIdx]) {
-          newTbody.appendChild(newRow);
-        }
-        newRow.appendChild(cell.cloneNode(true));
-      }
-    }
-      
-    tbody.parentElement.appendChild(newTbody);
-    tbody.parentElement.removeChild(tbody);
-    }
-    Array.from(document.querySelectorAll('.tbody__reverse'))
-      .forEach((table) => transposeTable(table));
-    
-      Array.from(document.querySelectorAll('.student_name')).forEach((student) => {
-    
-        const students_col = student.parentElement;
-        const index_in_col = Array.from(students_col.children).indexOf(student);
-        const table_tbody = students_col.parentElement;
-
-        const table_tbody_length = table_tbody.children.length;
-
-        let counter = 0;
-    
-        Array.from(table_tbody.children).forEach((col, index) => {
-          if(index == table_tbody.children.length) {
-            return;
-          }
-
-          if(col.children[index_in_col].innerHTML.trim() == '-') {
-            counter = counter + 1;
-          }
-        });
-        
-        if((table_tbody_length - 1) == counter) {
-          Array.from(table_tbody.children).forEach((col) => {
-            col.children[index_in_col].remove();
-          });
-        }
-    
-      });
+  </div>
+<% }); %>
 
 
 
 
 
-function exportReportToExcel(e) {
-  let table = e.previousElementSibling.firstElementChild;
-  let subjectName = `Таблица с herokuapp`; // you can use document.getElementById('tableId') as well by providing id to the table tag
-  TableToExcel.convert(table, { // html code may contain multiple tables so here we are refering to 1st table tag
-    name: `${subjectName}.xlsx`, // fileName you could use any name
-    sheet: {
-      name: 'Sheet 1' // sheetName
-    }
-  });
-}
-
-    </script>
 
 
 
 
-    <% subjects.forEach(function(subject) { %>
 
-      <div class="row d-flex flex-column group__block my-3">
-      <div class="accordion" id="accordion">
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="headingSubject_<%= subject.id %>">
-            <button class="accordion-button d-block text-center bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject_<%= subject.id %>" aria-expanded="true" aria-controls="collapseSubject_<%= subject.id %>">
-              <h5 class="text-light">Характеристики по предмету: <%= subject.name %></h5>
-            </button>
-          </h2>
-          <div id="collapseSubject_<%= subject.id %>" class="accordion-collapse collapse" aria-labelledby="headingSubject_<%= subject.id %>" data-bs-parent="#accordion">
-            <div class="accordion-body d-flex flex-column bg-warning">
 
-                <div class="table-responsive-lg">
-                  <table class="table table-striped table-hover table-bordered border-primary">
-                    <tr>
-                       <th>Дата проведения</th>
-                       <th>Предмет</th>
-                       <th>Посещаемость</th>
-                       <th>Активность</th>
-                       <th>Выполнение ДЗ</th>
-                       <th>Подробнее</th>
-                    </tr>
-                    <% reviews.filter((review) => review.name == subject.name).sort(function(a, b) { return new Date(b.posting_date) - new Date(a.posting_date); }).forEach(function(review) { %>
-                    <tr>
-                        <th class="date"><%= review.posting_date.toLocaleDateString('ru-RU') %></th>
-                        <th><%= review.name %></th>
-                        <th class="attendance"><%= review.attendance %></th>
-                        <th class="activity"><%= review.activity %></th>
-                        <th class="homework"><%= review.homework %></th>
-                        <th>
-                          <a href=<%= `${globalLink}/reviews/${review.review_id}/` %> class="btn btn-warning my-2">
-                          <strong>Перейти</strong>
-                          </a>
-                        </th>
-                    </tr>
-                    <% }); %>
-                 </table>
-                </div>
-              </div>
+
+
+
+
+
+
+
+
+
+<% subjects.forEach(function(subject) { %>
+  <% if(reviews.filter((review) => review.name == subject.name).length !== 0) { %>
+  <div class="row d-flex flex-column group__block my-3">
+  <div class="accordion" id="accordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingSubject_<%= subject.subject_id %>">
+        <button class="accordion-button d-block text-center bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject_<%= subject.subject_id %>" aria-expanded="true" aria-controls="collapseSubject_<%= subject.subject_id %>">
+          <h5 class="text-light">Характеристики по предмету: <%= subject.name %></h5>
+        </button>
+      </h2>
+      <div id="collapseSubject_<%= subject.subject_id %>" class="accordion-collapse collapse" aria-labelledby="headingSubject_<%= subject.subject_id %>" data-bs-parent="#accordion">
+        <div class="accordion-body d-flex flex-column bg-warning">
+            <div class="table-responsive-lg">
+              <table class="table table-striped table-hover table-bordered border-primary">
+                <tr>
+                   <th>Дата проведения</th>
+                   <th>Предмет</th>
+                   <th>Посещаемость</th>
+                   <th>Активность</th>
+                   <th>Выполнение ДЗ</th>
+                   <th>Подробнее</th>
+                </tr>
+                <% reviews.filter((review) => review.name == subject.name).sort(function(a, b) { return new Date(b.posting_date) - new Date(a.posting_date); }).forEach(function(review) { %>
+                <tr>
+                    <th class="date"><%= review.posting_date.toLocaleDateString('ru-RU') %></th>
+                    <th><%= review.name %></th>
+                    <th class="attendance"><%= review.attendance %></th>
+                    <th class="activity"><%= review.activity %></th>
+                    <th class="homework"><%= review.homework %></th>
+                    <th>
+                      <a href=<%= `${globalLink}/reviews/${review.review_id}/` %> class="btn btn-warning my-2">
+                      <strong>Перейти</strong>
+                      </a>
+                    </th>
+                </tr>
+                <% }); %>
+             </table>
+            </div>
           </div>
-        </div>
       </div>
     </div>
-
-
-    <% }); %>
+  </div>
+</div>
+<% } %>
+<% }); %>
 
 </div>
 

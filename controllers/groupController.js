@@ -28,32 +28,33 @@ exports.getGroup = async (req, res, next) => {
     .then((groupData) => {
       group.group_info = groupData;
 
+      performance.mark('start')
+      
       return t.manyOrNone(`select * from group_subjects a
       join subjects b
       on a.subject_id = b.id
       where a.group_id = ${groupId}`)
     })
-    .then((group_subjects) => {
-      group.subjects = group_subjects;
+    .then(async (group_subjects) => {
+      
+      group.subjects = await Promise.all(group_subjects.map((subject) => {
 
-      return t.manyOrNone(`select a.group_id, d.name as subject_name,
-      a.student_id, b.name as student_name
-      from group_students a
-      join students b
-      on a.student_id = b.student_id
-      join student_subjects c
-      on b.student_id = c.student_id
-      join subjects d
-      on c.subject_id = d.id
-      where a.group_id = ${groupId} and active = true`)
-    }).then((group_students) => {
-      group.students = group_students;
-
-      group.group_students_by_subjects = group.subjects.map((subject) => {
-
-       subject.subject_students = group.students.filter((student) => student.subject_name == subject.name);
-       return subject;
-      });
+        return t.manyOrNone(`select *, b.name as student_name from group_students a
+        join students b
+        on a.student_id = b.student_id
+        join student_subjects c
+        on b.student_id = c.student_id 
+        join subjects d
+        on d.id = c.subject_id
+        where a.group_id = ${groupId} and c.subject_id = ${subject.subject_id}`)
+        .then((subject_students) => 
+        ({
+           name: subject.name, subject_id: subject.id, students: subject_students 
+          })
+          );
+      }));
+    })
+    .then(() => {
       return t.manyOrNone(`SELECT a.review_id,  a.posting_date, c.name,
       count(b.attendance) AS marked_attendance,
       count(*) filter (where b.attendance) as attendance,
@@ -70,116 +71,69 @@ exports.getGroup = async (req, res, next) => {
     })
     .then((group_reviews) => {
       group.reviews = group_reviews;
-      
+      performance.mark('begin tests');
       return t.manyOrNone(`select distinct on(format) id, format, group_id from group_custom_tests
       where group_id = ${groupId}`);
     })
-    .then((testFormatsData) => {
+    .then(async (formats) => {
 
-      return t.tx((tt) => {
+      group.formats = await Promise.all(formats.map((format) => {
 
-        const queries = testFormatsData.map((format) => {
-          return tt.manyOrNone(`select * from group_subjects a
-          join subjects b on a.subject_id = b.id 
-          where group_id = ${groupId}`)
-          .then((subjects) => {
-            format.subjects = subjects;
-            return format;
-          })
+        return t.manyOrNone(`select distinct b.subject_id, c.name as subject_name
+        from group_custom_tests a
+        join custom_tests_results b
+        on a.id = custom_test_id
+        join subjects c
+        on b.subject_id = c.id
+        where a.group_id = ${groupId} and a.format = '${format.format}'`)
+        .then( async (subjects) => ({
+          format: format.format, format_id: format.id, subjects: await Promise.all(subjects.map(async (subject) => {
+
+            return t.manyOrNone(`SELECT distinct ROUND(avg(b.points)) as average_points,
+            b.test_date,
+            b.theme, b.max_points,
+            b.score_five, b.score_four, b.score_three,
+            ROUND(AVG(ROUND(cast(b.points as decimal) / b.max_points * 100))) as percents,
+            CASE 
+            WHEN AVG(ROUND(cast(b.points as decimal) / b.max_points * 100)) > b.score_five THEN 5
+            WHEN AVG(ROUND(cast(b.points as decimal) / b.max_points * 100)) > b.score_four 
+            AND AVG(ROUND(cast(b.points as decimal) / b.max_points * 100)) < b.score_five THEN 4
+            WHEN AVG(ROUND(cast(b.points as decimal) / b.max_points * 100)) > b.score_three
+            AND AVG(ROUND(cast(b.points as decimal) / b.max_points * 100)) < b.score_four THEN 3
+            ELSE null 
+            END
+            AS average_grade,
+            SUM 
+            ( CASE
+            WHEN ROUND(cast(b.points as decimal) / b.max_points * 100) < b.score_three THEN 
+              1
+            ELSE
+              0
+            END
+            ) AS bad_grade
+            from custom_tests_results b
+            join group_custom_tests a
+            on b.custom_test_id = a.id
+            where a.group_id = ${groupId}
+            and a.format = '${format.format}' and b.subject_id = ${subject.subject_id}
+            GROUP BY b.test_date, b.theme, b.max_points,
+            b.score_five, b.score_four, b.score_three`)
+            .then((results) => ({subject, tests:results}))
+          }))
         })
-        return tt.batch(queries);
-      })
-    })
-    .then((formatsData) => {
-
-      group.formats = formatsData;
-      
-      return t.tx((tt) => {
-
-        const queries = group.formats.map((format) => {
-
-          return format.subjects.map((subject) => {
-            tt.manyOrNone(`select distinct a.format, a.id,
-            b.test_date, b.theme, b.score_five, b.score_four,
-            b.score_three
-            from group_custom_tests a
-                        join custom_tests_results b
-                        on a.id = b.custom_test_id
-                        where a.format = '${format.format}' 
-                        and b.subject_id = ${subject.id} and a.group_id = ${groupId}`)
-            .then((testData) => {
-              subject.tests = testData;
-              return subject;
-            });
-          });
-        });
-
-        return tt.batch(queries);
-      });
+        );
+      }));
     })
     .then(() => {
-      group.formats.map((format) => {
-        return format.subjects.map((subject) => {
-          return subject.tests.map((test) => {
-            test.students = group.students.map((student) => student.student_name)
-              .sort()
-              .filter((v, i, a) => a.indexOf(v) === i)
-              .map((student_name) => {
-                return { name: student_name }
-              });
-          });
-        });
-      });
-    })
-    .then(() => {
-
-        return t.tx((tt) => {
-            const queries = group.formats.map((format) => {
-              
-              return format.subjects.map((subject) => {
-
-                return subject.tests.map((test) => {
-                  
-                  return test.students.map((student) => tt.manyOrNone(
-                    `select a.student_id, a.subject_id,
-                    a.max_points, a.points from custom_tests_results a
-                    join group_custom_tests b
-                    on a.custom_test_id = b.id
-                    join students c
-                    on a.student_id = c.student_id
-                    join subjects d
-                    on a.subject_id = d.id
-                    where a.custom_test_id = ${test.id}
-                    and c.name = '${student.name}'
-                    and a.subject_id = ${subject.subject_id} and b.group_id = ${groupId}`)
-                    .then((resultsData) => {
-                      student.results = resultsData;
-                      return student;
-                    }))
-                })
-              })
-            })
-
-            return tt.batch(queries)
-        })
-    })
-    .then(() => {
-      unique_students = group.students
-        .map((student) => student.student_name)
-        .filter((v, i, a) => a.indexOf(v) === i);
-
-      // res.status(200).json({
-      //   formats: group.formats,
-      // })
+        performance.mark('end')
+        performance.measure('begin-to-end', 'start', 'end')
+        console.log(performance.getEntries())
 
       res.status(200).render('./pages/groupPage', {
-      unique_students,
-      formats: group.formats,
-      group_students_by_subjects: group.group_students_by_subjects,
       group: group.group_info,
-      students: group.students,
       subjects: group.subjects,
       reviews: group.reviews,
+      formats: group.formats,
       globalLink,
       })
     });
@@ -193,7 +147,7 @@ exports.getGroup = async (req, res, next) => {
   });
 
 
-};
+}
 
 
 
