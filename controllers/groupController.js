@@ -89,35 +89,41 @@ exports.getGroup = async (req, res, next) => {
         .then( async (subjects) => ({
           format: format.format, format_id: format.id, subjects: await Promise.all(subjects.map(async (subject) => {
 
-            return t.manyOrNone(`SELECT distinct ROUND(avg(b.points)) as average_points,
-            b.test_date,
-            b.theme, b.max_points,
-            b.score_five, b.score_four, b.score_three,
-            ROUND(AVG(ROUND(cast(b.points as decimal) / b.max_points * 100))) as percents,
-            CASE 
-            WHEN AVG(ROUND(cast(b.points as decimal) / b.max_points * 100)) > b.score_five THEN 5
-            WHEN AVG(ROUND(cast(b.points as decimal) / b.max_points * 100)) > b.score_four 
-            AND AVG(ROUND(cast(b.points as decimal) / b.max_points * 100)) < b.score_five THEN 4
-            WHEN AVG(ROUND(cast(b.points as decimal) / b.max_points * 100)) > b.score_three
-            AND AVG(ROUND(cast(b.points as decimal) / b.max_points * 100)) < b.score_four THEN 3
-            ELSE null 
-            END
-            AS average_grade,
-            SUM 
-            ( CASE
-            WHEN ROUND(cast(b.points as decimal) / b.max_points * 100) < b.score_three THEN 
-              1
-            ELSE
-              0
-            END
-            ) AS bad_grade
-            from custom_tests_results b
-            join group_custom_tests a
-            on b.custom_test_id = a.id
-            where a.group_id = ${groupId}
-            and a.format = '${format.format}' and b.subject_id = ${subject.subject_id}
-            GROUP BY b.test_date, b.theme, b.max_points,
-            b.score_five, b.score_four, b.score_three`)
+            return t.manyOrNone(`SELECT *
+            FROM (
+            SELECT  a.format, b.subject_id,
+            b.test_date, b.student_id,
+            c.name as student_name,
+            b.max_points, b.points, b.score_five, b.score_four, b.score_three,
+            MAX(test_date) OVER (PARTITION BY a.format)
+            as last_date,
+              CASE
+              WHEN ROUND(cast(b.points as decimal) / b.max_points * 100) > score_five THEN
+                5 
+              WHEN ROUND(cast(b.points as decimal) / b.max_points * 100) < score_five
+                AND ROUND(cast(b.points as decimal) / b.max_points * 100) > score_four THEN
+                4
+              WHEN ROUND(cast(b.points as decimal) / b.max_points * 100) < score_four
+                AND ROUND(cast(b.points as decimal) / b.max_points * 100) > score_three THEN
+              3
+                ELSE
+              2
+                END
+              AS grade,
+              ROUND(cast(b.points as decimal) / b.max_points * 100) as percents
+            FROM group_custom_tests a
+            join custom_tests_results b
+            on a.id = b.custom_test_id
+            join students c
+              on b.student_id = c.student_id
+            where group_id = 69
+            and subject_id = 14
+            and format = 'Вто рой'
+              GROUP BY a.format, b.subject_id, b.test_date, b.student_id, c.name, b.points, b.max_points,
+              b.score_five, b.score_four, b.score_three
+            ) x
+            WHERE test_date = last_date
+            `)
             .then((results) => ({subject, tests:results}))
           }))
         })

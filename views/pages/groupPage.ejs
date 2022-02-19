@@ -76,11 +76,6 @@
   </div>
 
 </div>
-
-
-
-
-
     <div class="row d-flex group__block my-4">
       <div class="col py-2">
         <h4 class="text-center">Тесты</h4>
@@ -158,13 +153,13 @@ inputCharsValue.addEventListener('change', async (event) => {
   const queryToDB = await fetch(`<%= globalLink %>/reviews/async/groups/${event.target.value}/<%= group.group_id %>`)
   const response = await queryToDB.json()
   response.forEach((item) => {
-    const trEl = document.createElement('tr')
+    const trEl = document.createElement('tr');
     tableBlock.appendChild(trEl);
-    const dateCol = document.createElement('td')
+    const dateCol = document.createElement('td');
     dateCol.innerText = new Date(item.posting_date).toLocaleDateString('ru-RU');
-    const subjectCol = document.createElement('td')
+    const subjectCol = document.createElement('td');
     subjectCol.innerText = item.subject_name;
-    const attendanceCountCol = document.createElement('td')
+    const attendanceCountCol = document.createElement('td');
     attendanceCountCol.innerText = item.attendance_count;
     const activityCountCol = document.createElement('td')
     activityCountCol.innerText = item.activity_count;
@@ -181,11 +176,7 @@ inputCharsValue.addEventListener('change', async (event) => {
   })
 });
 </script>
-
-
-
-
-
+<!-- в блоке результатов отображаем только последние результаты по опред формату и предмету -->
 <% formats.forEach(function(format) { %>
   <div class="row d-flex group__block my-3">
     <div class="group__info">
@@ -216,15 +207,7 @@ inputCharsValue.addEventListener('change', async (event) => {
                         Не указана
                       <% } %></p></td>
                   <td><p><%= test.max_points %></p></td>
-                  <td><p><%= Math.round(test.average_points) %></p></td>
                   <td><p><%= Math.round(test.percents) %></p></td>
-                  <td><p>
-                    <% if(Math.round(test.average_grade) < 3) { %>
-                      2
-                      <% } else { %>
-                        <%= Math.round(test.average_grade) %>
-                        <% } %>
-                  </p></td>
                 </tr>
                 <% }); %>
             </tbody>
@@ -233,128 +216,11 @@ inputCharsValue.addEventListener('change', async (event) => {
         <div id="chart__<%= subject.subject.subject_id %>__<%= format.format_id %>">
         </div>
       </div>
-
-
-<script>
-  let gradeTwoSum_<%= subject.subject.subject_id %>__<%= format.format_id %> = <%- JSON.stringify(subject.tests.map((test) => {
-    console.log(test.bad_grade)
-    return test.bad_grade
-   })) %>
-
-   let averageGradeNoTwo_<%= subject.subject.subject_id %>__<%= format.format_id %> = <%- JSON.stringify(subject.tests.map((test) => {
-    console.log(test.average_grade)
-    return test.average_grade
-   })) %>
-
-   let fourGrades_<%= subject.subject.subject_id %>__<%= format.format_id %> = <%- JSON.stringify(subject.tests.map((test) => {
-    return 4
-   })) %>
-
-   let dates_<%= subject.subject.subject_id %>__<%= format.format_id %> = <%- JSON.stringify(subject.tests.map((test) => {
-    return test.test_date.toLocaleDateString('ru-RU')
-   })) %>
-
-
-
-var options = {
-  series: [
-  {
-    name: "Кривая успеваемости",
-    data: averageGradeNoTwo_<%= subject.subject.subject_id %>__<%= format.format_id %>,
-    type: 'line'
-  },
-  {
-    name: "Количество двоечников",
-    data: gradeTwoSum_<%= subject.subject.subject_id %>__<%= format.format_id %>,
-    type: 'column',
-    fill: {
-      colors: ['#D8583D']
-}
-  },
-  {
-    name: "Прямая качества",
-    data: fourGrades_<%= subject.subject.subject_id %>__<%= format.format_id %>,
-    type: 'line'
-  },
-],
-  chart: {
-  type: 'line',
-  height: 350,
-  toolbar: {
-    show: false
-  }
-},
-colors: ['#5674ED', '	#D8583D', '#006200'],
-fill: {
-      colors: ['#D8583D']
-},
-dataLabels: {
-  enabled: true,
-},
-stroke: {
-  curve: 'smooth',
-},
-title: {
-  text: 'График успеваемости',
-  align: 'left'
-},
-markers: {
-  size: 3
-},
-xaxis: {
-  categories: dates_<%= subject.subject.subject_id %>__<%= format.format_id %>,
-  title: {
-    text: 'Время'
-  },
-},
-yaxis: {
-  title: {
-    text: 'Средний балл'
-  },
-  min: 0,
-  max: 5,
-},
-legend: {
-  position: 'top',
-  horizontalAlign: 'right',
-  floating: true,
-  offsetY: -25,
-  offsetX: -5
-}
-};
-var chart = new ApexCharts(document.querySelector("#chart__<%= subject.subject.subject_id %>__<%= format.format_id %>"), options);
-chart.render();
-
-
-</script>
-
-
-<!-- для каждого предмета свой график со скриптом здесь -->
-
         <% }); %>
 
     </div>
   </div>
 <% }); %>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <% subjects.forEach(function(subject) { %>
   <% if(reviews.filter((review) => review.name == subject.name).length !== 0) { %>
