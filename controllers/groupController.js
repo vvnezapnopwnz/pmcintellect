@@ -27,9 +27,7 @@ exports.getGroup = async (req, res, next) => {
     return t.oneOrNone(`SELECT * from groups where group_id = ${groupId}`)
     .then((groupData) => {
       group.group_info = groupData;
-
-      performance.mark('start')
-      
+      // performance.mark('start')
       return t.manyOrNone(`select * from group_subjects a
       join subjects b
       on a.subject_id = b.id
@@ -131,11 +129,7 @@ exports.getGroup = async (req, res, next) => {
       }));
     })
     .then(() => {
-      
-        performance.mark('end')
-        performance.measure('begin-to-end', 'start', 'end')
-        console.log(performance.getEntries())
-        console.log(JSON.stringify(group.formats))
+
       res.status(200).render('./pages/groupPage', {
       group: group.group_info,
       subjects: group.subjects,

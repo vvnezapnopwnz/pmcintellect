@@ -176,6 +176,8 @@ inputCharsValue.addEventListener('change', async (event) => {
   })
 });
 </script>
+
+
 <!-- в блоке результатов отображаем только последние результаты по опред формату и предмету -->
 <% formats.forEach(function(format) { %>
   <div class="row d-flex group__block my-3">
@@ -194,25 +196,84 @@ inputCharsValue.addEventListener('change', async (event) => {
           Не указана
           <% }; %>
         </h6>
+        <h6>
+          Максимум баллов: <%= subject.latest_test_results[0].max_points %>
+        </h6>
         <div class="table-responsive-lg">
           <table class="table table-striped table-hover table-bordered border-primary">
             <tbody class="tbody__reverse">
               <tr>
                 <th>Ученики</th>
-                <th>Тема</th>
-                <th>Максимум баллов</th>
-                <th>Средний балл</th>
+                <th>Набранные баллы</th>
                 <th>Проценты</th>
-                <th>Средняя оценка</th>
+                <th>Оценка</th>
               </tr>
+              <% subject.latest_test_results.forEach(function (result) { %>
+                <tr>
+                  <th>
+                    <%= result.student_name %>
+                  </th>
+                  <th>
+                    <%= result.points %>
+                  </th>
+                  <th>
+                    <%= result.percents %>
+                  </th>
+                  <th>
+                    <%= result.grade %>
+                  </th>
+                </tr>
+              <% }); %>
+
             </tbody>
           </table>
         </div>
         <div id="chart__<%= subject.subject.subject_id %>__<%= format.format_id %>">
         </div>
       </div>
-        <% }); %>
+<script>
+let gradesCount__<%= format.format_id %><%= subject.subject.subject_id %> = <%- JSON.stringify(Object.values(subject.latest_test_results.reduce((acc, result) => {
+switch(result.grade) {
+  case 5:
+  acc.five += 1;
+  break;
+  case 4:
+  acc.four += 1;
+  break;
+  case 3:
+  acc.three += 1;
+  break;
+  default:
+    acc.two += 1;
+}
+return acc;
+},{ five: 0, four: 0, three: 0, two: 0}))) %>
 
+var options = {
+series: [{
+data: gradesCount__<%= format.format_id %><%= subject.subject.subject_id %>
+}],
+chart: {
+type: 'bar',
+height: 350
+},
+plotOptions: {
+bar: {
+borderRadius: 4,
+horizontal: true,
+}
+},
+dataLabels: {
+enabled: false
+},
+xaxis: {
+categories: ['Отлично', 'Хорошо', 'Удовлетворительно', 'Плохо'
+],
+}
+};
+var chart__<%= subject.subject.subject_id %>__<%= format.format_id %> = new ApexCharts(document.querySelector("#chart__<%= subject.subject.subject_id %>__<%= format.format_id %>"), options).render();
+</script>
+        <% }); %>
     </div>
   </div>
 <% }); %>
