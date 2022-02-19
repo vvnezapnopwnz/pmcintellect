@@ -92,7 +92,7 @@ exports.getGroup = async (req, res, next) => {
             return t.manyOrNone(`SELECT *
             FROM (
             SELECT  a.format, b.subject_id,
-            b.test_date, b.student_id,
+            b.test_date, b.student_id, b.theme,
             c.name as student_name,
             b.max_points, b.points, b.score_five, b.score_four, b.score_three,
             MAX(test_date) OVER (PARTITION BY a.format)
@@ -116,25 +116,26 @@ exports.getGroup = async (req, res, next) => {
             on a.id = b.custom_test_id
             join students c
               on b.student_id = c.student_id
-            where group_id = 69
-            and subject_id = 14
-            and format = 'Вто рой'
+            where group_id = ${groupId}
+            and subject_id = ${subject.subject_id}
+            and format = '${format.format}'
               GROUP BY a.format, b.subject_id, b.test_date, b.student_id, c.name, b.points, b.max_points,
-              b.score_five, b.score_four, b.score_three
+              b.score_five, b.score_four, b.score_three, b.theme
             ) x
             WHERE test_date = last_date
             `)
-            .then((results) => ({subject, tests:results}))
+            .then((latest_test_results) => ({subject, latest_test_results}))
           }))
         })
         );
       }));
     })
     .then(() => {
+      
         performance.mark('end')
         performance.measure('begin-to-end', 'start', 'end')
         console.log(performance.getEntries())
-
+        console.log(JSON.stringify(group.formats))
       res.status(200).render('./pages/groupPage', {
       group: group.group_info,
       subjects: group.subjects,

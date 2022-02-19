@@ -187,29 +187,24 @@ inputCharsValue.addEventListener('change', async (event) => {
       <% format.subjects.forEach((subject) => { %>
       <div class="row d-flex flex-column">
         <h5 class="text-end"><%= subject.subject.subject_name %></h5>
+        <h6>Дата проведения последнего теста: <%= subject.latest_test_results[0].test_date.toLocaleDateString('ru-RU') %></h6>
+        <h6>Тема: <% if(subject.latest_test_results[0].theme !== null) { %>
+          <%= subject.latest_test_results[0].theme %>
+        <% } else { %>
+          Не указана
+          <% }; %>
+        </h6>
         <div class="table-responsive-lg">
           <table class="table table-striped table-hover table-bordered border-primary">
             <tbody class="tbody__reverse">
               <tr>
-                <th>Дата проведения </th>
+                <th>Ученики</th>
                 <th>Тема</th>
                 <th>Максимум баллов</th>
                 <th>Средний балл</th>
                 <th>Проценты</th>
                 <th>Средняя оценка</th>
               </tr>
-              <% subject.tests.forEach((test) => { %>
-                <tr>
-                  <td><p><%= test.test_date.toLocaleDateString('ru-RU') %></p></td>
-                  <td> <p> <% if(test.theme) { %>
-                      <%= test.theme %>
-                      <% } else { %>
-                        Не указана
-                      <% } %></p></td>
-                  <td><p><%= test.max_points %></p></td>
-                  <td><p><%= Math.round(test.percents) %></p></td>
-                </tr>
-                <% }); %>
             </tbody>
           </table>
         </div>
