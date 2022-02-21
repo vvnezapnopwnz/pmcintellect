@@ -183,11 +183,12 @@ inputCharsValue.addEventListener('change', async (event) => {
   <div class="row d-flex group__block my-3">
     <div class="group__info">
       <h4 class="students_content_title text-center">
-        Тесты по формату: <%= format.format ? format.format : 'Не указан' %>
+        Формат: <%= format.format ? format.format : 'Не указан' %>
       </h4>
 
       <% format.subjects.forEach((subject) => { %>
       <div class="row d-flex flex-column">
+        <a href="<%= globalLink %>/groups/<%= group.group_id %>/formats/<%= format.format_id %>/subjects/<%= subject.subject.subject_id %>" class="btn btn-primary w-25">Подробнее</a>
         <h5 class="text-end"><%= subject.subject.subject_name %></h5>
         <h6>Дата проведения последнего теста: <%= subject.latest_test_results[0].test_date.toLocaleDateString('ru-RU') %></h6>
         <h6>Тема: <% if(subject.latest_test_results[0].theme !== null) { %>
@@ -251,24 +252,31 @@ return acc;
 
 var options = {
 series: [{
+  name: 'Количество учеников получивших соответствующую оценку',
 data: gradesCount__<%= format.format_id %><%= subject.subject.subject_id %>
 }],
 chart: {
 type: 'bar',
-height: 350
+height: 350,
+toolbar: {
+  show: false,
+},
 },
 plotOptions: {
 bar: {
 borderRadius: 4,
 horizontal: true,
+distributed: true
 }
+},
+fill: {
+  colors: [ '#0000e5', '#00b300','#cc8400', '#b20000']
 },
 dataLabels: {
 enabled: false
 },
 xaxis: {
-categories: ['Отлично', 'Хорошо', 'Удовлетворительно', 'Плохо'
-],
+categories: ['Отлично', 'Хорошо', 'Удовлетворительно', 'Плохо'],
 }
 };
 var chart__<%= subject.subject.subject_id %>__<%= format.format_id %> = new ApexCharts(document.querySelector("#chart__<%= subject.subject.subject_id %>__<%= format.format_id %>"), options).render();

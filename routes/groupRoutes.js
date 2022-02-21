@@ -52,13 +52,16 @@ router
   .post('/:id/removeComplexTest', complexTestController.removeComplexTest);
 
 
+router
+.get('/:id/formats/:format_id/subjects/:subject_id/', groupController.getFormatTestsPage);
+
+router
+.get('/:id/async/formats/:format_id/subjects/:subject_id/dates/:date/students/:student_id', groupController.asyncGetFormatResults );
 
 
-  router
+router
   .get('/:id/addEntTrial', testController.addEntTrialPage)
   .post('/:id/addEntTrial', testController.addEntTrial)
-  // .get('/:id/removeEntTrials', testController.removeEntTrialPage)
-  // .post('/:id/removeEntTrials', testController.removeEntTrialPage)
 
 router
   .route('/:id/trials/:trial_id')

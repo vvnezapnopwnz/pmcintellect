@@ -151,6 +151,115 @@ exports.getGroup = async (req, res, next) => {
 }
 
 
+exports.getFormatTestsPage = async (req, res) => {
+
+  db.task(t => {
+
+    const groupId = req.params.id;
+    const formatId = req.params.format_id;
+    const subjectId = req.params.subject_id;
+    let formatName;
+    let studentsNames;
+    let subjectName;
+    let groupName;
+
+    return t.oneOrNone(`select distinct a.format, 
+      c.name as subject_name, d.name as group_name
+      from 
+      group_custom_tests a
+      join custom_tests_results
+      b on a.id = b.custom_test_id
+      join subjects c
+      on b.subject_id = c.id
+      join groups d
+      on d.group_id = a.group_id
+      where a.group_id = ${groupId}
+      and a.id = ${formatId}
+      and b.subject_id = ${subjectId}`)
+      .then(({format, subject_name, group_name }) =>  {
+        formatName = format;
+        subjectName = subject_name;
+        groupName = group_name;
+
+        return t.manyOrNone(`select distinct b.name, b.student_id from
+          custom_tests_results a
+          join students b
+          on a.student_id = b.student_id
+          join group_custom_tests c
+          on a.custom_test_id = c.id
+          where c.group_id = ${groupId} and c.format = '${formatName}'
+          and a.subject_id = ${subjectId}
+          GROUP BY a.test_date, a.id, b.student_id, c.id`)
+      })
+      .then((studentsNamesData) => {
+        studentsNames = studentsNamesData;
+      })
+      .then(() => t.manyOrNone(`select distinct a.test_date,
+      max_points from custom_tests_results a
+      join students b
+      on a.student_id = b.student_id
+      join group_custom_tests c
+      on a.custom_test_id = c.id
+      where c.group_id = ${groupId} and c.format = '${formatName}'
+      and a.subject_id = ${subjectId}
+      GROUP BY a.test_date, a.id, b.student_id, c.id`))
+      .then((dates) => {
+        console.log(studentsNames)
+        res.status(200).render('./pages/formatResults', {
+        studentsNames,
+        dates,
+        globalLink,
+        formatId,
+        subjectId,
+        groupId,
+        subjectName,
+        formatName,
+        groupName,
+      })})
+    })
+}
+
+exports.asyncGetFormatResults = async (req, res, next) => {
+
+db.task(t => {
+
+  const formatId = req.params.format_id;
+  const subjectId = req.params.subject_id;
+  const date = req.params.date;
+  const studentId = req.params.student_id;
+  const dateToSQLFormat = date.split('.').reverse().join('-');
+  console.log(dateToSQLFormat);
+
+  return t.query(`select points from custom_tests_results a
+  where a.subject_id = ${subjectId} and student_id = ${studentId}
+  and test_date::date = '${dateToSQLFormat}'`)
+  .then((results) => {
+    res.status(200).json({
+     results
+    })
+  })
+
+
+
+
+})
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
 
 
 exports.moveStudentPage = async (req, res, next) => {

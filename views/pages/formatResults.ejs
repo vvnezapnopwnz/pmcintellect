@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+  <!-- <script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script> -->
+
+</head>
+
+<body>
+
+  <%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+    <div class="row my-3 group__block">
+        <div class="col-lg-4 shadow p-3 m-3 rounded bg-secondary align-self-start text-warning">
+            <h4>Группа: <%= groupName %></h4>
+            <h4>Формат: <%= formatName %></h4>
+            <h4>Предмет: <%= subjectName %></h4>
+            <a href="<%= globalLink %>/groups/<%= groupId %>" class="btn btn-light p-3 shadow">
+                Вернуться на страницу группы
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
+                    <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="table-responsive-lg responsive table-responsive">
+            <table class="table table-striped table-hover table-bordered border-primary">        
+                <tbody>
+                    <tr>
+                        <th>
+                            Дата
+                        </th>
+                        <th>
+                            Максимум баллов
+                        </th>
+                        <% studentsNames.forEach(function(student) { %>
+                        <th class="student" id="<%= student.student_id %>">
+                            <%= student.name %>
+                        </th>    
+                        <% }); %>
+                    </tr>
+                    <% dates.forEach(function({test_date, max_points}) { %>
+                        <tr>
+                            <td class="date">
+                                <%= test_date.toLocaleDateString('ru-RU') %>
+                            </td>
+                            <td class="max_points">
+                                <%= max_points %>
+                            </td>
+                            <% studentsNames.forEach(function(student) { %>
+                                <td class="grade" ">
+                                    
+                                </td>    
+                                <% }); %>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <div id="chart">
+        </div> 
+    </div>
+</div>
+
+</body>
+
+<%- include ("../partials/footer.ejs") %>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+
+const students = Array.from(document.querySelectorAll('.student'))
+const dates = Array.from(document.querySelectorAll('.date'))
+
+dates.forEach((date) => {
+    const tbody = date.parentElement.parentElement;
+    const dateTrBlock = date.parentElement;
+    let dateIndex = Array.prototype.indexOf.call(tbody.children, dateTrBlock);
+
+    students.forEach(async (student, i) => {
+        let studentIndexInTr = Array.prototype.indexOf.call(student.parentElement.children, student);
+
+        const promise = await fetch(`<%= globalLink %>/groups/<%= groupId %>/async/formats/<%= formatId %>/subjects/<%= subjectId %>/dates/${date.innerText}/students/${student.id}`);
+        const response = await promise.json();
+
+        if(response.results.length == 0) {
+
+            let nullData = '-';
+            tbody.children[dateIndex].children[studentIndexInTr].innerText = nullData;
+        } else {
+            
+            let data = response.results[0].points;
+            tbody.children[dateIndex].children[studentIndexInTr].innerText = data;
+        }
+    })
+})
+
+})
+
+
+var chart = new ApexCharts(document.querySelector("#chart"), options).render();
+
+</script>
