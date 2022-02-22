@@ -89,7 +89,7 @@ exports.addComplexTest = async (req, res, next) => {
   db.task(t => {
 
     const data = Object.keys(req.body);
-
+    console.log(data)
     const format = req.body.complex_test_format;
     const groupId = req.params.id;
     const students = [req.body.students].flat();

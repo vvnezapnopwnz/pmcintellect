@@ -21,6 +21,18 @@
               Класс:
               <%= group.class_number %>
           </h4>
+          <h4 class="btn btn-success">
+            Филиал:
+            <%= group.branch %>
+        </h4>
+        <h4 class="btn btn-success">
+          Язык обучения:
+          <%= group.language %>
+      </h4>
+      <h4 class="btn btn-success">
+        Количество учеников:
+        <%= group_students.length %>
+    </h4>
       </div>
       </div>
     </div>
@@ -34,6 +46,7 @@
 
                 <div class="d-flex flex-column students__content mx-1">
                   <b><%= subject.name %> :</b>
+                  <b>Кол-во учеников: <%= subject.students.length %></b>
                 <% subject.students.forEach(function(student) { %>
                   <a href=<%= `${globalLink}/students/${student.student_id}/` %> class="btn btn-warning my-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
@@ -336,3 +349,10 @@ var chart__<%= subject.subject.subject_id %>__<%= format.format_id %> = new Apex
 
 
 <%- include ("../partials/footer.ejs") %>
+
+<script>
+
+
+
+
+</script>

@@ -130,13 +130,18 @@ exports.getGroup = async (req, res, next) => {
     })
     .then(() => {
 
-      res.status(200).render('./pages/groupPage', {
-      group: group.group_info,
-      subjects: group.subjects,
-      reviews: group.reviews,
-      formats: group.formats,
-      globalLink,
-      })
+      return t.manyOrNone(`select * from group_students
+      where group_id = ${groupId}`)
+      .then((group_students) => {
+        res.status(200).render('./pages/groupPage', {
+          group: group.group_info,
+          subjects: group.subjects,
+          reviews: group.reviews,
+          formats: group.formats,
+          globalLink,
+          group_students,
+          });
+      });
     });
   })
   .catch((error) => {
@@ -162,6 +167,9 @@ exports.getFormatTestsPage = async (req, res) => {
     let studentsNames;
     let subjectName;
     let groupName;
+    let dates;
+    let graphData;
+
 
     return t.oneOrNone(`select distinct a.format, 
       c.name as subject_name, d.name as group_name
@@ -203,21 +211,55 @@ exports.getFormatTestsPage = async (req, res) => {
       where c.group_id = ${groupId} and c.format = '${formatName}'
       and a.subject_id = ${subjectId}
       GROUP BY a.test_date, a.id, b.student_id, c.id`))
-      .then((dates) => {
-        console.log(studentsNames)
+      .then(async (datesData) => {
+        dates = datesData;
+
+        graphData = await Promise.all(dates.map((date) => {
+
+          return t.manyOrNone(`select a.test_date, a.custom_test_id, a.subject_id,
+          AVG(CASE 
+          WHEN ROUND(cast(a.points as decimal) / a.max_points * 100) > a.score_five THEN 5
+          WHEN ROUND(cast(a.points as decimal) / a.max_points * 100) > a.score_four 
+          AND ROUND(cast(a.points as decimal) / a.max_points * 100) < a.score_five THEN 4
+          WHEN ROUND(cast(a.points as decimal) / a.max_points * 100) > a.score_three
+          AND ROUND(cast(a.points as decimal) / a.max_points * 100) < a.score_four THEN 3
+          ELSE null 
+          END)
+          AS average_grade,
+          COUNT 
+          (CASE
+            WHEN 
+           ROUND(cast(a.points as decimal) / a.max_points * 100) < a.score_three
+           THEN 1
+          END
+          ) AS bad_grade
+          from custom_tests_results a
+          join group_custom_tests b
+          on a.custom_test_id = b.id
+          where b.format = '${formatName}'
+          and a.subject_id = ${subjectId} and a.test_date = '${date.test_date.toLocaleDateString()}'
+          and b.group_id = ${groupId}
+          GROUP BY a.test_date, a.custom_test_id, a.subject_id`)
+        }))
+
+      })
+      .then(() => {
+
         res.status(200).render('./pages/formatResults', {
-        studentsNames,
-        dates,
-        globalLink,
-        formatId,
-        subjectId,
-        groupId,
-        subjectName,
-        formatName,
-        groupName,
-      })})
-    })
-}
+          studentsNames,
+          dates,
+          globalLink,
+          formatId,
+          subjectId,
+          groupId,
+          subjectName,
+          formatName,
+          groupName,
+          graphData
+        });
+      });
+    });
+};
 
 exports.asyncGetFormatResults = async (req, res, next) => {
 
