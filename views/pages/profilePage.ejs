@@ -44,7 +44,7 @@
               <option>Филиал</option>
               <option>Нурсая</option>
               <option>Рахат</option>
-              <option>Онлайн</option>
+              <option>Online</option>
             </select>
           </div>
 
@@ -53,6 +53,14 @@
               <option>Язык обучения</option>
               <option>Казахский</option>
               <option>Русский</option>
+            </select>
+          </div>
+
+          <div class="input-group mb-3">
+            <select id="group_active_select" class="form-select">
+              <option>В работе?</option>
+              <option>Активна</option>
+              <option>Закрыта</option>
             </select>
           </div>
 
@@ -385,6 +393,7 @@ const groupNameInput = document.querySelector('#group_name');
 const groupClassNumberInput = document.querySelector('#group_class_number');
 const groupBranchSelect = document.querySelector('#group_branch_select');
 const groupLangSelect = document.querySelector('#group_lang_select');
+const groupActiveSelect = document.querySelector('#group_active_select');
 const groupSearchSubmit = document.querySelector('#group_find_submit');
 
 const hideResultsButton = document.querySelector('#hide_results');
@@ -397,9 +406,8 @@ groupSearchSubmit.addEventListener('click', async (event) => {
 
   searchResultsBlock.innerHTML = '<h5>Результаты поиска:</h5>';
 
-  const searchUrl = new URL(`<%= globalLink %>/groups/async/search/params?group_name=${groupNameInput.value}&class_number=${groupClassNumberInput.value}&branch=${groupBranchSelect.value}&lang=${groupLangSelect.value}`)
+  const searchUrl = new URL(`<%= globalLink %>/groups/async/search/params?group_name=${groupNameInput.value}&class_number=${groupClassNumberInput.value}&branch=${groupBranchSelect.value}&lang=${groupLangSelect.value}&active=${groupActiveSelect.value}`);
   const encodedUrl = encodeURI(searchUrl)
-  console.log(encodedUrl)
 
 const promise = await fetch(encodedUrl);
 const response = await promise.json();
@@ -409,7 +417,7 @@ searchResultsBlock.innerHTML = `<h5>Результаты поиска:</h5>\n<h5
   response.searchResults.forEach((result) => {
     const groupButton = document.createElement('a');
     groupButton.setAttribute('href', `<%= globalLink %>/groups/${result.group_id}/`);
-    groupButton.setAttribute('class', 'btn btn-secondary btn-sm m-1 p-1')
+    groupButton.setAttribute('class', `btn btn-${result.active == true ? 'primary' : 'danger'} btn-sm m-1 p-1`)
     groupButton.innerText = result.name;
     searchResultsBlock.appendChild(groupButton);
   });
@@ -419,7 +427,7 @@ searchResultsBlock.innerHTML = `<h5>Результаты поиска:</h5>\n<h5
 const hideResults = () => {
   searchResultsBlock.classList.add('hide');
   hideResultsButton.classList.add('hide');
-}
+};
 
 
 

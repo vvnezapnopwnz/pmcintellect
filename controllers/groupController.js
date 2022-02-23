@@ -502,20 +502,16 @@ exports.removeGroup = async (req, res, next) => {
 exports.asyncSearch = async (req, res, next) => {
 
   db.task(t => {
-    console.log(req.headers.host)
-    console.log(req.url)
     const comingRequestUrl = decodeURI(`${globalLink}/groups${req.url}`);
-    console.log(comingRequestUrl)
     const urlToParse = new URL(comingRequestUrl)
     const classNumberParam = urlToParse.searchParams.get("class_number");
     const nameParam = urlToParse.searchParams.get("group_name");
     const branchParam = urlToParse.searchParams.get("branch");
     const langParam = urlToParse.searchParams.get("lang");
-    console.log(urlToParse.searchParams.get("class_number"))
-    console.log(urlToParse.searchParams)
+    const activeParam = urlToParse.searchParams.get("active");
 
     return t.manyOrNone(`select * from groups 
-    where name LIKE '%${nameParam}%' ${classNumberParam == '' ? '' : `and class_number = ${classNumberParam}`} ${ langParam == 'Язык обучения' ? '' : `and language = '${langParam}'`} ${ branchParam == 'Филиал' ? '' : `and branch = '${branchParam}'` } `)
+    where name LIKE '%${nameParam}%' ${classNumberParam == '' ? '' : `and class_number = ${classNumberParam}`} ${ langParam == 'Язык обучения' ? '' : `and language = '${langParam}'`} ${ branchParam == 'Филиал' ? '' : `and branch = '${branchParam}'` } ${activeParam == 'В работе?' ? '' : `and active = '${activeParam == 'Активна' ? true : false }'` } `)
     .then((searchResults) => {
 
       res.status(200).json({
@@ -529,10 +525,9 @@ exports.asyncSearch = async (req, res, next) => {
 
 exports.updateGroupPage = async (req, res, next) => {
 
-
   db.manyOrNone(`select a.group_id,
   a.name as group_name, a.class_number,
-  a.branch, a.language, count(*) as group_students_count
+  a.branch, a.language, a.active, count(*) as group_students_count
   from groups a
   join group_students b
   on a.group_id = b.group_id
@@ -561,16 +556,16 @@ exports.updateGroup = async (req, res, next) => {
     const groupClassNumber = req.body.chosen_group_class_number;
     const groupBranch = req.body.chosen_group_branch_select;
     const groupLanguage = req.body.chosen_group_lang_select;
+    const groupStatus = req.body.chosen_group_active_select;
 
     return t.query(`UPDATE groups
     SET name = '${groupName}',
     class_number = ${groupClassNumber},
     branch = '${groupBranch}',
-    language = '${groupLanguage}'
+    language = '${groupLanguage}',
+    active = ${groupStatus == 'Активна'? true : false}
     WHERE group_id = ${groupId}`)
     .then(() => res.redirect(`${globalLink}/groups/update`))
-
-
   })
 
 }

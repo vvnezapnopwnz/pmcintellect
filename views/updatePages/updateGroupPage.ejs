@@ -29,7 +29,7 @@
                     <option>Филиал</option>
                     <option>Нурсая</option>
                     <option>Рахат</option>
-                    <option>Онлайн</option>
+                    <option>Online</option>
                   </select>
                 </div>
       
@@ -38,6 +38,14 @@
                     <option>Язык обучения</option>
                     <option>Казахский</option>
                     <option>Русский</option>
+                  </select>
+                </div>
+
+                <div class="input-group mb-3">
+                  <select id="group_active_select" class="form-select">
+                    <option>В работе?</option>
+                    <option>Активна</option>
+                    <option>Закрыта</option>
                   </select>
                 </div>
       
@@ -70,7 +78,7 @@
                         <option>Филиал</option>
                         <option>Нурсая</option>
                         <option>Рахат</option>
-                        <option>Онлайн</option>
+                        <option>Online</option>
                         </select>
                     </div>
                     <div class="input-group mb-3 w-50">
@@ -80,6 +88,13 @@
                         <option>Русский</option>
                         </select>
                     </div>
+
+                    <div class="input-group mb-3 w-50">
+                      <select name="chosen_group_active_select" id="update_group_active_select" class="form-select">
+                        <option>Активна</option>
+                        <option>Закрыта</option>
+                      </select>
+                  </div>
                     <div class="buttons d-flex flex-column justify-content-center mt-4">
                         <button type="submit" class="submit_button btn btn-primary my-2 w-50">Обновить данные выбранной группы</button>
                         <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
@@ -99,6 +114,7 @@ const groupNameInput = document.querySelector('#group_name');
 const groupClassNumberInput = document.querySelector('#group_class_number');
 const groupBranchSelect = document.querySelector('#group_branch_select');
 const groupLangSelect = document.querySelector('#group_lang_select');
+const groupActiveSelect = document.querySelector('#group_active_select');
 const groupSearchSubmit = document.querySelector('#group_find_submit');
 
 const chosenGroup = document.querySelector('#update_group_name');
@@ -106,15 +122,15 @@ const chosenGroupId = document.querySelector('#update_group_id');
 const chosenGroupClassNumber = document.querySelector('#update_group_class_number');
 const chosenGroupBranch = document.querySelector('#update_group_branch_select');
 const chosenGroupLang = document.querySelector('#update_group_lang_select');
+const chosenGroupActive = document.querySelector('#update_group_active_select')
 
 const searchResultsBlock = document.querySelector('.search_results_block');
 
 groupSearchSubmit.addEventListener('click', async (event) => {
   searchResultsBlock.innerHTML = '<h5>Результаты поиска:</h5>'
 
-  const searchUrl = new URL(`<%= globalLink %>/groups/async/search/params?group_name=${groupNameInput.value}&class_number=${groupClassNumberInput.value}&branch=${groupBranchSelect.value}&lang=${groupLangSelect.value}`)
-  const encodedUrl = encodeURI(searchUrl)
-  console.log(encodedUrl)
+  const searchUrl = new URL(`<%= globalLink %>/groups/async/search/params?group_name=${groupNameInput.value}&class_number=${groupClassNumberInput.value}&branch=${groupBranchSelect.value}&lang=${groupLangSelect.value}&active=${groupActiveSelect.value}`);
+  const encodedUrl = encodeURI(searchUrl);
 
   const promise = await fetch(encodedUrl);
   const response = await promise.json();
@@ -123,7 +139,7 @@ groupSearchSubmit.addEventListener('click', async (event) => {
 
     response.searchResults.forEach((result) => {
     const groupButton = document.createElement('input');
-    groupButton.setAttribute('class', 'btn btn-secondary btn-sm m-1 p-1 found_group')
+    groupButton.setAttribute('class', `btn btn-${result.active == true ? 'primary' : 'danger'} btn-sm m-1 p-1 found_group`)
     groupButton.setAttribute('type', 'button')
     groupButton.value = result.name;
     groupButton.id = result.group_id;
@@ -141,6 +157,7 @@ groupSearchSubmit.addEventListener('click', async (event) => {
             chosenGroupClassNumber.value = promise2Response.groupData.class_number;
             chosenGroupBranch.value = promise2Response.groupData.branch;
             chosenGroupLang.value = promise2Response.groupData.language;
+            promise2Response.groupData.active == true ? chosenGroupActive.value = 'Активна' : chosenGroupActive.value = 'Закрыта';
         })
     })
 
