@@ -26,7 +26,7 @@
                 </h4>          
             <% } %>
       </div>
-      <!-- <div class="search_group_block d-flex flex-column rounded bg-primary mt-2 p-3">
+      <div class="search_group_block d-flex flex-column rounded bg-primary mt-2 p-3">
         <div class="search_input_fields">
 
           <div class="input-group mb-3">
@@ -65,7 +65,7 @@
             <h5>Результаты поиска:</h5>
           </div>
         </div>
-      </div> -->
+      </div>
 
     </div>
 
@@ -354,7 +354,7 @@
         <a href="<%= globalLink%>/groups/new" class="btn btn-primary my-2">
         Создать группу
         </a>
-        <a href="<%= globalLink%>/groups/update" class="btn btn-primary my-2">
+        <a href="<%= globalLink%>/groups/update" class="btn btn-secondary my-2">
           Редактировать группу
           </a>
 
@@ -397,7 +397,11 @@ groupSearchSubmit.addEventListener('click', async (event) => {
 
   searchResultsBlock.innerHTML = '<h5>Результаты поиска:</h5>';
 
-const promise = await fetch(`<%= globalLink %>/groups/async/search/params?group_name=${groupNameInput.value}&class_number=${groupClassNumberInput.value}&branch=${groupBranchSelect.value}&lang=${groupLangSelect.value}`);
+  const searchUrl = new URL(`<%= globalLink %>/groups/async/search/params?group_name=${groupNameInput.value}&class_number=${groupClassNumberInput.value}&branch=${groupBranchSelect.value}&lang=${groupLangSelect.value}`)
+  const encodedUrl = encodeURI(searchUrl)
+  console.log(encodedUrl)
+
+const promise = await fetch(encodedUrl);
 const response = await promise.json();
 
 searchResultsBlock.innerHTML = `<h5>Результаты поиска:</h5>\n<h5>Найдено: ${response.searchResults.length}</h5>\n`

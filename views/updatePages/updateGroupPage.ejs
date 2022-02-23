@@ -110,12 +110,16 @@ const chosenGroupLang = document.querySelector('#update_group_lang_select');
 const searchResultsBlock = document.querySelector('.search_results_block');
 
 groupSearchSubmit.addEventListener('click', async (event) => {
-    searchResultsBlock.innerHTML = '<h5>Результаты поиска:</h5>'
+  searchResultsBlock.innerHTML = '<h5>Результаты поиска:</h5>'
 
-const promise = await fetch(`<%= globalLink %>/groups/async/search/params?group_name=${groupNameInput.value}&class_number=${groupClassNumberInput.value}&branch=${groupBranchSelect.value}&lang=${groupLangSelect.value}`);
-const response = await promise.json();
+  const searchUrl = new URL(`<%= globalLink %>/groups/async/search/params?group_name=${groupNameInput.value}&class_number=${groupClassNumberInput.value}&branch=${groupBranchSelect.value}&lang=${groupLangSelect.value}`)
+  const encodedUrl = encodeURI(searchUrl)
+  console.log(encodedUrl)
 
-searchResultsBlock.innerHTML = `<h5>Результаты поиска:</h5>\n<h5>Найдено: ${response.searchResults.length}</h5>\n`
+  const promise = await fetch(encodedUrl);
+  const response = await promise.json();
+
+  searchResultsBlock.innerHTML = `<h5>Результаты поиска:</h5>\n<h5>Найдено: ${response.searchResults.length}</h5>\n`
 
     response.searchResults.forEach((result) => {
     const groupButton = document.createElement('input');
