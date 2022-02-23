@@ -502,7 +502,10 @@ exports.removeGroup = async (req, res, next) => {
 exports.asyncSearch = async (req, res, next) => {
 
   db.task(t => {
-    const comingRequestUrl = decodeURI(req.headers.host + req.url);
+    console.log(req.headers.host)
+    console.log(req.url)
+    const comingRequestUrl = decodeURI(`${globalLink}/groups${req.url}`);
+    console.log(comingRequestUrl)
     const urlToParse = new URL(comingRequestUrl)
     const classNumberParam = urlToParse.searchParams.get("class_number");
     const nameParam = urlToParse.searchParams.get("group_name");
