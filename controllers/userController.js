@@ -2,7 +2,14 @@ const { globalLink } = require('../app');
 const db = require('../db');
 
 exports.profilePage = async (req, res, next) => {
-  db.manyOrNone('SELECT * from groups WHERE active')
+  db.manyOrNone(`select a.group_id,
+  a.name as group_name, a.class_number,
+  a.branch, a.language, count(*) as group_students_count
+  from groups a
+  join group_students b
+  on a.group_id = b.group_id
+  where a.active = true
+  GROUP BY a.group_id`)
     .then((groups) => {
       res.status(200).render('./pages/profilePage', {
         groups,

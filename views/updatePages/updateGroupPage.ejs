@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+
+      <div class="search_group_block d-flex rounded bg-primary mt-2 p-3">
+          <div class="col-lg-6 col-6">
+            <div class="search_input_fields">
+
+                <div class="input-group mb-3 w-75">
+                  <span class="input-group-text">Название группы</span>
+                  <input id="group_name" type="text" class="form-control" placeholder="" aria-label="Groupname">
+                </div>
+      
+                <div class="input-group mb-3 w-25">
+                  <span class="input-group-text">Класс</span>
+                  <input id="group_class_number" type="number" class="form-control" placeholder="" min="1" max="11" aria-label="Groupclassnumber">
+                </div>
+      
+                <div class="input-group mb-3 w-50">
+                  <select id="group_branch_select" class="form-select">
+                    <option>Филиал</option>
+                    <option>Нурсая</option>
+                    <option>Рахат</option>
+                    <option>Онлайн</option>
+                  </select>
+                </div>
+      
+                <div class="input-group mb-3 w-50">
+                  <select id="group_lang_select" class="form-select">
+                    <option>Язык обучения</option>
+                    <option>Казахский</option>
+                    <option>Русский</option>
+                  </select>
+                </div>
+      
+                <button id="group_find_submit" type="submit" class="btn btn-warning btn-lg">Найти</button>
+      
+            </div>
+            <div class="search_results_block my-2 p-3 rounded bg-warning">
+                <div>
+                  <h5>Результаты поиска:</h5>
+                </div>
+              </div>
+          </div>
+          <div class="col-lg-5 col-5 mx-2 bg-warning shadow p-2 rounded">
+            <form action=<%= `${globalLink}/groups/update` %> method='POST'>
+                <div class="text-center text-dark font-weight-bold">
+                    <h4>Редактирование группы</h4>
+                </div>
+                <div class="panel input-group mb-3 d-flex flex-column">
+                    <div class="input-group mb-3 w-75">
+                        <span class="input-group-text">Выбрана группа</span>
+                        <input name="chosen_group_name" id="update_group_name" type="text" class="form-control" placeholder="" aria-label="Groupname">
+                        <input name="chosen_group_id" id="update_group_id" type="text" class="form-control hide" placeholder="" aria-label="Groupid">
+                    </div>
+                    <div class="input-group mb-3 w-25">
+                        <span class="input-group-text">Класс</span>
+                        <input  name="chosen_group_class_number" id="update_group_class_number" type="number" class="form-control" placeholder="" min="1" max="11" aria-label="Groupclassnumber">
+                    </div>
+                    <div class="input-group mb-3 w-50">
+                        <select name="chosen_group_branch_select" id="update_group_branch_select" class="form-select">
+                        <option>Филиал</option>
+                        <option>Нурсая</option>
+                        <option>Рахат</option>
+                        <option>Онлайн</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-3 w-50">
+                        <select name="chosen_group_lang_select" id="update_group_lang_select" class="form-select">
+                        <option>Язык обучения</option>
+                        <option>Казахский</option>
+                        <option>Русский</option>
+                        </select>
+                    </div>
+                    <div class="buttons d-flex flex-column justify-content-center mt-4">
+                        <button type="submit" class="submit_button btn btn-primary my-2 w-50">Обновить данные выбранной группы</button>
+                        <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
+                    </div>
+                </div>
+              </form>
+            </div>
+
+      </div>
+    </div>
+      
+      <%- include ("../partials/footer.ejs") %>
+
+<script>
+
+const groupNameInput = document.querySelector('#group_name');
+const groupClassNumberInput = document.querySelector('#group_class_number');
+const groupBranchSelect = document.querySelector('#group_branch_select');
+const groupLangSelect = document.querySelector('#group_lang_select');
+const groupSearchSubmit = document.querySelector('#group_find_submit');
+
+const chosenGroup = document.querySelector('#update_group_name');
+const chosenGroupId = document.querySelector('#update_group_id');
+const chosenGroupClassNumber = document.querySelector('#update_group_class_number');
+const chosenGroupBranch = document.querySelector('#update_group_branch_select');
+const chosenGroupLang = document.querySelector('#update_group_lang_select');
+
+const searchResultsBlock = document.querySelector('.search_results_block');
+
+groupSearchSubmit.addEventListener('click', async (event) => {
+    searchResultsBlock.innerHTML = '<h5>Результаты поиска:</h5>'
+
+const promise = await fetch(`<%= globalLink %>/groups/async/search/params?group_name=${groupNameInput.value}&class_number=${groupClassNumberInput.value}&branch=${groupBranchSelect.value}&lang=${groupLangSelect.value}`);
+const response = await promise.json();
+
+searchResultsBlock.innerHTML = `<h5>Результаты поиска:</h5>\n<h5>Найдено: ${response.searchResults.length}</h5>\n`
+
+    response.searchResults.forEach((result) => {
+    const groupButton = document.createElement('input');
+    groupButton.setAttribute('class', 'btn btn-secondary btn-sm m-1 p-1 found_group')
+    groupButton.setAttribute('type', 'button')
+    groupButton.value = result.name;
+    groupButton.id = result.group_id;
+    searchResultsBlock.appendChild(groupButton);
+    });
+
+    Array.from(document.querySelectorAll('.found_group')).forEach((groupButton) => {
+
+        groupButton.addEventListener('click', async (e) => {
+            
+            const promise2 = await fetch(`<%= globalLink %>/groups/async/get_group/${groupButton.id}`);
+            const promise2Response = await promise2.json();
+            chosenGroup.value = promise2Response.groupData.name;
+            chosenGroupId.value = promise2Response.groupData.group_id;
+            chosenGroupClassNumber.value = promise2Response.groupData.class_number;
+            chosenGroupBranch.value = promise2Response.groupData.branch;
+            chosenGroupLang.value = promise2Response.groupData.language;
+        })
+    })
+
+});
+
+
+</script>

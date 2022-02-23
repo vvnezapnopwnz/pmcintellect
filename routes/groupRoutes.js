@@ -15,6 +15,8 @@ router.post('/remove', groupController.removeGroup);
 router.get('/remove', groupController.removeGroupPage);
 router.post('/move', groupController.moveStudent);
 router.get('/move', groupController.moveStudentPage);
+router.get('/update', groupController.updateGroupPage);
+router.post('/update', groupController.updateGroup);
 
 router
   .route('/:id')
@@ -53,29 +55,34 @@ router
 
 
 router
-.get('/:id/formats/:format_id/subjects/:subject_id/', groupController.getFormatTestsPage);
+  .get('/:id/formats/:format_id/subjects/:subject_id/', groupController.getFormatTestsPage);
 
 router
-.get('/:id/async/formats/:format_id/subjects/:subject_id/dates/:date/students/:student_id', groupController.asyncGetFormatResults );
-
-
-router
-  .get('/:id/addEntTrial', testController.addEntTrialPage)
-  .post('/:id/addEntTrial', testController.addEntTrial)
+  .get('/:id/async/formats/:format_id/subjects/:subject_id/dates/:date/students/:student_id', groupController.asyncGetFormatResults );
 
 router
-  .route('/:id/trials/:trial_id')
-  .get(testController.getTrial)
+  .get('/async/search/params?', groupController.asyncSearch);
 
-  router
-  .route('/:id/nutrials/:trial_id')
-  .get(testController.getNUTrial)
+router
+  .get('/async/get_group/:id/', groupController.asyncGetGroupInfo);
 
-  router
-  .get('/:id/addNUTrial', testController.addNUTrialPage)
-  .post('/:id/addNUTrial', testController.addNUTrial)
-  // .get('/:id/removeNUTrials', testController.removeNUTrialPage)
-  // .post('/:id/removeNUTrials', testController.removeNUTrialPage)
+// router
+//   .get('/:id/addEntTrial', testController.addEntTrialPage)
+//   .post('/:id/addEntTrial', testController.addEntTrial)
+
+// router
+//   .route('/:id/trials/:trial_id')
+//   .get(testController.getTrial)
+
+//   router
+//   .route('/:id/nutrials/:trial_id')
+//   .get(testController.getNUTrial)
+
+//   router
+//   .get('/:id/addNUTrial', testController.addNUTrialPage)
+//   .post('/:id/addNUTrial', testController.addNUTrial)
+//   // .get('/:id/removeNUTrials', testController.removeNUTrialPage)
+//   // .post('/:id/removeNUTrials', testController.removeNUTrialPage)
 
 
 module.exports = router;

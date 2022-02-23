@@ -278,30 +278,10 @@ db.task(t => {
   .then((results) => {
     res.status(200).json({
      results
+      })
     })
   })
-
-
-
-
-})
-
-
-
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
+};
 
 
 exports.moveStudentPage = async (req, res, next) => {
@@ -343,8 +323,6 @@ exports.moveStudent = async (req, res, next) => {
 };
 
 
-
-
 exports.addStudentToGroupPage = async (req, res, next) => {
 
   db.task(t => {
@@ -373,10 +351,6 @@ exports.addStudentToGroupPage = async (req, res, next) => {
 
   });
 };
-
-
-
-
 
 exports.addStudentToGroup = async (req, res, next) => {
   const groupId = req.params.id;
@@ -518,8 +492,97 @@ exports.removeGroup = async (req, res, next) => {
   db.task(t => {
     const groupId = req.body.group_id;
     return t.query(`UPDATE groups SET active = false WHERE group_id = ${groupId}`)
-           .then(() => res.redirect(`${globalLink}/users/profile/`))
+      .then(() => res.redirect(`${globalLink}/users/profile/`))
 
   })
   
 }
+
+
+exports.asyncSearch = async (req, res, next) => {
+
+  db.task(t => {
+    const comingRequestUrl = decodeURI(req.headers.host + req.url);
+    const urlToParse = new URL(comingRequestUrl)
+    const classNumberParam = urlToParse.searchParams.get("class_number");
+    const nameParam = urlToParse.searchParams.get("group_name");
+    const branchParam = urlToParse.searchParams.get("branch");
+    const langParam = urlToParse.searchParams.get("lang");
+    console.log(urlToParse.searchParams.get("class_number"))
+    console.log(urlToParse.searchParams)
+
+    return t.manyOrNone(`select * from groups 
+    where name LIKE '%${nameParam}%' ${classNumberParam == '' ? '' : `and class_number = ${classNumberParam}`} ${ langParam == 'Язык обучения' ? '' : `and language = '${langParam}'`} ${ branchParam == 'Филиал' ? '' : `and branch = '${branchParam}'` } `)
+    .then((searchResults) => {
+
+      res.status(200).json({
+        searchResults,
+      });
+    })
+  });
+};
+
+
+
+exports.updateGroupPage = async (req, res, next) => {
+
+
+  db.manyOrNone(`select a.group_id,
+  a.name as group_name, a.class_number,
+  a.branch, a.language, count(*) as group_students_count
+  from groups a
+  join group_students b
+  on a.group_id = b.group_id
+  where a.active = true
+  GROUP BY a.group_id`)
+    .then((groups) => {
+      res.status(200).render('./updatePages/updateGroupPage', {
+        groups,
+        globalLink,
+        user: res.locals.user,
+      });
+    })
+    .catch((error) => {
+      console.log('ERROR:', error);
+    });
+
+}
+
+
+exports.updateGroup = async (req, res, next) => {
+
+  db.task(t => {
+
+    const groupId = req.body.chosen_group_id;
+    const groupName = req.body.chosen_group_name;
+    const groupClassNumber = req.body.chosen_group_class_number;
+    const groupBranch = req.body.chosen_group_branch_select;
+    const groupLanguage = req.body.chosen_group_lang_select;
+
+    return t.query(`UPDATE groups
+    SET name = '${groupName}',
+    class_number = ${groupClassNumber},
+    branch = '${groupBranch}',
+    language = '${groupLanguage}'
+    WHERE group_id = ${groupId}`)
+    .then(() => res.redirect(`${globalLink}/groups/update`))
+
+
+  })
+
+}
+
+exports.asyncGetGroupInfo = async (req, res, next) => {
+
+  db.task(t => {
+
+    const groupId = req.params.id;
+
+    return t.oneOrNone(`select * from groups where group_id = ${groupId}`)
+    .then((groupData) => {
+      res.status(200).json({groupData});
+    })
+
+  });
+
+};
