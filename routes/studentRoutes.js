@@ -12,13 +12,13 @@ router.post('/new', authController.isLoggedIn, studentController.createStudent);
 router.get('/delete', authController.isLoggedIn, studentController.deleteStudentPage);
 router.post('/delete', authController.isLoggedIn, studentController.deleteStudent);
 router.get('/reincarnate', authController.isLoggedIn, studentController.reincarnateStudentPage)
-router.post('/reincarnate', studentController.reincarnateStudent)
+router.post('/reincarnate', authController.isLoggedIn, studentController.reincarnateStudent)
 
 router
   .get('/:id/addSubject', authController.isLoggedIn, studentController.addSubjectToStudentPage)
-  .post('/:id/addSubject', studentController.addSubjectToStudent)
+  .post('/:id/addSubject', authController.isLoggedIn, studentController.addSubjectToStudent)
   .get('/:id/removeSubject', authController.isLoggedIn, studentController.removeSubjectFromStudentPage)
-  .post('/:id/removeSubject', studentController.removeSubjectFromStudent)
+  .post('/:id/removeSubject', authController.isLoggedIn, studentController.removeSubjectFromStudent)
 
 router
   .get('/getAll/:group_id', studentController.getAllStudentsAsync)

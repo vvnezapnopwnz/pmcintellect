@@ -3,7 +3,6 @@ const db = require('../db');
 
 exports.addReviewPage = async (req, res, next) => {
 
-
   db.task(t => {
     const groupId = req.params.id;
     let group;
@@ -37,7 +36,6 @@ exports.addReviewPage = async (req, res, next) => {
 
   })
 
-
 };
 
 exports.addReview = async (req, res, next) => {
@@ -70,7 +68,6 @@ exports.addReview = async (req, res, next) => {
 };
 
 exports.getReview = async (req, res, next) => {
-
 
   db.task(t => {
     const reviewId = req.params.id;
@@ -208,6 +205,7 @@ exports.getAsyncReviews = async (req, res, next) => {
 
   db.task(t => {
     const month = req.params.month;
+    const subjectId = req.params.subject_id;
     const groupId = req.params.group_id;
 
     const date = `${month}-01`;
@@ -224,6 +222,8 @@ exports.getAsyncReviews = async (req, res, next) => {
     join subjects c
     on a.subject_id = c.id
     where a.group_id = ${groupId} and
+    subject_id = ${subjectId}
+    and
     posting_date > '${date}' and
     posting_date < '${date}':: date +  INTERVAL '1 month'
     GROUP BY a.review_id, c.name
@@ -243,10 +243,10 @@ exports.getStudentAsyncReviews = async (req, res, next) => {
 
     const month = req.params.month;
     const studentId = req.params.student_id;
-    console.log(studentId)
+    const subjectId = req.params.subject_id;
 
     const date = `${month}-01`;
-    console.log(date);
+
     return t.manyOrNone(`select 
     a.review_id, a.subject_id, 
 	  c.name as subject_name,
@@ -260,6 +260,7 @@ exports.getStudentAsyncReviews = async (req, res, next) => {
     join subjects c
     on a.subject_id = c.id
     where b.student_id = ${studentId}
+    and subject_id = ${subjectId}
 	  and posting_date > '${date}' and
     posting_date < '${date}':: date +  INTERVAL '1 month'
     GROUP BY a.review_id, c.name, b.student_id,

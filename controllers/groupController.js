@@ -483,7 +483,6 @@ exports.removeGroupPage = async (req, res, next) => {
     }))
   })
 
-
 };
 
 
@@ -493,7 +492,6 @@ exports.removeGroup = async (req, res, next) => {
     const groupId = req.body.group_id;
     return t.query(`UPDATE groups SET active = false WHERE group_id = ${groupId}`)
       .then(() => res.redirect(`${globalLink}/users/profile/`))
-
   })
   
 }

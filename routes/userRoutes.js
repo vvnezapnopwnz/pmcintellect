@@ -17,11 +17,16 @@ router.get('/managers', authController.isLoggedIn, viewController.getManagersOve
 router.get('/new', authController.isLoggedIn, userController.createUserPage);
 router.post('/new', authController.isLoggedIn, userController.createUser);
 
+router.get('/update', authController.isLoggedIn, userController.updateUserPage);
+router.post('/update', authController.isLoggedIn, userController.updateUser);
+
 router.get('/delete', authController.isLoggedIn, userController.deleteUserPage);
 router.post('/delete', authController.isLoggedIn, userController.deleteUser);
 
 router.get('/addnewsubject', authController.isLoggedIn, userController.createNewSubjectPage);
 router.post('/addnewsubject', authController.isLoggedIn, userController.createNewSubject);
+
+router.get('/async/findOne/:user_id', authController.isLoggedIn, userController.asyncFindOne);
 
 
 module.exports = router;

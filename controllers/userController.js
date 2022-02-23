@@ -85,8 +85,57 @@ exports.deleteUserPage = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
   db.task(t => {
-    return t.manyOrNone(`update users set active = false 
+    return t.manyOrNone(`delete from users 
       where user_id = ${req.body.student__delete}`)
       .then(() => res.status(200).redirect(`${globalLink}/users/dashboard`))
+  });
+};
+
+
+
+exports.updateUserPage = async (req, res, next) => {
+
+  db.task(t => {
+
+    return t.manyOrNone(`select * from users`)
+    .then((users) => {
+      res.status(200).render(`./updatePages/updateUserPage`, {
+        globalLink,
+        users
+      });
+    });
+  });
+
+};
+
+
+
+exports.updateUser = async (req, res, next) => {
+
+  db.task(t => {
+
+    return t.oneOrNone(`UPDATE users SET 
+    username = '${req.body.username}',
+    email = '${ req.body.email}',
+    password = '${ req.body.password}',
+    role = '${ req.body.role}'
+    where user_id = ${req.body.user_id}`)
+    .then(() => {
+      res.status(200).redirect(`${globalLink}/users/update`)
+    });
+  });
+
+};
+
+exports.asyncFindOne = async (req, res, next) => {
+
+  db.task(t => {
+
+    const userId = req.params.user_id;
+
+    return t.oneOrNone(`select * from users where user_id = ${userId}`)
+    .then((userData) => {
+      res.status(200).json({userData});
+    })
   });
 };

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include ("../partials/header.ejs") %>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.min.css" integrity="sha512-8vq2g5nHE062j3xor4XxPeZiPjmRDh6wlufQlfC6pdQ/9urJkU07NM0tEREeymP++NczacJ/Q59ul+/K2eYvcg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.css" integrity="sha512-J5tsMaZISEmI+Ly68nBDiQyNW6vzBoUlNHGsH8T3DzHTn2h9swZqiMeGm/4WMDxAphi5LMZMNA30LvxaEPiPkg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+<%- include ("../partials/nav.ejs") %>
+
+<div class="container">
+  <div class="row d-flex mt-3">
+      <div class="col-5">
+        <div class="users__list m-1 rounded shadow bg-warning p-3 justify-content-center">
+            <h5>Выберите пользователя для редактирования</h5>
+            <hr>
+            <% users.forEach((user) => { %>
+                <button onclick="chooseUser(this)" class="btn btn-secondary btn-sm m-1" id="<%= user.user_id %>">
+                    <%= user.username %>
+                </button>
+            <% }); %>
+        </div>
+      </div>
+      <div class="col-6 ">
+        <div class="update__user m-1 rounded shadow bg-warning p-3 justify-content-center">
+            <h5>Редактирование пользователя</h5>
+            <hr>
+            <div class="user__fields">
+            <form action=<%= `${globalLink}/users/update` %> method='POST'>
+                <div class="input-group mb-3 w-75">
+                    <span class="input-group-text">Имя пользователя</span>
+                    <input id="username" type="text" class="form-control" name="username" >
+                  </div>
+
+                <div class="input-group mb-3 w-75 hide">
+                    <span class="input-group-text">Айди</span>
+                    <input id="user_id" type="text" class="form-control" name="user_id" >
+                </div>
+
+                <div class="input-group mb-3 w-75">
+                    <span class="input-group-text">Почта пользователя</span>
+                    <input id="email" type="email" class="form-control" name="email" >
+                </div>
+
+                <div class="input-group mb-3 w-75">
+                    <span class="input-group-text">Пароль пользователя</span>
+                    <input id="password" type="password" class="form-control" name="password">
+                    <span onclick="makeVisible()" class="input-group-text">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                        </svg>
+                    </span>
+                </div>
+
+                <div class="input-group mb-3 w-75">
+                    <span class="input-group-text">Роль</span>
+                    <input id="role" type="role" class="form-control" name="role" placeholder="Администратор системы = admin, Тренер = trainer, Ассистент = assistant">
+                </div>
+
+                <hr>
+                <div class="endform d-flex justify-content-start align-items-start">
+                    <button type="submit" class="btn btn-primary m-1 w-50">Обновить пользователя</button>
+                    <a href="<%= `${globalLink}/users/profile/` %>" class="btn btn-light m-1 w-50">
+                      Вернуться в профиль
+                    </a>
+                </div>
+                <hr>
+                <a href="<%= `${globalLink}/users/new/` %>" class="btn btn-secondary m-1">
+                    Перейти на страницу "Создать пользователя"
+                  </a>
+
+            </form>
+            </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+
+    <%- include ("../partials/footer.ejs") %>
+
+<script>
+function makeVisible() {
+  var x = document.getElementById("password");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+};
+
+const chooseUser = async (user) => {
+
+    const usernameInput = document.querySelector('#username');
+    const userIdInput = document.querySelector('#user_id');
+    const passwordInput = document.querySelector('#password');
+    const userEmailInput = document.querySelector('#email');
+    const userRoleInput = document.querySelector('#role');
+
+    const searchUrl = new URL(`<%= globalLink %>/users/async/findOne/${user.id}`);
+
+    const promise = await fetch(searchUrl);
+    const response = await promise.json();
+    usernameInput.value = response.userData.username;
+    userIdInput.value = response.userData.user_id;
+    passwordInput.value = response.userData.password;
+    userEmailInput.value = response.userData.email;
+    userRoleInput.value = response.userData.role;
+
+};
+
+</script>

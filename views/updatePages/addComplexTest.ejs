@@ -116,19 +116,19 @@ const addSubjectToStudents = (subjectSelect) => {
     let maxPointsValue = maxPointsInput.name.split('__');
     maxPointsValue[maxPointsValue.length - 1] = subjectValue;
     maxPointsInput.name = maxPointsValue.join('__');
-    // console.log(maxPointsValue)
+
 
     const testDateInput = maxPointsInput.nextElementSibling;
     let testDateValue = testDateInput.name.split('__');
     testDateValue[testDateValue.length - 1] = subjectValue;
     testDateInput.name = testDateValue.join('__');
-    // console.log(testDateValue)
+  
 
     const testThemeInput = testDateInput.nextElementSibling;
     let testThemeValue = testThemeInput.name.split('__');
     testThemeValue[testThemeValue.length - 1] = subjectValue;
     testThemeInput.name = testThemeValue.join('__');
-    // console.log(testThemeInput)
+ 
 
     const scoreFiveInput = thisSubjectBlock.querySelector('#score_five');
     let scoreFiveValue = scoreFiveInput.name.split('__');

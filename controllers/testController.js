@@ -168,7 +168,7 @@ exports.addEntTrial = async (req, res, next) => {
       req.body[`geography__${student_id}`] ? student.geography = req.body[`geography__${student_id}`] : student.geography = null;
       req.body[`biology__${student_id}`] ? student.biology = req.body[`biology__${student_id}`] : student.biology = null;
       req.body[`chemistry__${student_id}`] ? student.chemistry = req.body[`chemistry__${student_id}`] : student.chemistry = null;
-      console.log(student)
+
       return student;
     });
       

@@ -7,7 +7,7 @@
 <body>
 
 <%- include ("../partials/nav.ejs") %>
-  
+
 <div class="container">
 
   <div class="row d-flex student__block my-4">
@@ -23,11 +23,6 @@
         <h5>
             Предметы ученика:
         </h5>
-        <div class="subjects_content my-2">
-          <% subjects.forEach(function(subject) { %>
-            <button class="btn btn-secondary m-1"><%= subject.name %></button>
-            <% }); %>
-        </div>
         <div class="d-flex my-1">
           <a href="<%= globalLink %>/students/<%= student.student_id %>/addSubject" class="btn btn-primary m-1" >
             Добавить ученику предмет
@@ -36,10 +31,107 @@
             Удалить у ученика предмет
           </a>
         </div>
+        <div class="subjects_content my-2">
+          <% subjects.forEach(function(subject) { %>
+            <button class="btn btn-secondary m-1"><%= subject.name %></button>
+            <% }); %>
+        </div>
+        <div class="row d-flex">
+          <div class="accordion" id="accordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingSubject">
+                <button class="accordion-button d-block text-center bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject">
+                  <h5 class="text-light">Найти характеристики</h5>
+                </button>
+              </h2>
+              <div id="collapseSubject" class="accordion-collapse collapse" aria-labelledby="headingSubject" data-bs-parent="#accordion">
+                <div class="accordion-body d-flex flex-column bg-warning">
+                  <div class="d-flex flex-lg-row flex-column bg-secondary p-3 rounded-3">
+                    <div class="input_month_field d-flex justify-content-around align-items-center">
+                      <strong>
+                        Укажите месяц: 
+                      </strong>
+                      <input type="month" class="month_form form-control input-lg w-50 my-1 ">
+                    </div>
+                    <div class="select_subject_field d-flex justify-content-start align-items-center">
+                      <select class="subject_select form-select input-lg my-1">
+                        <option value="">Выберите предмет</option>
+                        <% subjects.filter((subject) => { %>
+                        <% if(subject.name.slice(0,7) !== 'Пробные') { %>
+                        <%  return subject.name %>
+                        <% } %>
+                        <% }).forEach(function(subject) { %>
+                          <option value="<%= subject.subject_id %>"><%= subject.name %></option>
+                          <% }); %>
+                      </select>
+                    </div>
+                    <button type="submit" class="search_chars_button btn btn-warning m-2">
+                      Отобразить
+                    </button>
+                  </div>
+
+                  <hr>
+                  <div class="table-responsive-lg">
+                    <table class="table table-striped table-hover table-bordered border-primary">
+                      <tbody class="async__find">
+                        <tr>
+                          <th>Дата проведения</th>
+                          <th>Предмет</th>
+                          <th>Посещаемость</th>
+                          <th>Активность</th>
+                          <th>Выполнение ДЗ</th>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
+<script>
+const inputCharsValue = document.querySelector('.month_form');
+const tableBlock = document.querySelector('.async__find');
+const subjectSelect = document.querySelector('.subject_select');
+const searchCharsButton = document.querySelector('.search_chars_button');
+
+searchCharsButton.addEventListener('click', async (event) => {
+  tableBlock.innerHTML = `<tr><th>Дата проведения</th><th>Предмет</th><th>Посещаемость</th><th>Активность</th><th>Выполнение ДЗ</th></tr>`
+  const queryToDB = await fetch(`<%= globalLink %>/reviews/async/students/${inputCharsValue.value}/${subjectSelect.value}/<%= student.student_id %>`);
+  const response = await queryToDB.json();
+
+  response.forEach((item) => {
+    if(item.attendance == null && item.activity == null && item.homework == null) {
+      return;
+    } else {
+      const trEl = document.createElement('tr');
+    tableBlock.appendChild(trEl);
+    const dateCol = document.createElement('td');
+    dateCol.innerText = new Date(item.posting_date).toLocaleDateString('ru-RU');
+    const subjectCol = document.createElement('td');
+    subjectCol.innerText = item.subject_name;
+    const attendanceCountCol = document.createElement('td');
+    attendanceCountCol.innerText = item.attendance == true ? 'Посетил' : item.attendance == false ? 'Отсутствовал' : '-';
+    const activityCountCol = document.createElement('td');
+    activityCountCol.innerText = item.activity == true ? 'Активен' : item.activity == false ? 'Не активен' : '-';
+    const homeworkCountCol = document.createElement('td');
+    homeworkCountCol.innerText = item.homework == true ? 'Выполнил' : item.homework == false ? 'Не выполнил': '-';
+    trEl.appendChild(dateCol);
+    trEl.appendChild(subjectCol);
+    trEl.appendChild(attendanceCountCol);
+    trEl.appendChild(activityCountCol);
+    trEl.appendChild(homeworkCountCol);
+    }
+  });
+
+});
+</script>
+  
 
     <% if(student.trials.length > 0) { %>
     <div class="row d-flex flex-column group__block mb-1 mt-3 align-items-center">
@@ -255,7 +347,7 @@ if(reading_literacy_results.length > 0) {
     },
     grid: {
       row: {
-        colors: ['#f3f3f3', 'transparent'], 
+        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
         opacity: 0.5
       },
     },
@@ -308,7 +400,7 @@ if(math_literacy_results.length > 0) {
     },
     grid: {
       row: {
-        colors: ['#f3f3f3', 'transparent'],
+        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
         opacity: 0.5
       },
     },
@@ -362,7 +454,7 @@ if(mathematics_results.length > 0) {
     },
     grid: {
       row: {
-        colors: ['#f3f3f3', 'transparent'],
+        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
         opacity: 0.5
       },
     },
@@ -415,7 +507,7 @@ if(physics_results.length > 0) {
     },
     grid: {
       row: {
-        colors: ['#f3f3f3', 'transparent'],
+        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
         opacity: 0.5
       },
     },
@@ -467,7 +559,7 @@ if(geography_results.length > 0) {
     },
     grid: {
       row: {
-        colors: ['#f3f3f3', 'transparent'],
+        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
         opacity: 0.5
       },
     },
@@ -551,7 +643,6 @@ if(geography_results.length > 0) {
   const math_results = Array.from(document.querySelectorAll('.trials_math_result')).map((el) => el.innerText.split(' ')[0])
   const critical_thinking_results = Array.from(document.querySelectorAll('.trials_critical_thinking_result')).map((el) => el.innerText.split(' ')[0]);
 
-  console.log(math_results)
   
   if(critical_thinking_results.length > 0) {
     var options = {
@@ -649,6 +740,11 @@ if(geography_results.length > 0) {
     var chart = new ApexCharts(document.querySelector("#math_chart"), options);
     chart.render();
   };
+  
+  
+  
+  
+  
   
   </script>
       <% } %>

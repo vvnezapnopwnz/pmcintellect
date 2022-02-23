@@ -6,9 +6,12 @@ exports.getStudentView = async (req, res, next) => {
   db.task(t => {
 
     const student_id = req.params.id;
-
     let student;
     let testResults;
+    const currentDate  = new Date();
+    var firstDayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+
+    firstDayofThisMonth = firstDayDate.toLocaleDateString('ru-RU').split('.').reverse().join('-');
 
     return t.oneOrNone(`SELECT * from students WHERE student_id = ${student_id}`)
     .then((data) => student = data)
@@ -65,6 +68,9 @@ exports.getStudentView = async (req, res, next) => {
                                 JOIN subjects c ON
                                 b.subject_id = c.id
                                 WHERE student_id = ${student_id}
+                                and
+                                posting_date >= '${firstDayofThisMonth}'::date  and
+                                posting_date <= '${firstDayofThisMonth}'::date +  INTERVAL '1 month'
                                 ORDER BY b.posting_date DESC`)
       .then((records) => res.status(200)
         .render('./pages/viewPage', {
@@ -78,7 +84,6 @@ exports.getStudentView = async (req, res, next) => {
       console.log(error);
       res.redirect(`${globalLink}/`);
     });
-
 
   });
 

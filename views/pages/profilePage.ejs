@@ -26,56 +26,60 @@
                 </h4>          
             <% } %>
       </div>
-      <div class="search_group_block d-flex flex-column rounded bg-primary mt-2 p-3">
-        <div class="search_input_fields">
+    </div>
+  </div>
 
-          <div class="input-group mb-3">
-            <span class="input-group-text">Название группы</span>
-            <input id="group_name" type="text" class="form-control" placeholder="" aria-label="Groupname">
+    <div class="row d-flex profile__content">
+      <div class="col">
+        <h4 class="text-center">Фильтр групп</h4>
+        <div class="search_group_block d-flex flex-column rounded bg-primary mt-3 p-3">
+          <div class="search_input_fields">
+            <div class="input-group mb-3">
+              <span class="input-group-text">Название группы</span>
+              <input id="group_name" type="text" class="form-control" placeholder="" aria-label="Groupname">
+            </div>
+  
+            <div class="input-group mb-3">
+              <span class="input-group-text">Класс</span>
+              <input id="group_class_number" type="number" class="form-control" placeholder="" min="1" max="11" aria-label="Groupclassnumber">
+            </div>
+  
+            <div class="input-group mb-3">
+              <select id="group_branch_select" class="form-select">
+                <option>Филиал</option>
+                <option>Нурсая</option>
+                <option>Рахат</option>
+                <option>Online</option>
+              </select>
+            </div>
+  
+            <div class="input-group mb-3">
+              <select id="group_lang_select" class="form-select">
+                <option>Язык обучения</option>
+                <option>Казахский</option>
+                <option>Русский</option>
+              </select>
+            </div>
+  
+            <div class="input-group mb-3">
+              <select id="group_active_select" class="form-select">
+                <option>В работе?</option>
+                <option>Активна</option>
+                <option>Закрыта</option>
+              </select>
+            </div>
+  
+            <button id="group_find_submit" type="submit" class="btn btn-warning">Найти</button>
+            <button id="hide_results" onclick="hideResults()" class="btn btn-light m-2 hide">Свернуть результаты</button>
+  
           </div>
-
-          <div class="input-group mb-3">
-            <span class="input-group-text">Класс</span>
-            <input id="group_class_number" type="number" class="form-control" placeholder="" min="1" max="11" aria-label="Groupclassnumber">
-          </div>
-
-          <div class="input-group mb-3">
-            <select id="group_branch_select" class="form-select">
-              <option>Филиал</option>
-              <option>Нурсая</option>
-              <option>Рахат</option>
-              <option>Online</option>
-            </select>
-          </div>
-
-          <div class="input-group mb-3">
-            <select id="group_lang_select" class="form-select">
-              <option>Язык обучения</option>
-              <option>Казахский</option>
-              <option>Русский</option>
-            </select>
-          </div>
-
-          <div class="input-group mb-3">
-            <select id="group_active_select" class="form-select">
-              <option>В работе?</option>
-              <option>Активна</option>
-              <option>Закрыта</option>
-            </select>
-          </div>
-
-          <button id="group_find_submit" type="submit" class="btn btn-warning">Найти</button>
-          <button id="hide_results" onclick="hideResults()" class="btn btn-light m-2 hide">Свернуть результаты</button>
-
-        </div>
-        <div class="search_results_block my-2 p-3 rounded bg-warning">
-          <div>
-            <h5>Результаты поиска:</h5>
+          <div class="search_results_block my-2 p-3 rounded bg-warning">
+            <div>
+              <h5>Результаты поиска:</h5>
+            </div>
           </div>
         </div>
       </div>
-
-    </div>
 
     <div class="col-sm">
       <h3 class="text-center">Списки групп</h3>
@@ -338,6 +342,7 @@
         </div>
       </div>
     </div>
+  </div>
 
     <% if(user.role == 'admin' || user.role == 'assistant'){ %>
       <div class="students__content">
@@ -373,16 +378,14 @@
             Перевести ученика в другую группу
            </a>
       </div>
-    </div>
+
 
     <% } else { %>
       <% } %>
 
 
-
-
-  </div>    
 </div>
+
 
 
 <%- include ("../partials/footer.ejs") %>
