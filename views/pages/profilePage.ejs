@@ -29,13 +29,13 @@
     </div>
   </div>
 
-    <div class="row d-flex profile__content">
-      <div class="col">
+    <div class="flex-column-reverse flex-md-column-reverse flex-lg-row rounded bg-warning p-2 shadow">
+      <div class="col mx-3 my-2">
         <h4 class="text-center">Фильтр групп</h4>
         <div class="search_group_block d-flex flex-column rounded bg-primary mt-3 p-3">
           <div class="search_input_fields">
             <div class="input-group mb-3">
-              <span class="input-group-text">Название группы</span>
+              <span class="input-group-text">Название</span>
               <input id="group_name" type="text" class="form-control" placeholder="" aria-label="Groupname">
             </div>
   
@@ -73,7 +73,7 @@
             <button id="hide_results" onclick="hideResults()" class="btn btn-light m-2 hide">Свернуть результаты</button>
   
           </div>
-          <div class="search_results_block my-2 p-3 rounded bg-warning">
+          <div style="max-height: 400px;overflow-y: scroll;" class="search_results_block my-2 p-3 rounded bg-warning hide">
             <div>
               <h5>Результаты поиска:</h5>
             </div>
