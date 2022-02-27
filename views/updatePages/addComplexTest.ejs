@@ -25,7 +25,7 @@
       <form action=<%= `${globalLink}/groups/${group.group_id}/addComplexTest` %> method='POST'>
         <div class="test_date__list my-3">
         <label for="FormControlInputFormat" class="form-label">Укажите формат-название теста</label>
-        <input name="complex_test_format" type="text" class="form-control w-50" id="FormControlInputFormat">                
+        <input required name="complex_test_format" type="text" class="form-control w-50" id="FormControlInputFormat">                
         </div>
 
         <div class="subjects__list my-3">
@@ -33,16 +33,16 @@
             <label for="InputSubjects" class="form-label">Укажите предмет(ы), максимум баллов и дату проведения теста</label>
               <div class="subjects__add d-flex flex-column m-2 p-2 bg-info rounded">
                 <div class="subject__configs d-flex">
-                  <select onchange="addSubjectToStudents(this)" name="subject__name" type="select" class="input__subject form-control w-50" style="max-width: 190px;">
-                    <option selected="selected">Выберите предмет</option>
+                  <select required onchange="addSubjectToStudents(this)" name="subject__name" type="select" class="input__subject form-control w-50" style="max-width: 190px;">
+                    <option value=null disabled selected>Выберите предмет</option>
                     <% subjects.forEach(function(subject) { %>
                       <option class="available__option" value="<%= subject.id %>">
                         <%= subject.name %>
                       </option>
                       <% }); %>
                     </select>
-                    <input placeholder="Макс. баллов" name="max_points__" type="number" class="form-control mx-1" style="width:170px">
-                    <input name="complex_test_date__" type="date" class="form-control mx-1 w-25" id="FormControlInputDate">
+                    <input placeholder="Макс. баллов" required="required" name="max_points__" type="number" class="form-control mx-1" style="width:170px">
+                    <input name="complex_test_date__" required="required" type="date" class="form-control mx-1 w-25" id="FormControlInputDate">
                     <input placeholder="Тема теста" name="complex_test_theme__" type="text" class="form-control" style="width:150px" id="FormControlInputTheme"> 
                 </div>
                 <p style="margin-bottom: 0px;margin-top: 5px;">Укажите проценты соотвествия по выбранному предмету</p>
@@ -85,7 +85,7 @@
         </div>
 
         <div class="buttons d-flex flex-column justify-content-center">
-          <button type="submit" class="btn btn-primary my-2 w-50">Добавить</button>
+          <button type="submit" class="form-submit btn btn-primary my-2 w-50">Добавить</button>
           <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
         </div>
 
@@ -224,5 +224,16 @@ removeStudentButton.forEach((el) => {
         parentEl.parentElement.remove();
     });
 });
+
+const formatNameInput = document.querySelector('#FormControlInputFormat');
+
+const formBlock = document.querySelector('form');
+const formSubmit = document.querySelector('.form-submit');
+const AllsubjectSelects = Array.from(document.querySelectorAll('.input__subject'))
+console.log(formBlock);
+console.log(formSubmit);
+
+
+
 
 </script>

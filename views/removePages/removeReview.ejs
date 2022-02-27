@@ -27,7 +27,7 @@
             <label for="InputReviews" class="form-label">Укажите Ревью (характеристики) для удаления</label>
               <div class="reviews__add d-flex mb-4">
                   <select name="review" type="select" class="form-select form-select-lg w-50" id="InputReview" aria-label="Удаление характеристик">
-                    <option>Выберите ревью</option>
+                    <option value="unchoosen">Выберите ревью</option>
                     <% reviews.sort(function(a, b) { return new Date(a.posting_date) - new Date(b.posting_date); }).forEach(function(review) { %>
                       <option class="available__option" value="<%= review.review_id %>">
                         Дата: <%= review.posting_date.toLocaleDateString('ru-RU') %>,
@@ -38,7 +38,7 @@
               </div>
           </div>
           <div class="buttons d-flex flex-column justify-content-center">
-            <button type="submit" class="btn btn-primary my-2 w-50">Убрать</button>
+            <button type="submit" class="form-submit btn btn-primary my-2 w-50">Убрать</button>
             <a href="<%= `${globalLink}/users/profile/` %>" class="btn-profile btn btn-light w-50 mh-50">Вернуться в свой профиль</a>
           </div>
       </form>
@@ -46,3 +46,21 @@
   </div>
 
 </div>
+
+
+<script>
+const selectReviews = document.querySelector('.form-select');
+const submit = document.querySelector('.form-submit');
+form = document.querySelector('form')
+submit.addEventListener('click', function (event) {
+
+  if(selectReviews.value == 'unchoosen') {
+    alert('Укажите ревью!');
+    event.preventDefault();
+  } else {
+    form.submit()
+  }
+
+})
+
+</script>
