@@ -47,6 +47,8 @@ exports.getComplexTest = async (req, res, next) => {
           group: subjects[0],
           globalLink,
         })
+      }).catch((err) => {
+        res.status(200).redirect(`${globalLink}/groups/${groupId}`)
       })
 
   });
@@ -86,12 +88,12 @@ exports.addComplexTestPage = async (req, res, next) => {
 
 exports.addComplexTest = async (req, res, next) => {
 
+  const groupId = req.params.id;
+
   db.task(t => {
 
     const data = Object.keys(req.body);
-    console.log(data)
     const format = req.body.complex_test_format;
-    const groupId = req.params.id;
     const students = [req.body.students].flat();
     let testID;
     const results = data.filter((el) => {
@@ -101,7 +103,7 @@ exports.addComplexTest = async (req, res, next) => {
       if(students.includes(resultInfo[2])) {
         return el;
       } 
-
+      
       return;
       }).map((el) => {
         const resultInfo = el.split('__');
@@ -113,6 +115,9 @@ exports.addComplexTest = async (req, res, next) => {
         const scoreFour = `score_four__${resultInfo[4]}`;
         const scoreThree = `score_three__${resultInfo[4]}`;
 
+        if(resultValue == '' || resultValue == undefined) {
+          return;
+        }
         const resultData = {
           studentId: resultInfo[2],
           subjectId: resultInfo[4],
@@ -126,7 +131,10 @@ exports.addComplexTest = async (req, res, next) => {
         };
         console.log(resultData)
         return resultData;
-      });
+      }).filter((el) => el !== undefined);
+
+
+      console.log(results)
 
     return t.one(`INSERT INTO group_custom_tests(format, group_id)
     VALUES('${format}', ${groupId}) RETURNING id`)
@@ -142,7 +150,7 @@ exports.addComplexTest = async (req, res, next) => {
     }))
     .then(() => res.status(200).redirect(`${globalLink}/groups/${groupId}`))
   }).catch((err) => {
-    console.error(err);
+   res.status(200).redirect(`${globalLink}/groups/${groupId}`)
   })    
 
 };

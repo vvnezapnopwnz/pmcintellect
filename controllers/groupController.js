@@ -257,7 +257,9 @@ exports.getFormatTestsPage = async (req, res) => {
           groupName,
           graphData
         });
-      });
+      })
+      .catch((err) => res.redirect(`${globalLink}/groups/${groupId}`));
+    
     });
 };
 
