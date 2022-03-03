@@ -48,14 +48,18 @@
                 <div class="accordion-body d-flex flex-column bg-warning">
                   <div class="d-flex flex-lg-row flex-column bg-secondary p-3 rounded-3">
                     <div class="input_month_field d-flex justify-content-around align-items-center">
-                      <strong>
-                        Укажите месяц: 
+                      <strong class="mx-1 text-warning ">
+                        От: 
                       </strong>
-                      <input type="month" class="month_form form-control input-lg w-50 my-1 ">
+                      <input type="date" class="month_form_start form-control input-lg w-50 m-1 ">
+                      <strong class="mx-1 text-warning">
+                        До: 
+                      </strong>
+                      <input type="date" class="month_form_end form-control input-lg w-50 m-1 ">
                     </div>
                     <div class="select_subject_field d-flex justify-content-start align-items-center">
                       <select class="subject_select form-select input-lg my-1">
-                        <option value="">Выберите предмет</option>
+                        <option value="no_subject">Выберите предмет</option>
                         <% subjects.filter((subject) => { %>
                         <% if(subject.name.slice(0,7) !== 'Пробные') { %>
                         <%  return subject.name %>
@@ -95,16 +99,22 @@
   </div>
 
 <script>
-const inputCharsValue = document.querySelector('.month_form');
+const inputCharsStartDateValue = document.querySelector('.month_form_start');
+const inputCharsEndDateValue = document.querySelector('.month_form_end');
+console.log(inputCharsStartDateValue.value)
+console.log(inputCharsEndDateValue.value)
 const tableBlock = document.querySelector('.async__find');
 const subjectSelect = document.querySelector('.subject_select');
 const searchCharsButton = document.querySelector('.search_chars_button');
 
 searchCharsButton.addEventListener('click', async (event) => {
   tableBlock.innerHTML = `<tr><th>Дата проведения</th><th>Предмет</th><th>Посещаемость</th><th>Активность</th><th>Выполнение ДЗ</th></tr>`
-  const queryToDB = await fetch(`<%= globalLink %>/reviews/async/students/${inputCharsValue.value}/${subjectSelect.value}/<%= student.student_id %>`);
-  const response = await queryToDB.json();
 
+  const queryToDB = await fetch(`<%= globalLink %>/reviews/async/students/${inputCharsStartDateValue.value}/${inputCharsEndDateValue.value}/${subjectSelect.value}/<%= student.student_id %>`);
+  
+  const response = await queryToDB.json();
+  console.log(inputCharsStartDateValue.value)
+console.log(inputCharsEndDateValue.value)
   response.forEach((item) => {
     if(item.attendance == null && item.activity == null && item.homework == null) {
       return;

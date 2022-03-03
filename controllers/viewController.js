@@ -97,7 +97,7 @@ exports.getDashboardOverview = async (req, res, next) => {
     let groups;
     let students;
     let users;
-    return t.one(`SELECT count(group_id) FROM groups where active`)
+    return t.manyOrNone(`SELECT * FROM groups where active`)
     .then((groupsData) => groups = groupsData)
     .then(() => t.one(`SELECT count(student_id) from students where active`))
     .then((studentsData) => students = studentsData)

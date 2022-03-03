@@ -2,7 +2,7 @@
 <html>
 <head>
   <%- include ("../partials/header.ejs") %>
-  <!-- <script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script>
 
 </head>
 
@@ -59,6 +59,7 @@
                 </tbody>
             </table>
         </div>
+        <button class="btn btn-success w-25 my-3 mx-1 hide" id="btnExport" onclick="exportReportToExcel(this)">Скачать таблицу</button>
         <div id="chart">
         </div> 
     </div>
@@ -172,4 +173,21 @@ legend: {
 
 var chart = new ApexCharts(document.querySelector("#chart"), options).render();
 
+const buttonExport = document.querySelector('#btnExport')
+
+setTimeout(() => {
+  btnExport.classList.remove('hide');
+}, 5000)
+
+
+function exportReportToExcel(e) {
+  let table = document.querySelector('table')
+  let subjectName = `Таблица с веб-приложения`; // you can use document.getElementById('tableId') as well by providing id to the table tag
+  TableToExcel.convert(table, { // html code may contain multiple tables so here we are refering to 1st table tag
+    name: `${subjectName}.xlsx`, // fileName you could use any name
+    sheet: {
+      name: 'Sheet 1' // sheetName
+    }
+  });
+}
 </script>

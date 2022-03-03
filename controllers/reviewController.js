@@ -241,11 +241,10 @@ exports.getStudentAsyncReviews = async (req, res, next) => {
 
   db.task(t => {
 
-    const month = req.params.month;
+    const start = req.params.start;
+    const end = req.params.end;
     const studentId = req.params.student_id;
     const subjectId = req.params.subject_id;
-
-    const date = `${month}-01`;
 
     return t.manyOrNone(`select 
     a.review_id, a.subject_id, 
@@ -260,9 +259,9 @@ exports.getStudentAsyncReviews = async (req, res, next) => {
     join subjects c
     on a.subject_id = c.id
     where b.student_id = ${studentId}
-    and subject_id = ${subjectId}
-	  and posting_date > '${date}' and
-    posting_date < '${date}':: date +  INTERVAL '1 month'
+    ${subjectId == 'no_subject' ? '' : `and subject_id = ${subjectId}`}
+	  and posting_date > '${start}' and
+    posting_date < '${end}'
     GROUP BY a.review_id, c.name, b.student_id,
 	  b.attendance, b.activity, b.homework
     ORDER BY a.posting_date DESC`)
@@ -273,3 +272,61 @@ exports.getStudentAsyncReviews = async (req, res, next) => {
   });
 
 };
+
+
+exports.getDashboardOverviewAsyncStudentVisits = async (req, res, next) => {
+
+  db.task(t => {
+
+    const startDate = req.params.start;
+    const endDate = req.params.end;
+
+    return t.one(`select count(distinct c.name)
+    from student_records a
+    join group_reviews b
+    on a.review_id = b.review_id
+    join students c
+    on a.student_id = c.student_id
+    where posting_date > '${startDate}'
+    and posting_date < '${endDate}'`)
+    .then((data) => res.status(200).json(data))
+    .catch((error) => res.redirect(`${globalLink}`))
+
+  });
+
+};
+
+
+exports.getReviewsCountAsync = async (req, res, next) => {
+
+  db.task(t => {
+
+    const startDate = req.params.start;
+    const endDate = req.params.end;
+    const groupId = req.params.group_id
+    let subjectsData;
+
+    return t.manyOrNone(`select * from groups a
+    join group_subjects b
+    on a.group_id = b.group_id
+    join subjects c
+    on b.subject_id = c.id
+    where a.group_id = ${groupId}`)
+    .then((subjectsData) => {
+      subjects = subjectsData
+
+      return Promise.all(subjectsData.map(async (subject) => {
+
+          return t.manyOrNone(`select * from group_reviews *
+          where group_id = ${groupId} and subject_id = ${subject.subject_id}
+          and posting_date > '${startDate}'
+          and posting_date < '${endDate}'`)
+          .then((data) => subject.reviews = data)
+
+      }))
+    })
+    .then(() => res.status(200).json(subjects))
+
+  })
+
+}
