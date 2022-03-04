@@ -304,7 +304,7 @@ exports.getReviewsCountAsync = async (req, res, next) => {
     const startDate = req.params.start;
     const endDate = req.params.end;
     const groupId = req.params.group_id
-    let subjectsData;
+    let subjects;
 
     return t.manyOrNone(`select * from groups a
     join group_subjects b
@@ -322,7 +322,6 @@ exports.getReviewsCountAsync = async (req, res, next) => {
           and posting_date > '${startDate}'
           and posting_date < '${endDate}'`)
           .then((data) => subject.reviews = data)
-
       }))
     })
     .then(() => res.status(200).json(subjects))

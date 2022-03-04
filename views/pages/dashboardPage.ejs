@@ -74,10 +74,10 @@
 
             <div class="d-flex flex-column bg-info p-2 my-2 rounded shadow">
               <p id="reviews_count_show">Количество отправленных характеристик по предметам группы за выбранный период</p>
-              <div style="display: none;" class="group_subject_reviews">
+              <div style="display: none;" class="group_subject_reviews border">
 
               </div>
-              <div class="d-flex my-2">
+              <div class="d-flex my-2 input_field_subject_reviews">
                 <input type="date" class="form-control reviews_start_date mx-1 w-25">
                 <input type="date" class="form-control reviews_end_date w-25">
                 <select class="group_count_select form-select w-25 mx-1">
@@ -178,22 +178,59 @@ const reviewsStartDateInput = document.querySelector('.reviews_start_date');
 const reviewsEndDateInput = document.querySelector('.reviews_end_date');
 const groupCountSelect = document.querySelector('.group_count_select');
 const responseBlock = document.querySelector('.group_subject_reviews');
+const subjectReviewsList = document.createElement('div');
+let isButtonGenerated = false;
 
 showReviewsCountButton.addEventListener('click', async (event) => {
-  responseBlock.innerHTML = ''
-
+  responseBlock.innerHTML = '';
+  subjectReviewsList.remove();
   if(reviewsStartDateInput.value !== '' && reviewsEndDateInput.value !== '') {
     const promise = await fetch(`<%= globalLink %>/reviews/async/reviews_count/${groupCountSelect.value}/${reviewsStartDateInput.value}/${reviewsEndDateInput.value}`);
     const response = await promise.json();
     const groupReviewsCountShow = document.querySelector('.reviews_count_show');
+    console.log(response)
 
     response.forEach((subject) => {
       const subjectName = document.createElement('p');
-      subjectName.classList.add('fw-bold', 'm-1')
+      subjectName.classList.add('fw-bold', 'm-1', 'btn', 'btn-primary', 'btn-sm', 'subject_btn_generated')
       subjectName.innerText = `${subject.name}: ${subject.reviews.length}`
       responseBlock.classList.add('d-flex', 'rounded', 'bg-warning', 'p-2', 'justify-content-around');
       responseBlock.appendChild(subjectName);
-    })
+      isButtonGenerated = true;
+    });
+
+
+
+    if(isButtonGenerated) {
+      subjectReviewsList.classList.add('d-flex', 'p-2', 'flex-column', 'my-2', 'bg-light', 'rounded', 'shadow', 'reviews_list');
+      const subjectReviewsListDescr = document.createElement('p');
+      subjectReviewsListDescr.innerText = 'Список харак-к по выбранному предмету за указанные даты:'
+
+        const subjectBtnGenerated = Array.from(document.querySelectorAll('.subject_btn_generated'));
+        subjectBtnGenerated.forEach(async (el) => {
+
+          el.addEventListener('click', async (event) => {
+
+            subjectReviewsList.innerHTML = '';
+            subjectReviewsList.appendChild(subjectReviewsListDescr)
+
+            let index = Array.prototype.indexOf.call(responseBlock.children, event.target);
+            console.log(response[index])
+            responseBlock.parentElement.insertBefore(subjectReviewsList, document.querySelector('.input_field_subject_reviews'));
+            response[index].reviews.forEach((review) => {
+
+              const reviewElement = document.createElement('a')
+              reviewElement.setAttribute('href', `<%= globalLink %>/reviews/${review.review_id}`);
+              reviewElement.classList.add('btn', 'btn-secondary', 'btn-sm', 'w-25', 'my-1');
+              reviewElement.innerText = `Дата: ${new Date(review.posting_date).toLocaleDateString('ru-RU')}, день недели: ${new Date(review.posting_date).toLocaleString('ru', {weekday: 'long'})}`;
+              subjectReviewsList.appendChild(reviewElement);
+            })
+
+
+
+          });
+        });
+    }
 
 
   } else {
@@ -201,6 +238,8 @@ showReviewsCountButton.addEventListener('click', async (event) => {
   }
 
 });
+
+
 
 
 </script>

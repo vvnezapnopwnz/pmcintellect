@@ -214,8 +214,6 @@ exports.getFormatTestsPage = async (req, res) => {
       .then(async (datesData) => {
         dates = datesData;
 
-        graphData = await Promise.all(dates.map((date) => {
-
           return t.manyOrNone(`select a.test_date, a.custom_test_id, a.subject_id,
           AVG(CASE 
           WHEN ROUND(cast(a.points as decimal) / a.max_points * 100) > a.score_five THEN 5
@@ -237,15 +235,39 @@ exports.getFormatTestsPage = async (req, res) => {
           join group_custom_tests b
           on a.custom_test_id = b.id
           where b.format = '${formatName}'
-          and a.subject_id = ${subjectId} and a.test_date = '${date.test_date.toLocaleDateString()}'
+          and a.subject_id = ${subjectId}
           and b.group_id = ${groupId}
           GROUP BY a.test_date, a.custom_test_id, a.subject_id`)
-        }))
-
       })
-      .then(() => {
-
-        res.status(200).render('./pages/formatResults', {
+      .then((graphData) => {
+        
+        return t.manyOrNone(`select distinct a.test_date,
+        COALESCE(
+          sum(
+            CASE WHEN ROUND(cast(a.points as decimal) / a.max_points * 100) > a.score_five
+            THEN 1 ELSE 0 END),0) AS five_count,
+        COALESCE(
+          sum(
+            CASE WHEN ROUND(cast(a.points as decimal) / a.max_points * 100) > a.score_four
+            AND ROUND(cast(a.points as decimal) / a.max_points * 100) < a.score_five
+            THEN 1 ELSE 0 END),0) AS four_count,
+        COALESCE(
+          sum(
+            CASE WHEN ROUND(cast(a.points as decimal) / a.max_points * 100) > a.score_three
+            AND ROUND(cast(a.points as decimal) / a.max_points * 100) < a.score_four
+            THEN 1 ELSE 0 END),0) AS three_count,	
+            COALESCE(
+          sum(
+            CASE WHEN ROUND(cast(a.points as decimal) / a.max_points * 100) < a.score_three
+            THEN 1 ELSE 0 END),0) AS two_count
+         from custom_tests_results a
+         join group_custom_tests b
+         on a.custom_test_id = b.id
+         where b.format = '${formatName}'
+         and a.subject_id = ${subjectId}
+         and b.group_id = ${groupId}
+         GROUP BY a.test_date`)
+        .then((grades) => res.status(200).render('./pages/formatResults', {
           studentsNames,
           dates,
           globalLink,
@@ -255,8 +277,10 @@ exports.getFormatTestsPage = async (req, res) => {
           subjectName,
           formatName,
           groupName,
-          graphData
-        });
+          graphData,
+          grades
+        })
+        );
       })
       .catch((err) => res.redirect(`${globalLink}/groups/${groupId}`));
     

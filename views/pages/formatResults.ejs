@@ -61,7 +61,17 @@
         </div>
         <button class="btn btn-success w-25 my-3 mx-1 hide" id="btnExport" onclick="exportReportToExcel(this)">Скачать таблицу</button>
         <div id="chart">
-        </div> 
+        </div>
+        <hr>
+        <p class="text-center">
+          Методика расчета "Кривой успеваемости": 
+          Сложение всех оценок учеников согласно указанным процентным критериям 
+          успеваемости(по умолчанию: если > 89 = "5", > 69 = "4", >49 = "3") , кроме оценки "2" / на кол-во учеников, 
+          писавших тест и не получивших оценку "2".
+        </p>
+        <hr>
+        <div id="grades_chart">
+        </div>
     </div>
 </div>
 
@@ -98,26 +108,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-let dates = <%- JSON.stringify(graphData.map((data) => data[0].test_date.toLocaleDateString('ru-RU'))) %>;
-let  averageGradeNoTwo = <%- JSON.stringify(graphData.map((data) => Number(data[0].average_grade).toFixed(2) )) %>;
-let gradeTwoSum = <%- JSON.stringify(graphData.map((data) => Number(data[0].bad_grade))) %>;
+let dates = <%- JSON.stringify(graphData.map((data) => data.test_date.toLocaleDateString('ru-RU'))) %>;
+let  averageGradeNoTwo = <%- JSON.stringify(graphData.map((data) => Number(data.average_grade).toFixed(2) )) %>;
 let fourGrades = dates.map((date) => 4)
-console.log(averageGradeNoTwo)
-console.log(gradeTwoSum)
 var options = {
   series: [
   {
     name: "Кривая успеваемости",
     data: averageGradeNoTwo,
     type: 'line'
-  },
-  {
-    name: "Количество двоечников",
-    data: gradeTwoSum,
-    type: 'column',
-    fill: {
-      colors: ['#D8583D']
-}
   },
   {
     name: "Прямая качества",
@@ -172,6 +171,76 @@ legend: {
 };
 
 var chart = new ApexCharts(document.querySelector("#chart"), options).render();
+
+//second chart
+const dates2 = <%- JSON.stringify(grades.map((date) => date.test_date.toLocaleDateString('ru-RU'))) %>;
+const five_count = <%- JSON.stringify(grades.map((data) => data.five_count)) %>;
+const four_count = <%- JSON.stringify(grades.map((data) => data.four_count)) %>;
+const three_count = <%- JSON.stringify(grades.map((data) => data.three_count)) %>;
+const two_count = <%- JSON.stringify(grades.map((data) => data.two_count)) %>;
+
+var options2 = {
+      series: [{
+      name: 'Отлично',
+      data: five_count
+    }, {
+      name: 'Хорошо',
+      data: four_count
+    }, {
+      name: 'Удовлетворительно',
+      data: three_count
+    }, {
+      name: 'Плохо',
+      data: two_count
+    },
+  ],
+  colors:['#5674ED', '#32CD32', '#FF00FF', '#E91E63'],
+      chart: {
+      type: 'bar',
+      height: 350,
+      stacked: true,
+      stackType: '100%'
+    },
+    fill: {
+colors: ['#5674ED', '#32CD32', '#FF00FF', '#E91E63']
+},
+    plotOptions: {
+      bar: {
+        horizontal: true,
+      },
+    },
+    title: {
+      text: 'Соотношение оценок'
+    },
+    xaxis: {
+      categories: dates2,
+    },
+    tooltip: {
+      y: {
+        formatter: function (val) {
+          return val
+        }
+      }
+    },
+    legend: {
+      position: 'top',
+      horizontalAlign: 'left',
+      offsetX: 40
+    }
+};
+
+        var chart2 = new ApexCharts(document.querySelector("#grades_chart"), options2);
+        chart2.render();
+      
+
+
+
+
+
+
+
+
+//second chart
 
 const buttonExport = document.querySelector('#btnExport')
 
