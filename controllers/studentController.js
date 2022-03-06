@@ -55,9 +55,16 @@ exports.reincarnateStudentPage = async (req, res, next) => {
 
 exports.reincarnateStudent = async (req, res, next) => {
 
+  const studentForReturn = req.body.student_id;
+  console.log(studentForReturn);
+
   db.task(t => {
-    return t.query(`UPDATE students SET active = true WHERE student_id = ${studentForDeletion}`)
+    return t.query(`UPDATE students SET active = true WHERE student_id = ${studentForReturn}`)
     .then(() => res.redirect(`${globalLink}/students/`))
+    .catch((err) => {
+      console.log(err)
+      res.status(500).redirect(`${globalLink}/`)
+    });
   })
 }
 
@@ -163,6 +170,7 @@ exports.getAll = async (req, res, next) => {
       });
     })
     .catch((error) => {
+      console.log(error)
       res.redirect(`${globalLink}/`);
     });
 };
@@ -228,7 +236,11 @@ exports.removeSubjectFromStudentPage = async (req, res, next) => {
       globalLink,
       subjects,
       studentId,
-    }));
+    }))
+    .catch((err) => {
+      console.log(err)
+      res.status(500).redirect(`${globalLink}/`)
+    });
   });
 
 };
@@ -241,7 +253,11 @@ exports.removeSubjectFromStudent = async (req, res, next) => {
     const subject = req.body.subject;
     return t.query(`DELETE FROM student_subjects WHERE student_id = ${studentId} AND subject_id = ${subject}`)
     .then(()=> res.status(200).redirect(`${globalLink}/students/${studentId}`))
-  })
+    .catch((err) => {
+      console.log(err)
+      res.status(500).redirect(`${globalLink}/`)
+    });
+  });
 
 };
 
@@ -260,6 +276,10 @@ exports.getAllStudentsAsync = async (req, res, next) => {
       res.status(200).json({
       students,
       });
+    })
+    .catch((err) => {
+      console.log(err)
+      res.status(500).redirect(`${globalLink}/`)
     });
   });
 };
