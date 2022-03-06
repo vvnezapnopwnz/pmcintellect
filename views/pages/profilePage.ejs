@@ -95,13 +95,14 @@
               <ol>
                 <% groups.filter((group) => group.class_number == 1).forEach(function(group) { %>
                   <li">
-                    <a class="d-flex" href=<%= `${globalLink}/groups/${group.group_id}` %>>
+                    <a class="" href=<%= `${globalLink}/groups/${group.group_id}` %>>
                       <strong><%= group.group_name %>&nbsp;&nbsp;</strong>
+                        Филиал: <%= group.branch %>&nbsp;
+                        Язык: <%= group.language %>&nbsp;
+                        Кол-во учеников: <%= group.group_students_count %>
                     </a>
-                    <p>Филиал: <%= group.branch %>&nbsp;</p>
-                    <p>Язык: <%= group.language %>&nbsp;</p>
-                    <p>Кол-во учеников: <%= group.group_students_count %></p>
                   </li>
+                  <hr>
                 <% }); %>
               </ol>
             </div>

@@ -221,16 +221,10 @@ exports.getFormatTestsPage = async (req, res) => {
           AND ROUND(cast(a.points as decimal) / a.max_points * 100) < a.score_five THEN 4
           WHEN ROUND(cast(a.points as decimal) / a.max_points * 100) > a.score_three
           AND ROUND(cast(a.points as decimal) / a.max_points * 100) < a.score_four THEN 3
-          ELSE null 
+          WHEN ROUND(cast(a.points as decimal) / a.max_points * 100) < a.score_three THEN 2
+		      ELSE null
           END)
-          AS average_grade,
-          COUNT 
-          (CASE
-            WHEN 
-           ROUND(cast(a.points as decimal) / a.max_points * 100) < a.score_three
-           THEN 1
-          END
-          ) AS bad_grade
+          AS average_grade
           from custom_tests_results a
           join group_custom_tests b
           on a.custom_test_id = b.id

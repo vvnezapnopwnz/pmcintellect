@@ -63,11 +63,11 @@
         <div id="chart">
         </div>
         <hr>
-        <p class="text-center">
-          Методика расчета "Кривой успеваемости": 
+        <p class="text-center p-2 bg-light rounded shadow">
+          Методика расчета "Кривой успеваемости": <br>
           Сложение всех оценок учеников согласно указанным процентным критериям 
-          успеваемости(по умолчанию: если > 89 = "5", > 69 = "4", >49 = "3") , кроме оценки "2" / на кол-во учеников, 
-          писавших тест и не получивших оценку "2".
+          успеваемости(по умолчанию: если > 89 = "5", > 69 = "4", >49 = "3")  / на кол-во учеников, 
+          писавших тест.
         </p>
         <hr>
         <div id="grades_chart">
@@ -109,13 +109,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 let dates = <%- JSON.stringify(graphData.map((data) => data.test_date.toLocaleDateString('ru-RU'))) %>;
-let  averageGradeNoTwo = <%- JSON.stringify(graphData.map((data) => Number(data.average_grade).toFixed(2) )) %>;
+let  averageGrade = <%- JSON.stringify(graphData.map((data) => Number(data.average_grade).toFixed(2) )) %>;
 let fourGrades = dates.map((date) => 4)
 var options = {
   series: [
   {
     name: "Кривая успеваемости",
-    data: averageGradeNoTwo,
+    data: averageGrade,
     type: 'line'
   },
   {
