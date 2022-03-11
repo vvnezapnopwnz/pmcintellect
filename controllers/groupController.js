@@ -170,9 +170,13 @@ exports.getFormatTestsPage = async (req, res) => {
     let dates;
     let graphData;
 
+    return t.oneOrNone(`select * from subjects where
+    id = ${subjectId}`)
+    .then((subjectData) => {
+      subjectName = subjectData.name;
 
-    return t.oneOrNone(`select distinct a.format, 
-      c.name as subject_name, d.name as group_name
+      return t.oneOrNone(`select distinct a.format, 
+      d.name as group_name
       from 
       group_custom_tests a
       join custom_tests_results
@@ -182,11 +186,10 @@ exports.getFormatTestsPage = async (req, res) => {
       join groups d
       on d.group_id = a.group_id
       where a.group_id = ${groupId}
-      and a.id = ${formatId}
-      and b.subject_id = ${subjectId}`)
-      .then(({format, subject_name, group_name }) =>  {
+      and a.id = ${formatId} LIMIT 1
+      `)
+      .then(({format, group_name }) =>  {
         formatName = format;
-        subjectName = subject_name;
         groupName = group_name;
 
         return t.manyOrNone(`select distinct b.name, b.student_id from
@@ -201,6 +204,7 @@ exports.getFormatTestsPage = async (req, res) => {
       })
       .then((studentsNamesData) => {
         studentsNames = studentsNamesData;
+
       })
       .then(() => t.manyOrNone(`select distinct a.test_date,
       max_points from custom_tests_results a
@@ -268,17 +272,20 @@ exports.getFormatTestsPage = async (req, res) => {
           formatId,
           subjectId,
           groupId,
-          subjectName,
           formatName,
           groupName,
           graphData,
-          grades
+          grades,
+          subjectName
         })
         );
       })
-      .catch((err) => res.redirect(`${globalLink}/groups/${groupId}`));
-    
-    });
+      .catch((err) => {
+        console.log(err)
+        res.redirect(`${globalLink}/groups/${groupId}`)
+      });
+    })
+  });
 };
 
 exports.asyncGetFormatResults = async (req, res, next) => {
