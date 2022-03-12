@@ -44,28 +44,35 @@ exports.addReview = async (req, res, next) => {
 
     const studentsData = [req.body.students].flat();
 
+
     const students = studentsData.map((student_id) => {
       const student = { id: Number(student_id) };
       student.attendance = req.body[`attendance_${student_id}`] ? req.body[`attendance_${student_id}`] : null;
       student.activity = req.body[`activity_${student_id}`] ? req.body[`activity_${student_id}`] : null;
-      student.homework = req.body[`homework_${student_id}`] ? req.body[`homework_${student_id}`] : null; 
+      student.homework = req.body[`homework_${student_id}`] ? req.body[`homework_${student_id}`] : null;
+      student.comment = req.body[`comment_${student_id}`] ? req.body[`comment_${student_id}`] : null;
+
       if(student.attendance == null && student.activity == null && student.homework == null) {
         return null;
       } else {
         return student;
       }
     }).filter((student) => student !== null)
-
+    console.log(students)
+    console.log(req.body) 
     resolve(students);
   }).then((students) => db.task((t) => t.one(`INSERT INTO group_reviews(group_id, subject_id, posting_date)
             VALUES(${req.params.id}, ${req.body.subject}, '${req.body.reviewing_date}') RETURNING review_id`)).then(({ review_id }) => db.tx((tt) => {
     const queries = students.map((student) => {
-      return tt.none(`INSERT INTO student_records(review_id, student_id, attendance, activity, homework)
-            VALUES(${review_id}, ${student.id}, ${student.attendance}, ${student.activity}, ${student.homework})`);
+      return tt.none(`INSERT INTO student_records(review_id, student_id, attendance, activity, homework, comment)
+            VALUES(${review_id}, ${student.id}, ${student.attendance}, ${student.activity}, ${student.homework}, ${student.comment == null ? null : `'${student.comment}'`})`);
     });
     return tt.batch(queries);
   })).then(() => res.redirect(`${globalLink}/groups/${req.params.id}`)));
 };
+
+
+
 
 exports.getReview = async (req, res, next) => {
 
@@ -252,7 +259,8 @@ exports.getStudentAsyncReviews = async (req, res, next) => {
     a.posting_date, b.student_id,
     b.attendance,
     b.activity,
-	  b.homework
+	  b.homework,
+    b.comment
     from group_reviews a
     join student_records b
     on a.review_id = b.review_id
@@ -263,7 +271,7 @@ exports.getStudentAsyncReviews = async (req, res, next) => {
 	  and posting_date > '${start}' and
     posting_date < '${end}'
     GROUP BY a.review_id, c.name, b.student_id,
-	  b.attendance, b.activity, b.homework
+	  b.attendance, b.activity, b.homework, b.comment
     ORDER BY a.posting_date DESC`)
     .then((reviews) => {
       res.status(200).json(reviews);

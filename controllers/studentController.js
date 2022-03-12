@@ -109,7 +109,7 @@ exports.getStudent = async (req, res, next) => {
                               from group_custom_tests a
                               join custom_tests_results b
                               on a.id = b.custom_test_id
-                              where b.student_id = 585`)
+                              where b.student_id = ${student_id}`)
     )
     .then(() => t.manyOrNone(`SELECT * FROM student_subjects a
                                 JOIN subjects b ON a.subject_id = b.id
@@ -123,14 +123,15 @@ exports.getStudent = async (req, res, next) => {
       on a.custom_test_id = b.id
       join subjects c
       on a.subject_id = c.id
-      where a.student_id = ${student_id}`))
+      where a.student_id = ${student_id}
+      ORDER BY a.test_date DESC`))
       .then((testResultsData) => {
         testResults = testResultsData;
       })
     .then(() => t.manyOrNone(`SELECT b.posting_date, a.record_id,
                                 a.review_id, a.student_id,
                                 a.attendance, a.activity, a.homework, b.group_id,
-                                c.name
+                                c.name, a.comment
                                 FROM student_records a
                                 JOIN group_reviews b
                                 ON a.review_id = b.review_id

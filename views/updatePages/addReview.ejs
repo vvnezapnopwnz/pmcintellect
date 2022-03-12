@@ -59,6 +59,23 @@
                   <%= student.name %>
                 </option>
               </select>
+              <div class="comment_section">
+                <div id="accordion">
+
+                  <div class="card">
+                    <div class="card-header d-flex flex-column">
+                      <a class="btn btn-warning align-self-center" data-bs-toggle="collapse" href="#collapse__<%= student.student_id %>">
+                        Оставить комментарий
+                      </a>
+                    </div>
+                    <div id="collapse__<%= student.student_id %>" class="collapse" data-bs-parent="#accordion">
+                      <div class="card-body">
+                        <input class="form-control" placeholder="Введите текст вашего комментария" type="text" name="comment_<%= student.student_id %>" id="comment_<%= student.student_id %>">
+                      </div>
+                    </div>
+                  </div>
+
+              </div>
             </div>
 
             <div class="row d-flex flex-column records_content">

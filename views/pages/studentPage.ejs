@@ -84,6 +84,7 @@
                           <th>Посещаемость</th>
                           <th>Активность</th>
                           <th>Выполнение ДЗ</th>
+                          <th>Комментарий тренера</th>
                         </tr>
                       </tbody>
                     </table>
@@ -108,7 +109,7 @@ const subjectSelect = document.querySelector('.subject_select');
 const searchCharsButton = document.querySelector('.search_chars_button');
 
 searchCharsButton.addEventListener('click', async (event) => {
-  tableBlock.innerHTML = `<tr><th>Дата проведения</th><th>Предмет</th><th>Посещаемость</th><th>Активность</th><th>Выполнение ДЗ</th></tr>`
+  tableBlock.innerHTML = `<tr><th>Дата проведения</th><th>Предмет</th><th>Посещаемость</th><th>Активность</th><th>Выполнение ДЗ</th><th>Комментарий тренера</th></tr>`
 
   const queryToDB = await fetch(`<%= globalLink %>/reviews/async/students/${inputCharsStartDateValue.value}/${inputCharsEndDateValue.value}/${subjectSelect.value}/<%= student.student_id %>`);
   
@@ -131,11 +132,14 @@ console.log(inputCharsEndDateValue.value)
     activityCountCol.innerText = item.activity == true ? 'Активен' : item.activity == false ? 'Не активен' : '-';
     const homeworkCountCol = document.createElement('td');
     homeworkCountCol.innerText = item.homework == true ? 'Выполнил' : item.homework == false ? 'Не выполнил': '-';
+    const commentCountCol = document.createElement('td');
+    commentCountCol.innerText = item.comment;
     trEl.appendChild(dateCol);
     trEl.appendChild(subjectCol);
     trEl.appendChild(attendanceCountCol);
     trEl.appendChild(activityCountCol);
     trEl.appendChild(homeworkCountCol);
+    trEl.appendChild(commentCountCol);
     }
   });
 
@@ -938,6 +942,7 @@ if(geography_results.length > 0) {
                   <th>Посещаемость</th>
                   <th>Активность</th>
                   <th>Домашнее задание</th>
+                  <th>Комментарий тренера</th>
                 </tr>
                 <% records.filter((record) => record.name == subject.name).forEach(function(record) { %>
                 <tr>
@@ -959,6 +964,12 @@ if(geography_results.length > 0) {
                     <p class="homework_<%= subject.id %>">Выполнил</p>
                     <% } else { %>
                     <p class="homework_<%= subject.id %>">Не выполнил</p>
+                    <% } %>
+                  </th>
+                  <th><% if(record.comment !== null || record.comment !== '') { %>
+                    <p class="comment_<%= subject.id %>"><%= record.comment %></p>
+                    <% } else { %>
+                    <p class="comment_<%= subject.id %>">-</p>
                     <% } %>
                   </th>
                 </tr>

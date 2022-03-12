@@ -44,7 +44,7 @@ exports.getGroup = async (req, res, next) => {
         on b.student_id = c.student_id 
         join subjects d
         on d.id = c.subject_id
-        where a.group_id = ${groupId} and c.subject_id = ${subject.subject_id}`)
+        where a.group_id = ${groupId} and c.subject_id = ${subject.subject_id} and b.active = true`)
         .then((subject_students) => 
         ({
            name: subject.name, subject_id: subject.id, students: subject_students 
@@ -179,10 +179,6 @@ exports.getFormatTestsPage = async (req, res) => {
       d.name as group_name
       from 
       group_custom_tests a
-      join custom_tests_results
-      b on a.id = b.custom_test_id
-      join subjects c
-      on b.subject_id = c.id
       join groups d
       on d.group_id = a.group_id
       where a.group_id = ${groupId}
