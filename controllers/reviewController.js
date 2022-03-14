@@ -268,8 +268,8 @@ exports.getStudentAsyncReviews = async (req, res, next) => {
     on a.subject_id = c.id
     where b.student_id = ${studentId}
     ${subjectId == 'no_subject' ? '' : `and subject_id = ${subjectId}`}
-	  and posting_date > '${start}' and
-    posting_date < '${end}'
+	  and posting_date >= '${start}' and
+    posting_date <= '${end}'
     GROUP BY a.review_id, c.name, b.student_id,
 	  b.attendance, b.activity, b.homework, b.comment
     ORDER BY a.posting_date DESC`)
@@ -295,8 +295,8 @@ exports.getDashboardOverviewAsyncStudentVisits = async (req, res, next) => {
     on a.review_id = b.review_id
     join students c
     on a.student_id = c.student_id
-    where posting_date > '${startDate}'
-    and posting_date < '${endDate}'`)
+    where posting_date >= '${startDate}'
+    and posting_date <= '${endDate}'`)
     .then((data) => res.status(200).json(data))
     .catch((error) => res.redirect(`${globalLink}`))
 
@@ -327,8 +327,8 @@ exports.getReviewsCountAsync = async (req, res, next) => {
 
           return t.manyOrNone(`select * from group_reviews *
           where group_id = ${groupId} and subject_id = ${subject.subject_id}
-          and posting_date > '${startDate}'
-          and posting_date < '${endDate}'`)
+          and posting_date >= '${startDate}'
+          and posting_date <= '${endDate}'`)
           .then((data) => subject.reviews = data)
       }))
     })
