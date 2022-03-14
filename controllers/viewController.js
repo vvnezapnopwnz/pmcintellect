@@ -61,7 +61,7 @@ exports.getStudentView = async (req, res, next) => {
     .then(() => t.manyOrNone(`SELECT b.posting_date, a.record_id,
                                 a.review_id, a.student_id,
                                 a.attendance, a.activity, a.homework, b.group_id,
-                                c.name
+                                c.name, a.comment
                                 FROM student_records a
                                 JOIN group_reviews b
                                 ON a.review_id = b.review_id
