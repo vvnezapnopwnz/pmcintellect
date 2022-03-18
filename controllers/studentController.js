@@ -124,7 +124,7 @@ exports.getStudent = async (req, res, next) => {
       join subjects c
       on a.subject_id = c.id
       where a.student_id = ${student_id}
-      ORDER BY a.test_date DESC`))
+      ORDER BY a.test_date ASC`))
       .then((testResultsData) => {
         testResults = testResultsData;
       })

@@ -54,7 +54,7 @@ exports.getStudentView = async (req, res, next) => {
       on a.custom_test_id = b.id
       join subjects c
       on a.subject_id = c.id
-      where a.student_id = ${student_id} ORDER BY a.test_date DESC`))
+      where a.student_id = ${student_id} ORDER BY a.test_date ASC`))
       .then((testResultsData) => {
         testResults = testResultsData;
       })
