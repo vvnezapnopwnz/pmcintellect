@@ -40,7 +40,11 @@ exports.createUser = async (req, res, next) => {
     return t.oneOrNone(`INSERT INTO users(username, password, email, role)
       VALUES('${username}', '${req.body.password}', '${req.body.email}',
         '${req.body.role}')`)
-        .then(() => res.redirect(`${globalLink}/users/dashboard`));
+        .then(() => res.redirect(`${globalLink}/users/dashboard`))
+        .catch((err)=> {
+          console.log(err)
+          res.status(500).redirect(`${globalLink}/`)
+        })
   });
   
 };
