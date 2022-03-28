@@ -13,7 +13,7 @@
     <div class="col-sm">
       <div class="user__info">
         <h2>Информация о профиле</h2>
-        <h4>Имя: <%= user.username%></h4>
+        <h4>ФИО сотрудника: <%= user.username%></h4>
         <% if(user.role == 'admin' ){ %>
           <h4>Роль: Администратор системы</h4>
           <% } else if(user.role == 'assistant') { %>
@@ -347,7 +347,7 @@
 
     <% if(user.role == 'admin' || user.role == 'assistant'){ %>
       <div class="students__content">
-        <h5>Ученики</h5>
+        <h5>Управление учениками</h5>
         <a href="<%= globalLink%>/students/" class="btn btn-secondary my-2">
           Перейти в базу учеников
         </a>
@@ -378,6 +378,13 @@
           <a href="<%= globalLink%>/groups/move" class="btn btn-warning my-2">
             Перевести ученика в другую группу
            </a>
+      </div>
+
+      <div class="groups__content">
+        <h5>Управление предметами</h5>
+        <a href="<%= globalLink%>/users/addnewsubject" class="btn btn-primary my-2">
+        Создать группу
+        </a>
       </div>
 
 

@@ -10,14 +10,67 @@
 
 <div class="container">
     <div class="row my-3 student__block">
-        <div class="col">
-                <h3 class="text-center">Спискок учеников</h3>
-                <input placeholder="Поиск по имени" type="text" id="input" class=" mb-4 form-control w-75 align-self-center" />
-                          <div class="col studens_all">
+        <div class="col d-flex flex-column">
+                <h3 class="text-center">Список учеников</h3>
+				<p style="cursor:default" class="btn btn-warning my-2 p-2">
+					Для того чтобы получить информацию об успеваемости нужного вам ученика,
+					 введите его имя в поле поиска ниже. Для редактирования профиля выберите первую опцию. Вы также можете посмотреть
+					на страницу ученика, со стороны клиента, выбрав вторую опцию или 
+					же скопировать ссылку для передачи клиенту нажав на иконку копирования
+					<svg xmlns="http://www.w3.org/2000/svg"
+					width="24" height="24" fill="currentColor" 
+					class="me-3 bi bi-clipboard-check" viewBox="0 0 16 16">
+			   <path fill-rule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+			   <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+			   <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+					 </svg>
+				</p>
+                <input placeholder="Поиск по имени" type="text" id="input" class=" mb-4 form-control align-self-center" />
+                          <div class="col studens_all d-flex flex-wrap">
                             <% students.forEach(function(student) { %>
-                              <a class="btn btn-secondary btn-sm m-1 hide" href=<%= `${globalLink}/students/${student.student_id}` %>>
-                                <strong><%= student.name %></strong>
-                              </a>
+							  <div class="dropdown stud hide m-1">
+								<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+									<%= student.name %>
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+									<li>
+										<a class="dropdown-item" href=<%= `${globalLink}/students/${student.student_id}` %>>Редактировать ученика</a>
+									</li>
+									<li class="d-flex justify-content-center align-items-center"> 
+										<a class="js-copytextarea__<%= student.student_id %> dropdown-item" href=<%= `${globalLink}/views/${student.student_id}` %>>Ссылка родителей 
+										</a>	
+											<svg xmlns="http://www.w3.org/2000/svg"
+											 width="24" height="24" fill="currentColor" 
+											 class="me-3 js-textareacopybtn__<%= student.student_id %> bi bi-clipboard-check" viewBox="0 0 16 16">
+										<path fill-rule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+										<path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+										<path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+									  		</svg>
+									</li>
+								</ul>
+							  </div>
+							  
+<script>
+var copyTextareaBtn__<%= student.student_id %> = document.querySelector('.js-textareacopybtn__<%= student.student_id %>');
+var copyTextarea__<%= student.student_id %> = document.querySelector('.js-copytextarea__<%= student.student_id %>');
+
+copyTextareaBtn__<%= student.student_id %>.addEventListener('click', function(event) {
+  console.log(copyTextarea__<%= student.student_id %>)
+  try {
+    var input = document.createElement('textarea');
+    input.innerHTML = copyTextarea__<%= student.student_id %>.href;
+    document.body.appendChild(input);
+    input.select();
+    var result = document.execCommand('copy');
+    document.body.removeChild(input);
+    return result;
+  } catch (err) {
+    console.log('Oops, unable to copy');
+  }
+});
+</script>
+
+
                         <% }); %>
                           </div>
 
@@ -35,7 +88,7 @@ window.onload = () => {
   input.oninput = function() {
     if(this.value.length > 2) {
       let value = this.value.trim();
-		let list = document.querySelectorAll('.btn-secondary');
+		let list = document.querySelectorAll('.stud');
 
 		value
 			? list.forEach(elem => {
@@ -50,7 +103,7 @@ window.onload = () => {
 
     } else {
       let value = this.value.trim();
-		let list = document.querySelectorAll('.btn-secondary');
+		let list = document.querySelectorAll('.stud');
 
 		value
 			? list.forEach(elem => {
@@ -66,6 +119,7 @@ window.onload = () => {
 
 	};
 };
+
 
 
 

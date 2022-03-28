@@ -17,11 +17,11 @@
             <%= student.name %>
         </h4>
         <h5>
-            Класс ученика:
+            Класс:
             <%= student.class_number %>
         </h5>
         <h5>
-            Предметы ученика:
+            Предметы:
         </h5>
         <div class="d-flex my-1">
           <a href="<%= globalLink %>/students/<%= student.student_id %>/addSubject" class="btn btn-primary m-1" >
@@ -41,7 +41,7 @@
             <div class="accordion-item">
               <h2 class="accordion-header" id="headingSubject">
                 <button class="accordion-button d-block text-center bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubject">
-                  <h5 class="text-light">Найти характеристики</h5>
+                  <h5 class="text-light">Найти характеристики за период</h5>
                 </button>
               </h2>
               <div id="collapseSubject" class="accordion-collapse collapse" aria-labelledby="headingSubject" data-bs-parent="#accordion">
@@ -84,7 +84,7 @@
                           <th>Посещаемость</th>
                           <th>Активность</th>
                           <th>Выполнение ДЗ</th>
-                          <th>Комментарий тренера</th>
+                          <th>Комментарий от тренера</th>
                         </tr>
                       </tbody>
                     </table>
@@ -109,7 +109,7 @@ const subjectSelect = document.querySelector('.subject_select');
 const searchCharsButton = document.querySelector('.search_chars_button');
 
 searchCharsButton.addEventListener('click', async (event) => {
-  tableBlock.innerHTML = `<tr><th>Дата проведения</th><th>Предмет</th><th>Посещаемость</th><th>Активность</th><th>Выполнение ДЗ</th><th>Комментарий тренера</th></tr>`
+  tableBlock.innerHTML = `<tr><th>Дата проведения</th><th>Предмет</th><th>Посещаемость</th><th>Активность</th><th>Выполнение ДЗ</th><th>Комментарий от тренера</th></tr>`
 
   const queryToDB = await fetch(`<%= globalLink %>/reviews/async/students/${inputCharsStartDateValue.value}/${inputCharsEndDateValue.value}/${subjectSelect.value}/<%= student.student_id %>`);
   
