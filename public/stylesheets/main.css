@@ -102,3 +102,6 @@ body {
   display: none;
 }
 
+.bi-clipboard-check:active {
+  background-color: green;
+}
