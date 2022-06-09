@@ -1,4 +1,4 @@
-# Educational orgranization analitycal service for teachers and students
+# Educational orgranization analytical service for teachers and students
 
  Node.js app using [Express 4](http://expressjs.com/).
 
